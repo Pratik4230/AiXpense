@@ -11,6 +11,17 @@ export const EXPENSE_CATEGORIES = [
   "other",
 ] as const;
 
+export const INCOME_CATEGORIES = [
+  "salary",
+  "freelance",
+  "business",
+  "investment",
+  "rental",
+  "refund",
+  "gift",
+  "other",
+] as const;
+
 export const EXPENSE_TYPES = ["expense", "income"] as const;
 
 export const PAYMENT_METHODS = [
@@ -19,7 +30,6 @@ export const PAYMENT_METHODS = [
   "card",
   "netbanking",
   "wallet",
-  "other",
 ] as const;
 
 export type ExpenseCategory = (typeof EXPENSE_CATEGORIES)[number];

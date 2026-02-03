@@ -1,28 +1,56 @@
+import mongoose from "mongoose";
 import { MongoClient } from "mongodb";
 
-const uri = process.env.MONGO_URI!;
+const MONGO_URI = process.env.MONGO_URI!;
 
-if (!uri) {
+if (!MONGO_URI) {
   throw new Error("MONGO_URI is not defined");
 }
 
-const options = {};
-
-let client: MongoClient;
-
-if (process.env.NODE_ENV === "development") {
-  const globalWithMongo = global as typeof globalThis & {
-    _mongoClient?: MongoClient;
-  };
-
-  if (!globalWithMongo._mongoClient) {
-    globalWithMongo._mongoClient = new MongoClient(uri, options);
-  }
-  client = globalWithMongo._mongoClient;
-} else {
-  client = new MongoClient(uri, options);
+interface MongooseCache {
+  conn: typeof mongoose | null;
+  promise: Promise<typeof mongoose> | null;
 }
 
-const db = client.db();
+declare global {
+  var mongooseCache: MongooseCache | undefined;
+  var mongoClient: MongoClient | undefined;
+}
 
-export { client, db };
+const cached: MongooseCache = global.mongooseCache ?? {
+  conn: null,
+  promise: null,
+};
+
+if (!global.mongooseCache) {
+  global.mongooseCache = cached;
+}
+
+export async function connectDB() {
+  if (cached.conn) {
+    return cached.conn;
+  }
+
+  if (!cached.promise) {
+    cached.promise = mongoose.connect(MONGO_URI).then((mongoose) => mongoose);
+  }
+
+  cached.conn = await cached.promise;
+  return cached.conn;
+}
+
+const mongoClientOptions = {};
+
+let mongoClient: MongoClient;
+
+if (process.env.NODE_ENV === "development") {
+  if (!global.mongoClient) {
+    global.mongoClient = new MongoClient(MONGO_URI, mongoClientOptions);
+  }
+  mongoClient = global.mongoClient;
+} else {
+  mongoClient = new MongoClient(MONGO_URI, mongoClientOptions);
+}
+
+export const client = mongoClient;
+export const db = mongoClient.db();

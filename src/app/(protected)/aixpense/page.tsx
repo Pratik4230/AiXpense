@@ -1,50 +1,158 @@
-export default function DashboardPage() {
+"use client";
+
+import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport } from "ai";
+import { useState, useRef, useEffect } from "react";
+import {
+  Message,
+  MessageContent,
+  MessageResponse,
+} from "@/components/ai-elements/message";
+import {
+  ExpenseCard,
+  IncomeCard,
+  ChatEmptyState,
+  ChatInput,
+  ToolLoading,
+} from "@/components/chat";
+
+export default function AiXpensePage() {
+  const [input, setInput] = useState("");
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const { messages, sendMessage, status } = useChat({
+    transport: new DefaultChatTransport({ api: "/api/chat" }),
+  });
+
+  const isLoading = status === "streaming";
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim() || isLoading) return;
+    sendMessage({ text: input });
+    setInput("");
+  };
+
+  const handleSuggestionClick = (suggestion: string) => {
+    if (isLoading) return;
+    sendMessage({ text: suggestion });
+  };
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages]);
+
   return (
-    <div className="container mx-auto px-4 py-6 sm:py-8">
-      <div className="mb-6 sm:mb-8">
-        <h1 className="text-2xl sm:text-3xl font-bold">Dashboard</h1>
-        <p className="text-muted-foreground mt-1">
-          Track your expenses with AI
-        </p>
+    <div className="flex flex-col h-[calc(100vh-3.5rem)]">
+      <div className="flex-1 overflow-y-auto p-4 sm:p-6">
+        <div className="max-w-3xl mx-auto space-y-6">
+          {messages.length === 0 && <ChatEmptyState />}
+
+          {messages.map((message) => (
+            <Message key={message.id} from={message.role}>
+              <MessageContent>
+                {message.parts.map((part, index) => {
+                  if (part.type === "text") {
+                    return (
+                      <MessageResponse key={`${message.id}-${index}`}>
+                        {part.text}
+                      </MessageResponse>
+                    );
+                  }
+
+                  if (part.type === "tool-saveExpense") {
+                    if (part.state === "output-available" && part.output) {
+                      const expense = (
+                        part.output as {
+                          expense: {
+                            item: string;
+                            amount: number;
+                            category: string;
+                            subcategory?: string;
+                          };
+                        }
+                      ).expense;
+
+                      return (
+                        <ExpenseCard
+                          key={`${message.id}-${index}`}
+                          {...expense}
+                        />
+                      );
+                    }
+
+                    if (
+                      part.state === "input-streaming" ||
+                      part.state === "input-available"
+                    ) {
+                      return (
+                        <ToolLoading
+                          key={`${message.id}-${index}`}
+                          type="expense"
+                        />
+                      );
+                    }
+                  }
+
+                  if (part.type === "tool-saveIncome") {
+                    if (part.state === "output-available" && part.output) {
+                      const income = (
+                        part.output as {
+                          income: {
+                            source: string;
+                            amount: number;
+                            category: string;
+                            subcategory?: string;
+                          };
+                        }
+                      ).income;
+
+                      return (
+                        <IncomeCard
+                          key={`${message.id}-${index}`}
+                          {...income}
+                        />
+                      );
+                    }
+
+                    if (
+                      part.state === "input-streaming" ||
+                      part.state === "input-available"
+                    ) {
+                      return (
+                        <ToolLoading
+                          key={`${message.id}-${index}`}
+                          type="income"
+                        />
+                      );
+                    }
+                  }
+
+                  return null;
+                })}
+              </MessageContent>
+            </Message>
+          ))}
+
+          {isLoading && messages[messages.length - 1]?.role === "user" && (
+            <Message from="assistant">
+              <MessageContent>
+                <ToolLoading type="thinking" />
+              </MessageContent>
+            </Message>
+          )}
+
+          <div ref={messagesEndRef} />
+        </div>
       </div>
 
-      <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-xl border border-border bg-card p-4 sm:p-6">
-          <p className="text-sm text-muted-foreground">Total Expenses</p>
-          <p className="text-2xl sm:text-3xl font-bold mt-1">₹0</p>
-          <p className="text-xs text-muted-foreground mt-1">This month</p>
-        </div>
-        <div className="rounded-xl border border-border bg-card p-4 sm:p-6">
-          <p className="text-sm text-muted-foreground">Total Income</p>
-          <p className="text-2xl sm:text-3xl font-bold mt-1">₹0</p>
-          <p className="text-xs text-muted-foreground mt-1">This month</p>
-        </div>
-        <div className="rounded-xl border border-border bg-card p-4 sm:p-6">
-          <p className="text-sm text-muted-foreground">Balance</p>
-          <p className="text-2xl sm:text-3xl font-bold mt-1">₹0</p>
-          <p className="text-xs text-muted-foreground mt-1">This month</p>
-        </div>
-        <div className="rounded-xl border border-border bg-card p-4 sm:p-6">
-          <p className="text-sm text-muted-foreground">Transactions</p>
-          <p className="text-2xl sm:text-3xl font-bold mt-1">0</p>
-          <p className="text-xs text-muted-foreground mt-1">This month</p>
-        </div>
-      </div>
-
-      <div className="mt-6 sm:mt-8 rounded-xl border border-border bg-card p-4 sm:p-6">
-        <h2 className="text-lg font-semibold mb-4">Quick Add</h2>
-        <p className="text-muted-foreground text-sm">
-          Type something like &quot;bought coffee for 50 rs&quot; to add an
-          expense
-        </p>
-        <div className="mt-4">
-          <input
-            type="text"
-            placeholder="e.g., lunch at office 150 rs"
-            className="w-full h-12 px-4 rounded-lg border border-border bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/50"
-          />
-        </div>
-      </div>
+      <ChatInput
+        value={input}
+        onChange={setInput}
+        onSubmit={handleSubmit}
+        onSuggestionClick={handleSuggestionClick}
+        isLoading={isLoading}
+      />
     </div>
   );
 }
