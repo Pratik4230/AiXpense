@@ -1,21 +1,24 @@
-export const EXPENSE_CATEGORIES = [
+export const CATEGORIES = [
   "food",
+  "groceries",
   "transport",
   "shopping",
   "entertainment",
+  "subscriptions",
   "bills",
+  "rent",
+  "emi",
   "health",
   "education",
   "personal",
   "travel",
-  "other",
-] as const;
-
-export const INCOME_CATEGORIES = [
   "salary",
+  "bonus",
   "freelance",
   "business",
   "investment",
+  "interest",
+  "cashback",
   "rental",
   "refund",
   "gift",
@@ -32,6 +35,6 @@ export const PAYMENT_METHODS = [
   "wallet",
 ] as const;
 
-export type ExpenseCategory = (typeof EXPENSE_CATEGORIES)[number];
+export type Category = (typeof CATEGORIES)[number];
 export type ExpenseType = (typeof EXPENSE_TYPES)[number];
 export type PaymentMethod = (typeof PAYMENT_METHODS)[number];

@@ -115,6 +115,18 @@ export default function AiXpensePage() {
                       );
                     }
 
+                    if (part.state === "output-error") {
+                      return (
+                        <div
+                          key={`${message.id}-${index}`}
+                          className="text-red-500 text-sm"
+                        >
+                          Error saving income:{" "}
+                          {part.errorText || "Unknown error"}
+                        </div>
+                      );
+                    }
+
                     if (
                       part.state === "input-streaming" ||
                       part.state === "input-available"

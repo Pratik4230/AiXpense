@@ -38,7 +38,7 @@ import {
   Trash2,
   Loader2,
 } from "lucide-react";
-import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from "@/lib/constants/expense";
+import { CATEGORIES } from "@/lib/constants/expense";
 import {
   useDeleteTransaction,
   useUpdateTransaction,
@@ -70,8 +70,7 @@ export function TransactionCard({ transaction }: TransactionCardProps) {
   const deleteMutation = useDeleteTransaction();
   const updateMutation = useUpdateTransaction();
 
-  const categories =
-    transaction.type === "income" ? INCOME_CATEGORIES : EXPENSE_CATEGORIES;
+  const categories = CATEGORIES;
 
   const handleDelete = () => {
     deleteMutation.mutate(transaction._id);

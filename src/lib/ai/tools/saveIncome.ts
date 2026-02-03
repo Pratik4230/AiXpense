@@ -2,7 +2,7 @@ import { tool } from "ai";
 import { z } from "zod";
 import { connectDB } from "@/lib/db";
 import { Expense } from "@/lib/models";
-import { INCOME_CATEGORIES } from "@/lib/constants/expense";
+import { CATEGORIES, PAYMENT_METHODS } from "@/lib/constants/expense";
 
 interface SaveIncomeParams {
   userId: string;
@@ -15,7 +15,7 @@ export const createSaveIncomeTool = ({ userId, rawInput }: SaveIncomeParams) =>
     inputSchema: z.object({
       source: z.string().describe("Source of the income"),
       amount: z.number().describe("The amount received in INR"),
-      category: z.enum(INCOME_CATEGORIES).describe("Category of the income"),
+      category: z.enum(CATEGORIES).describe("Category of the income"),
       subcategory: z
         .string()
         .optional()
@@ -24,8 +24,19 @@ export const createSaveIncomeTool = ({ userId, rawInput }: SaveIncomeParams) =>
         .array(z.string())
         .optional()
         .describe("Optional tags for the income"),
+      paymentMethod: z
+        .enum(PAYMENT_METHODS)
+        .optional()
+        .describe("Payment method if explicitly mentioned"),
     }),
-    execute: async ({ source, amount, category, subcategory, tags }) => {
+    execute: async ({
+      source,
+      amount,
+      category,
+      subcategory,
+      tags,
+      paymentMethod,
+    }) => {
       await connectDB();
 
       const income = await Expense.create({
@@ -38,6 +49,7 @@ export const createSaveIncomeTool = ({ userId, rawInput }: SaveIncomeParams) =>
         date: new Date(),
         rawInput,
         tags: tags || [],
+        paymentMethod,
       });
 
       return {

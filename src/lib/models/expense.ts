@@ -1,9 +1,9 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 import {
-  EXPENSE_CATEGORIES,
+  CATEGORIES,
   EXPENSE_TYPES,
   PAYMENT_METHODS,
-  type ExpenseCategory,
+  type Category,
   type ExpenseType,
   type PaymentMethod,
 } from "@/lib/constants/expense";
@@ -12,7 +12,7 @@ export interface IExpense {
   userId: mongoose.Types.ObjectId;
   item: string;
   amount: number;
-  category: ExpenseCategory;
+  category: Category;
   subcategory?: string;
   type: ExpenseType;
   paymentMethod?: PaymentMethod;
@@ -47,7 +47,7 @@ const expenseSchema = new Schema<IExpenseDocument>(
     },
     category: {
       type: String,
-      enum: EXPENSE_CATEGORIES,
+      enum: CATEGORIES,
       required: true,
       index: true,
     },

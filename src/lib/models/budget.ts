@@ -1,13 +1,10 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
-import {
-  EXPENSE_CATEGORIES,
-  type ExpenseCategory,
-} from "@/lib/constants/expense";
+import { CATEGORIES, type Category } from "@/lib/constants/expense";
 import { BUDGET_PERIODS, type BudgetPeriod } from "@/lib/constants/budget";
 
 export interface IBudget {
   userId: mongoose.Types.ObjectId;
-  category: ExpenseCategory | "all";
+  category: Category | "all";
   amount: number;
   period: BudgetPeriod;
   startDate: Date;
@@ -28,7 +25,7 @@ const budgetSchema = new Schema<IBudgetDocument>(
     },
     category: {
       type: String,
-      enum: [...EXPENSE_CATEGORIES, "all"],
+      enum: [...CATEGORIES, "all"],
       required: true,
     },
     amount: {

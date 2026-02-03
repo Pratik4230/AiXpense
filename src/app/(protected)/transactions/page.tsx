@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { IndianRupee, Filter, Loader2, RefreshCw } from "lucide-react";
-import { EXPENSE_CATEGORIES, INCOME_CATEGORIES } from "@/lib/constants/expense";
+import { CATEGORIES } from "@/lib/constants/expense";
 import { TransactionCard } from "@/components/expenses";
 import { useTransactions } from "@/services/transactions";
 
@@ -28,12 +28,7 @@ export default function ExpensesPage() {
 
   const transactions = data?.transactions || [];
 
-  const categories =
-    typeFilter === "income"
-      ? INCOME_CATEGORIES
-      : typeFilter === "expense"
-        ? EXPENSE_CATEGORIES
-        : [...EXPENSE_CATEGORIES, ...INCOME_CATEGORIES];
+  const categories = CATEGORIES;
 
   const totalExpense = transactions
     .filter((t) => t.type === "expense")

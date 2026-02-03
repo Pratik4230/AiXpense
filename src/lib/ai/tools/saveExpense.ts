@@ -2,7 +2,7 @@ import { tool } from "ai";
 import { z } from "zod";
 import { connectDB } from "@/lib/db";
 import { Expense } from "@/lib/models";
-import { EXPENSE_CATEGORIES } from "@/lib/constants/expense";
+import { CATEGORIES, PAYMENT_METHODS } from "@/lib/constants/expense";
 
 interface SaveExpenseParams {
   userId: string;
@@ -18,7 +18,7 @@ export const createSaveExpenseTool = ({
     inputSchema: z.object({
       item: z.string().describe("What was purchased"),
       amount: z.number().describe("The cost in INR"),
-      category: z.enum(EXPENSE_CATEGORIES).describe("Category of the expense"),
+      category: z.enum(CATEGORIES).describe("Category of the expense"),
       subcategory: z
         .string()
         .optional()
@@ -27,8 +27,19 @@ export const createSaveExpenseTool = ({
         .array(z.string())
         .optional()
         .describe("Optional tags for the expense"),
+      paymentMethod: z
+        .enum(PAYMENT_METHODS)
+        .optional()
+        .describe("Payment method if explicitly mentioned"),
     }),
-    execute: async ({ item, amount, category, subcategory, tags }) => {
+    execute: async ({
+      item,
+      amount,
+      category,
+      subcategory,
+      tags,
+      paymentMethod,
+    }) => {
       await connectDB();
 
       const expense = await Expense.create({
@@ -41,6 +52,7 @@ export const createSaveExpenseTool = ({
         date: new Date(),
         rawInput,
         tags: tags || [],
+        paymentMethod,
       });
 
       return {

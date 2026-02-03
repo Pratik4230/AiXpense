@@ -1,8 +1,8 @@
 export {
-  EXPENSE_CATEGORIES,
+  CATEGORIES,
   EXPENSE_TYPES,
   PAYMENT_METHODS,
-  type ExpenseCategory,
+  type Category,
   type ExpenseType,
   type PaymentMethod,
 } from "./expense";
