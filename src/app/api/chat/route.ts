@@ -27,7 +27,7 @@ export async function POST(req: Request) {
   const toolParams = { userId, rawInput };
 
   const result = streamText({
-    model: openai("gpt-5-mini"),
+    model: openai("gpt-5.1-codex-mini"),
     system: SYSTEM_PROMPT,
     messages: await convertToModelMessages(messages),
     tools: {
