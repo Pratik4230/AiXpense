@@ -11,7 +11,7 @@ import { signOut, useSession } from "@/lib/authClient";
 
 const navLinks = [
   { href: "/aixpense", label: "AiXpense" },
-  { href: "/expenses", label: "Expenses" },
+  { href: "/transactions", label: "Transactions" },
 ];
 
 export function Navbar() {
