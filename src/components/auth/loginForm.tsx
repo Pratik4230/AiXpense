@@ -33,7 +33,7 @@ export function LoginForm() {
     const { error } = await signIn.email({
       email,
       password,
-      callbackURL: "/dashboard",
+      callbackURL: "/aixpense",
     });
 
     if (error) {
@@ -42,7 +42,7 @@ export function LoginForm() {
       return;
     }
 
-    router.push("/dashboard");
+    router.push("/aixpense");
   };
 
   return (

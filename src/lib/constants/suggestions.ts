@@ -1,6 +1,4 @@
 export const SUGGESTIONS = [
-  "uber 180",
-  "pizza 450",
   "paid electricity bill 1200",
   "mobile recharge 899",
   "booked flight tickets 8500",

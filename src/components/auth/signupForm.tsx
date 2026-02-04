@@ -35,7 +35,7 @@ export function SignupForm() {
       name,
       email,
       password,
-      callbackURL: "/dashboard",
+      callbackURL: "/aixpense",
     });
 
     if (error) {
@@ -44,7 +44,7 @@ export function SignupForm() {
       return;
     }
 
-    router.push("/dashboard");
+    router.push("/aixpense");
   };
 
   return (

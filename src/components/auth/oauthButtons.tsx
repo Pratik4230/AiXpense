@@ -15,7 +15,7 @@ export function OAuthButtons({ disabled }: OAuthButtonsProps) {
     setIsLoading(provider);
     await signIn.social({
       provider,
-      callbackURL: "/dashboard",
+      callbackURL: "/aixpense",
     });
     setIsLoading(null);
   };

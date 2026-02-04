@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+
 import {
   Card,
   CardDescription,
@@ -16,6 +16,7 @@ import {
   CheckCircle2,
   Zap,
 } from "lucide-react";
+import { SmartLink, SmartTextLink } from "@/components/auth/SmartLink";
 
 export default function LandingPage() {
   return (
@@ -34,18 +35,12 @@ export default function LandingPage() {
           </span>
         </Link>
         <div className="flex items-center gap-4">
-          <Link
-            href="/login"
-            className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors hidden sm:block"
-          >
+          <SmartTextLink className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors hidden sm:block">
             Login
-          </Link>
-          <Button
-            asChild
-            className="rounded-full px-6 shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all"
-          >
-            <Link href="/signup">Get Started</Link>
-          </Button>
+          </SmartTextLink>
+          <SmartLink className="rounded-full px-6 shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all">
+            Get Started
+          </SmartLink>
         </div>
       </header>
 
@@ -82,24 +77,13 @@ export default function LandingPage() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300">
-            <Button
+            <SmartLink
               size="lg"
               className="h-12 px-8 rounded-full text-lg shadow-xl shadow-primary/20 hover:shadow-primary/30 hover:scale-105 transition-all"
-              asChild
             >
-              <Link href="/signup">
-                Start Tracking Free
-                <ArrowRight className="ml-2 size-5" />
-              </Link>
-            </Button>
-            <Button
-              size="lg"
-              variant="outline"
-              className="h-12 px-8 rounded-full text-lg border-primary/20 hover:bg-primary/5"
-              asChild
-            >
-              <Link href="/login">View Demo</Link>
-            </Button>
+              Start Tracking Free
+              <ArrowRight className="ml-2 size-5" />
+            </SmartLink>
           </div>
 
           {/* Chat Demo UI */}
@@ -133,7 +117,7 @@ export default function LandingPage() {
                   <div className="space-y-2">
                     <div className="bg-muted/50 border border-border/50 px-5 py-4 rounded-2xl rounded-tl-sm shadow-sm backdrop-blur-sm">
                       <p className="text-sm font-medium text-muted-foreground mb-2">
-                        Expense added successfully! 🎉
+                        Expense added successfully!
                       </p>
                       <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm">
                         <div className="text-muted-foreground">Item</div>
@@ -231,13 +215,12 @@ export default function LandingPage() {
             </div>
 
             <div className="mt-10">
-              <Button
+              <SmartLink
                 size="lg"
                 className="h-12 px-10 rounded-full text-lg shadow-lg hover:shadow-xl transition-all"
-                asChild
               >
-                <Link href="/signup">Get Started Now</Link>
-              </Button>
+                Get Started Now
+              </SmartLink>
             </div>
           </div>
         </section>
@@ -246,17 +229,24 @@ export default function LandingPage() {
       <footer className="border-t border-border/40 bg-muted/20">
         <div className="container mx-auto px-4 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
           <p className="text-sm text-muted-foreground">
-            © 2025 AiXpense. Built with ❤️ and AI.
+            © 2026 AiXpense. Built with ❤️ and AI.
           </p>
-          <div className="flex items-center gap-6 text-sm text-muted-foreground">
-            <Link href="#" className="hover:text-foreground transition-colors">
-              Privacy
+          <div className="flex items-center gap-4 text-sm">
+            <Link
+              href="https://www.linkedin.com/in/pratikjadhav1438/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              LinkedIn
             </Link>
-            <Link href="#" className="hover:text-foreground transition-colors">
-              Terms
-            </Link>
-            <Link href="#" className="hover:text-foreground transition-colors">
-              Twitter
+            <Link
+              href="https://x.com/Pratik4230"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Twitter/X
             </Link>
           </div>
         </div>
