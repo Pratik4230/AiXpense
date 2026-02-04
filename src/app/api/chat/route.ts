@@ -50,9 +50,16 @@ export async function POST(req: Request) {
 
   const toolParams = { userId, rawInput };
 
+  const currentDate = new Date().toLocaleDateString("en-IN", {
+    weekday: "long",
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+
   const result = streamText({
-    model: openai("gpt-5-nano"),
-    system: SYSTEM_PROMPT,
+    model: openai("gpt-5-mini"),
+    system: SYSTEM_PROMPT(currentDate),
     messages: await convertToModelMessages(messages),
     tools: {
       saveExpense: createSaveExpenseTool(toolParams),
@@ -61,5 +68,7 @@ export async function POST(req: Request) {
     stopWhen: stepCountIs(5),
   });
 
-  return result.toUIMessageStreamResponse();
+  return result.toUIMessageStreamResponse({
+    sendReasoning: true,
+  });
 }

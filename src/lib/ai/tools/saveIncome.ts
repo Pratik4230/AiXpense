@@ -2,7 +2,7 @@ import { tool } from "ai";
 import { z } from "zod";
 import { connectDB } from "@/lib/db";
 import { Expense } from "@/lib/models";
-import { CATEGORIES, PAYMENT_METHODS } from "@/lib/constants/expense";
+import { CATEGORIES } from "@/lib/constants/expense";
 
 interface SaveIncomeParams {
   userId: string;
@@ -24,19 +24,8 @@ export const createSaveIncomeTool = ({ userId, rawInput }: SaveIncomeParams) =>
         .array(z.string())
         .optional()
         .describe("Optional tags for the income"),
-      paymentMethod: z
-        .enum(PAYMENT_METHODS)
-        .optional()
-        .describe("Payment method if explicitly mentioned"),
     }),
-    execute: async ({
-      source,
-      amount,
-      category,
-      subcategory,
-      tags,
-      paymentMethod,
-    }) => {
+    execute: async ({ source, amount, category, subcategory, tags }) => {
       await connectDB();
 
       const income = await Expense.create({
@@ -49,7 +38,6 @@ export const createSaveIncomeTool = ({ userId, rawInput }: SaveIncomeParams) =>
         date: new Date(),
         rawInput,
         tags: tags || [],
-        paymentMethod,
       });
 
       return {
@@ -61,6 +49,8 @@ export const createSaveIncomeTool = ({ userId, rawInput }: SaveIncomeParams) =>
           amount: income.amount,
           category: income.category,
           subcategory: income.subcategory,
+          tags: income.tags,
+
           date: income.date.toISOString(),
         },
       };

@@ -27,14 +27,5 @@ export const CATEGORIES = [
 
 export const EXPENSE_TYPES = ["expense", "income"] as const;
 
-export const PAYMENT_METHODS = [
-  "cash",
-  "upi",
-  "card",
-  "netbanking",
-  "wallet",
-] as const;
-
 export type Category = (typeof CATEGORIES)[number];
 export type ExpenseType = (typeof EXPENSE_TYPES)[number];
-export type PaymentMethod = (typeof PAYMENT_METHODS)[number];

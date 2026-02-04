@@ -9,6 +9,11 @@ import {
   MessageResponse,
 } from "@/components/ai-elements/message";
 import {
+  Reasoning,
+  ReasoningContent,
+  ReasoningTrigger,
+} from "@/components/ai-elements/reasoning";
+import {
   ExpenseCard,
   IncomeCard,
   ChatEmptyState,
@@ -52,6 +57,32 @@ export default function AiXpensePage() {
             <Message key={message.id} from={message.role}>
               <MessageContent>
                 {message.parts.map((part, index) => {
+                  if (part.type === "reasoning") {
+                    const isLastPart = index === message.parts.length - 1;
+                    const isLastMessage = message.id === messages.at(-1)?.id;
+                    const isCurrentlyStreaming =
+                      status === "streaming" && isLastPart && isLastMessage;
+
+                    const reasoningText =
+                      (part as { text?: string; reasoning?: string }).text ||
+                      (part as { text?: string; reasoning?: string })
+                        .reasoning ||
+                      "";
+
+                    return (
+                      <Reasoning
+                        key={`${message.id}-${index}`}
+                        className="w-full mb-3"
+                        isStreaming={isCurrentlyStreaming}
+                      >
+                        <ReasoningTrigger />
+                        {reasoningText && (
+                          <ReasoningContent>{reasoningText}</ReasoningContent>
+                        )}
+                      </Reasoning>
+                    );
+                  }
+
                   if (part.type === "text") {
                     return (
                       <MessageResponse key={`${message.id}-${index}`}>
@@ -69,6 +100,7 @@ export default function AiXpensePage() {
                             amount: number;
                             category: string;
                             subcategory?: string;
+                            tags?: string[];
                           };
                         }
                       ).expense;
@@ -103,6 +135,7 @@ export default function AiXpensePage() {
                             amount: number;
                             category: string;
                             subcategory?: string;
+                            tags?: string[];
                           };
                         }
                       ).income;
