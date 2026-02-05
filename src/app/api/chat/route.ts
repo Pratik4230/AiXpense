@@ -5,6 +5,7 @@ import { headers } from "next/headers";
 import { SYSTEM_PROMPT } from "@/lib/constants/prompts";
 import { createSaveExpenseTool, createSaveIncomeTool } from "@/lib/ai/tools";
 import { db } from "@/lib/db";
+import { ObjectId } from "mongodb";
 
 export const maxDuration = 30;
 
@@ -35,10 +36,7 @@ export async function POST(req: Request) {
   if (!isPremium) {
     await db
       .collection("user")
-      .updateOne(
-        { _id: userId as unknown as object },
-        { $inc: { freeTrials: -1 } },
-      );
+      .updateOne({ _id: new ObjectId(userId) }, { $inc: { freeTrials: -1 } });
   }
 
   const { messages }: { messages: UIMessage[] } = await req.json();
