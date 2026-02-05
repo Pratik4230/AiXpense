@@ -4,6 +4,7 @@ import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport } from "ai";
 import { useState, useRef, useEffect } from "react";
 import { useSession } from "@/lib/authClient";
+import { useRouter } from "next/navigation";
 import {
   Message,
   MessageContent,
@@ -40,6 +41,7 @@ interface UserWithTrial {
 }
 
 export default function AiXpensePage() {
+  const router = useRouter();
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
@@ -86,6 +88,11 @@ export default function AiXpensePage() {
       return;
     }
     sendMessage({ text: suggestion });
+  };
+
+  const handleUpgradeClick = () => {
+    setShowUpgradeDialog(false);
+    router.push("/premium");
   };
 
   useEffect(() => {
@@ -249,7 +256,7 @@ export default function AiXpensePage() {
           <TrialStatus
             isPremium={isPremium}
             freeTrials={freeTrials}
-            onUpgradeClick={() => setShowUpgradeDialog(true)}
+            onUpgradeClick={() => router.push("/premium")}
           />
         )}
       </div>
@@ -285,7 +292,7 @@ export default function AiXpensePage() {
             >
               Cancel
             </Button>
-            <Button>Upgrade Now</Button>
+            <Button onClick={handleUpgradeClick}>Upgrade Now</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
