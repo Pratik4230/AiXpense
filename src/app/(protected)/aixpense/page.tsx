@@ -225,6 +225,25 @@ export default function AiXpensePage() {
                     }
                   }
 
+                  if (part.type === "tool-searchTransactions") {
+                    if (part.state === "output-available" && part.output) {
+                      // Output suppressed as per user request (Text only response)
+                      return null;
+                    }
+
+                    if (
+                      part.state === "input-streaming" ||
+                      part.state === "input-available"
+                    ) {
+                      return (
+                        <ToolLoading
+                          key={`${message.id}-${index}`}
+                          type="thinking"
+                        />
+                      );
+                    }
+                  }
+
                   return null;
                 })}
               </MessageContent>

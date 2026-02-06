@@ -3,7 +3,11 @@ import { openai } from "@ai-sdk/openai";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { SYSTEM_PROMPT } from "@/lib/constants/prompts";
-import { createSaveExpenseTool, createSaveIncomeTool } from "@/lib/ai/tools";
+import {
+  createSaveExpenseTool,
+  createSaveIncomeTool,
+  createSearchTransactionsTool,
+} from "@/lib/ai/tools";
 import { db } from "@/lib/db";
 import { ObjectId } from "mongodb";
 
@@ -47,8 +51,9 @@ export async function POST(req: Request) {
     lastUserMessage && "text" in lastUserMessage ? lastUserMessage.text : "";
 
   const toolParams = { userId, rawInput };
+  const now = new Date();
 
-  const currentDate = new Date().toLocaleDateString("en-IN", {
+  const currentDateStr = now.toLocaleDateString("en-IN", {
     weekday: "long",
     year: "numeric",
     month: "long",
@@ -57,11 +62,15 @@ export async function POST(req: Request) {
 
   const result = streamText({
     model: openai("gpt-5-mini"),
-    system: SYSTEM_PROMPT(currentDate),
+    system: SYSTEM_PROMPT(currentDateStr),
     messages: await convertToModelMessages(messages),
     tools: {
       saveExpense: createSaveExpenseTool(toolParams),
       saveIncome: createSaveIncomeTool(toolParams),
+      searchTransactions: createSearchTransactionsTool({
+        userId,
+        currentDate: now,
+      }),
     },
     stopWhen: stepCountIs(5),
   });
