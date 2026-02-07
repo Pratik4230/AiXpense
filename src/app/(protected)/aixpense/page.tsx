@@ -18,9 +18,12 @@ import {
 import {
   ExpenseCard,
   IncomeCard,
+  UpdatedCard,
+  DeletedCard,
   ChatEmptyState,
   ChatInput,
   ToolLoading,
+  type SelectedTransaction,
 } from "@/components/chat";
 import { TrialStatus } from "@/components/chat/TrialStatus";
 import {
@@ -45,6 +48,9 @@ export default function AiXpensePage() {
   const [input, setInput] = useState("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] =
+    useState<SelectedTransaction | null>(null);
+  const [outdatedIds, setOutdatedIds] = useState<Set<string>>(new Set());
   const { data: session, isPending: isSessionLoading, refetch } = useSession();
 
   const user = session?.user as UserWithTrial | undefined;
@@ -72,11 +78,27 @@ export default function AiXpensePage() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim() || isLoading) return;
     if (!isPremium && freeTrials <= 0) {
       setShowUpgradeDialog(true);
       return;
     }
+
+    if (selectedTransaction) {
+      const prefix = `[ATTACHED_TRANSACTION: id=${selectedTransaction.id}, type=${selectedTransaction.type}, item=${selectedTransaction.item}, amount=${selectedTransaction.amount}, action=${selectedTransaction.action}]`;
+      const messageText =
+        selectedTransaction.action === "delete"
+          ? prefix
+          : `${prefix} ${input}`.trim();
+
+      if (selectedTransaction.action === "delete" || input.trim()) {
+        sendMessage({ text: messageText });
+        setInput("");
+        setSelectedTransaction(null);
+      }
+      return;
+    }
+
+    if (!input.trim() || isLoading) return;
     sendMessage({ text: input });
     setInput("");
   };
@@ -93,6 +115,58 @@ export default function AiXpensePage() {
   const handleUpgradeClick = () => {
     setShowUpgradeDialog(false);
     router.push("/premium");
+  };
+
+  const handleTransactionEdit = (data: {
+    id: string;
+    item: string;
+    amount: number;
+    category: string;
+  }) => {
+    setSelectedTransaction({
+      ...data,
+      type: "expense",
+      action: "edit",
+    });
+  };
+
+  const handleTransactionDelete = (data: {
+    id: string;
+    item: string;
+    amount: number;
+    category: string;
+  }) => {
+    setSelectedTransaction({
+      ...data,
+      type: "expense",
+      action: "delete",
+    });
+  };
+
+  const handleIncomeEdit = (data: {
+    id: string;
+    item: string;
+    amount: number;
+    category: string;
+  }) => {
+    setSelectedTransaction({
+      ...data,
+      type: "income",
+      action: "edit",
+    });
+  };
+
+  const handleIncomeDelete = (data: {
+    id: string;
+    item: string;
+    amount: number;
+    category: string;
+  }) => {
+    setSelectedTransaction({
+      ...data,
+      type: "income",
+      action: "delete",
+    });
   };
 
   useEffect(() => {
@@ -136,9 +210,34 @@ export default function AiXpensePage() {
                   }
 
                   if (part.type === "text") {
+                    let displayText = part.text;
+                    if (
+                      message.role === "user" &&
+                      displayText.includes("[ATTACHED_TRANSACTION:")
+                    ) {
+                      const actionMatch = displayText.match(/action=(\w+)/);
+                      const itemMatch = displayText.match(/item=([^,\]]+)/);
+                      const amountMatch = displayText.match(/amount=(\d+)/);
+                      const action = actionMatch?.[1];
+                      const itemName = itemMatch?.[1];
+                      const amount = amountMatch?.[1];
+                      const userText = displayText
+                        .split("]")
+                        .slice(1)
+                        .join("]")
+                        .trim();
+
+                      if (action === "delete") {
+                        displayText = `Delete: ${itemName} (₹${amount})`;
+                      } else {
+                        displayText = userText
+                          ? `Edit ${itemName}: ${userText}`
+                          : `Edit: ${itemName} (₹${amount})`;
+                      }
+                    }
                     return (
                       <MessageResponse key={`${message.id}-${index}`}>
-                        {part.text}
+                        {displayText}
                       </MessageResponse>
                     );
                   }
@@ -148,6 +247,7 @@ export default function AiXpensePage() {
                       const expense = (
                         part.output as {
                           expense: {
+                            id: string;
                             item: string;
                             amount: number;
                             category: string;
@@ -161,6 +261,9 @@ export default function AiXpensePage() {
                         <ExpenseCard
                           key={`${message.id}-${index}`}
                           {...expense}
+                          isOutdated={outdatedIds.has(expense.id)}
+                          onEdit={handleTransactionEdit}
+                          onDelete={handleTransactionDelete}
                         />
                       );
                     }
@@ -183,6 +286,7 @@ export default function AiXpensePage() {
                       const income = (
                         part.output as {
                           income: {
+                            id: string;
                             source: string;
                             amount: number;
                             category: string;
@@ -196,6 +300,9 @@ export default function AiXpensePage() {
                         <IncomeCard
                           key={`${message.id}-${index}`}
                           {...income}
+                          isOutdated={outdatedIds.has(income.id)}
+                          onEdit={handleIncomeEdit}
+                          onDelete={handleIncomeDelete}
                         />
                       );
                     }
@@ -227,7 +334,108 @@ export default function AiXpensePage() {
 
                   if (part.type === "tool-searchTransactions") {
                     if (part.state === "output-available" && part.output) {
-                      // Output suppressed as per user request (Text only response)
+                      return null;
+                    }
+
+                    if (
+                      part.state === "input-streaming" ||
+                      part.state === "input-available"
+                    ) {
+                      return (
+                        <ToolLoading
+                          key={`${message.id}-${index}`}
+                          type="thinking"
+                        />
+                      );
+                    }
+                  }
+
+                  if (part.type === "tool-deleteTransaction") {
+                    if (part.state === "output-available" && part.output) {
+                      const output = part.output as {
+                        success: boolean;
+                        deleted?: {
+                          id: string;
+                          item: string;
+                          amount: number;
+                          type: string;
+                        };
+                      };
+                      if (output.success && output.deleted) {
+                        if (!outdatedIds.has(output.deleted.id)) {
+                          setOutdatedIds((prev) =>
+                            new Set(prev).add(output.deleted!.id),
+                          );
+                        }
+                        return (
+                          <DeletedCard
+                            key={`${message.id}-${index}`}
+                            type={output.deleted.type as "expense" | "income"}
+                            item={output.deleted.item}
+                            amount={output.deleted.amount}
+                          />
+                        );
+                      }
+                      return null;
+                    }
+
+                    if (
+                      part.state === "input-streaming" ||
+                      part.state === "input-available"
+                    ) {
+                      return (
+                        <ToolLoading
+                          key={`${message.id}-${index}`}
+                          type="thinking"
+                        />
+                      );
+                    }
+                  }
+
+                  if (part.type === "tool-updateTransaction") {
+                    if (part.state === "output-available" && part.output) {
+                      const output = part.output as {
+                        success: boolean;
+                        transaction?: {
+                          id: string;
+                          item: string;
+                          amount: number;
+                          category: string;
+                          subcategory?: string;
+                          type: string;
+                        };
+                      };
+                      if (output.success && output.transaction) {
+                        if (!outdatedIds.has(output.transaction.id)) {
+                          setOutdatedIds((prev) =>
+                            new Set(prev).add(output.transaction!.id),
+                          );
+                        }
+                        const txType = output.transaction.type as
+                          | "expense"
+                          | "income";
+                        const editHandler =
+                          txType === "expense"
+                            ? handleTransactionEdit
+                            : handleIncomeEdit;
+                        const deleteHandler =
+                          txType === "expense"
+                            ? handleTransactionDelete
+                            : handleIncomeDelete;
+                        return (
+                          <UpdatedCard
+                            key={`${message.id}-${index}`}
+                            id={output.transaction.id}
+                            type={txType}
+                            item={output.transaction.item}
+                            amount={output.transaction.amount}
+                            category={output.transaction.category}
+                            subcategory={output.transaction.subcategory}
+                            onEdit={editHandler}
+                            onDelete={deleteHandler}
+                          />
+                        );
+                      }
                       return null;
                     }
 
@@ -268,6 +476,8 @@ export default function AiXpensePage() {
         onSubmit={handleSubmit}
         onSuggestionClick={handleSuggestionClick}
         isLoading={isLoading}
+        selectedTransaction={selectedTransaction}
+        onClearTransaction={() => setSelectedTransaction(null)}
       />
 
       <div className="absolute top-4 right-4 z-10">

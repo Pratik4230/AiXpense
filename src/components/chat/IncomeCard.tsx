@@ -1,32 +1,103 @@
+"use client";
+
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { CheckCircle2, Pencil, Trash2 } from "lucide-react";
 
 interface IncomeCardProps {
+  id?: string;
   source: string;
   amount: number;
   category: string;
   subcategory?: string;
   tags?: string[];
+  isOutdated?: boolean;
+  onEdit?: (data: {
+    id: string;
+    item: string;
+    amount: number;
+    category: string;
+  }) => void;
+  onDelete?: (data: {
+    id: string;
+    item: string;
+    amount: number;
+    category: string;
+  }) => void;
 }
 
 export function IncomeCard({
+  id,
   source,
   amount,
   category,
   subcategory,
   tags,
+  isOutdated,
+  onEdit,
+  onDelete,
 }: IncomeCardProps) {
   const categoryDisplay = subcategory
     ? `${category} / ${subcategory}`
     : category;
 
+  const handleEdit = () => {
+    if (id && onEdit) {
+      onEdit({ id, item: source, amount, category });
+    }
+  };
+
+  const handleDelete = () => {
+    if (id && onDelete) {
+      onDelete({ id, item: source, amount, category });
+    }
+  };
+
   return (
-    <Card className="bg-blue-500/10 border-blue-500/20 w-full sm:min-w-72 md:min-w-sm sm:max-w-sm">
+    <Card
+      className={`w-full sm:min-w-72 md:min-w-sm sm:max-w-sm group ${
+        isOutdated
+          ? "bg-muted/50 border-muted opacity-60"
+          : "bg-blue-500/10 border-blue-500/20"
+      }`}
+    >
       <CardContent className="p-4">
-        <div className="flex items-center gap-2 mb-3">
-          <CheckCircle2 className="size-5 text-blue-500" />
-          <span className="font-medium text-blue-500">Income Saved</span>
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <CheckCircle2
+              className={`size-5 ${isOutdated ? "text-muted-foreground" : "text-blue-500"}`}
+            />
+            <span
+              className={`font-medium ${isOutdated ? "text-muted-foreground line-through" : "text-blue-500"}`}
+            >
+              {isOutdated ? "Outdated" : "Income Saved"}
+            </span>
+          </div>
+          {id && !isOutdated && (onEdit || onDelete) && (
+            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+              {onEdit && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="size-7"
+                  onClick={handleEdit}
+                >
+                  <Pencil className="size-3.5" />
+                </Button>
+              )}
+              {onDelete && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="size-7 text-destructive hover:text-destructive"
+                  onClick={handleDelete}
+                >
+                  <Trash2 className="size-3.5" />
+                </Button>
+              )}
+            </div>
+          )}
         </div>
         <div className="space-y-2 text-sm">
           <div className="flex justify-between items-center">

@@ -7,6 +7,8 @@ import {
   createSaveExpenseTool,
   createSaveIncomeTool,
   createSearchTransactionsTool,
+  createDeleteTransactionTool,
+  createUpdateTransactionTool,
 } from "@/lib/ai/tools";
 import { db } from "@/lib/db";
 import { ObjectId } from "mongodb";
@@ -71,6 +73,8 @@ export async function POST(req: Request) {
         userId,
         currentDate: now,
       }),
+      deleteTransaction: createDeleteTransactionTool({ userId }),
+      updateTransaction: createUpdateTransactionTool({ userId }),
     },
     stopWhen: stepCountIs(5),
   });

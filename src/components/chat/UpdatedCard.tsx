@@ -3,16 +3,15 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { CheckCircle2, Pencil, Trash2 } from "lucide-react";
+import { RefreshCw, IndianRupee, Pencil, Trash2 } from "lucide-react";
 
-interface ExpenseCardProps {
+interface UpdatedCardProps {
   id?: string;
+  type: "expense" | "income";
   item: string;
   amount: number;
   category: string;
   subcategory?: string;
-  tags?: string[];
-  isOutdated?: boolean;
   onEdit?: (data: {
     id: string;
     item: string;
@@ -27,20 +26,21 @@ interface ExpenseCardProps {
   }) => void;
 }
 
-export function ExpenseCard({
+export function UpdatedCard({
   id,
+  type,
   item,
   amount,
   category,
   subcategory,
-  tags,
-  isOutdated,
   onEdit,
   onDelete,
-}: ExpenseCardProps) {
+}: UpdatedCardProps) {
   const categoryDisplay = subcategory
     ? `${category} / ${subcategory}`
     : category;
+
+  const isExpense = type === "expense";
 
   const handleEdit = () => {
     if (id && onEdit) {
@@ -55,26 +55,16 @@ export function ExpenseCard({
   };
 
   return (
-    <Card
-      className={`w-full sm:min-w-72 md:min-w-sm sm:max-w-sm group ${
-        isOutdated
-          ? "bg-muted/50 border-muted opacity-60"
-          : "bg-green-500/10 border-green-500/20"
-      }`}
-    >
+    <Card className="w-full sm:min-w-72 md:min-w-sm sm:max-w-sm bg-amber-500/10 border-amber-500/20 group">
       <CardContent className="p-4">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
-            <CheckCircle2
-              className={`size-5 ${isOutdated ? "text-muted-foreground" : "text-green-500"}`}
-            />
-            <span
-              className={`font-medium ${isOutdated ? "text-muted-foreground line-through" : "text-green-500"}`}
-            >
-              {isOutdated ? "Outdated" : "Expense Saved"}
+            <RefreshCw className="size-5 text-amber-500" />
+            <span className="font-medium text-amber-500">
+              {isExpense ? "Expense" : "Income"} Updated
             </span>
           </div>
-          {id && !isOutdated && (onEdit || onDelete) && (
+          {id && (onEdit || onDelete) && (
             <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
               {onEdit && (
                 <Button
@@ -101,13 +91,17 @@ export function ExpenseCard({
         </div>
         <div className="space-y-2 text-sm">
           <div className="flex justify-between items-center">
-            <span className="text-muted-foreground">Item</span>
+            <span className="text-muted-foreground">
+              {isExpense ? "Item" : "Source"}
+            </span>
             <span className="font-medium">{item}</span>
           </div>
           <div className="flex justify-between items-center">
             <span className="text-muted-foreground">Amount</span>
-            <span className="font-medium text-foreground">
-              ₹{amount.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+            <span className="font-medium flex items-center">
+              {!isExpense && "+"}
+              <IndianRupee className="size-3" />
+              {amount.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
             </span>
           </div>
           <div className="flex justify-between items-center">
@@ -116,22 +110,6 @@ export function ExpenseCard({
               {categoryDisplay}
             </Badge>
           </div>
-          {tags && tags.length > 0 && (
-            <div className="flex justify-between items-center">
-              <span className="text-muted-foreground">Tags</span>
-              <div className="flex gap-1.5">
-                {tags.map((tag) => (
-                  <Badge
-                    key={tag}
-                    variant="outline"
-                    className="text-xs px-2 py-0.5"
-                  >
-                    #{tag}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          )}
         </div>
       </CardContent>
     </Card>

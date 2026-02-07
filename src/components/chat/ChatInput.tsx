@@ -3,6 +3,10 @@ import { Suggestions, Suggestion } from "@/components/ai-elements/suggestion";
 import { SUGGESTIONS } from "@/lib/constants/suggestions";
 import { cn } from "@/lib/utils";
 import { SendHorizonal, Loader2 } from "lucide-react";
+import {
+  TransactionAttachment,
+  type SelectedTransaction,
+} from "./TransactionAttachment";
 
 interface ChatInputProps {
   value: string;
@@ -11,6 +15,8 @@ interface ChatInputProps {
   onSuggestionClick?: (suggestion: string) => void;
   isLoading: boolean;
   showSuggestions?: boolean;
+  selectedTransaction?: SelectedTransaction | null;
+  onClearTransaction?: () => void;
 }
 
 export function ChatInput({
@@ -20,11 +26,34 @@ export function ChatInput({
   onSuggestionClick,
   isLoading,
   showSuggestions = true,
+  selectedTransaction,
+  onClearTransaction,
 }: ChatInputProps) {
+  const getPlaceholder = () => {
+    if (!selectedTransaction) {
+      return "Type an expense... e.g., Coffee 50";
+    }
+    if (selectedTransaction.action === "delete") {
+      return "Send to confirm deletion...";
+    }
+    return "Type changes... e.g., change amount to 500";
+  };
+
+  const canSubmit = selectedTransaction
+    ? selectedTransaction.action === "delete" || value.trim()
+    : value.trim();
+
   return (
     <div className="border-t border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 p-4">
       <div className="max-w-3xl mx-auto space-y-3">
-        {showSuggestions && (
+        {selectedTransaction && onClearTransaction && (
+          <TransactionAttachment
+            transaction={selectedTransaction}
+            onRemove={onClearTransaction}
+          />
+        )}
+
+        {showSuggestions && !selectedTransaction && (
           <Suggestions>
             {SUGGESTIONS.map((suggestion) => (
               <Suggestion
@@ -41,7 +70,7 @@ export function ChatInput({
             type="text"
             value={value}
             onChange={(e) => onChange(e.target.value)}
-            placeholder="Type an expense... e.g., Coffee 50"
+            placeholder={getPlaceholder()}
             disabled={isLoading}
             className={cn(
               "flex-1 h-12 px-4 rounded-xl border border-border bg-background",
@@ -53,7 +82,7 @@ export function ChatInput({
           <Button
             type="submit"
             size="lg"
-            disabled={!value.trim() || isLoading}
+            disabled={!canSubmit || isLoading}
             className="h-12 px-6 rounded-xl"
           >
             {isLoading ? (
