@@ -65,15 +65,27 @@ export function ChatInput({
             ))}
           </Suggestions>
         )}
-        <form onSubmit={onSubmit} className="flex gap-2">
-          <input
-            type="text"
+        <form onSubmit={onSubmit} className="flex gap-2 items-end">
+          <textarea
             value={value}
-            onChange={(e) => onChange(e.target.value)}
+            onChange={(e) => {
+              onChange(e.target.value);
+              e.target.style.height = "auto";
+              e.target.style.height = `${Math.min(e.target.scrollHeight, 120)}px`;
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                if (canSubmit && !isLoading) {
+                  onSubmit(e as unknown as React.FormEvent);
+                }
+              }
+            }}
             placeholder={getPlaceholder()}
             disabled={isLoading}
+            rows={1}
             className={cn(
-              "flex-1 h-12 px-4 rounded-xl border border-border bg-background",
+              "flex-1 min-h-12 max-h-30 px-4 py-3 rounded-xl border border-border bg-background resize-none overflow-hidden",
               "text-foreground placeholder:text-muted-foreground",
               "focus:outline-none focus:ring-2 focus:ring-primary/50",
               "disabled:opacity-50",
@@ -83,7 +95,7 @@ export function ChatInput({
             type="submit"
             size="lg"
             disabled={!canSubmit || isLoading}
-            className="h-12 px-6 rounded-xl"
+            className="h-12 px-6 rounded-xl shrink-0"
           >
             {isLoading ? (
               <Loader2 className="size-5 animate-spin" />

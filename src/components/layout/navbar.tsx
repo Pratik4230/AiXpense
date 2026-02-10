@@ -3,11 +3,13 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { Menu, X, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/ui/modeToggle";
 import { signOut, useSession } from "@/lib/authClient";
+
+const emptySubscribe = () => () => {};
 
 const navLinks = [
   { href: "/aixpense", label: "AiXpense" },
@@ -18,6 +20,11 @@ export function Navbar() {
   const pathname = usePathname();
   const { data: session } = useSession();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const mounted = useSyncExternalStore(
+    emptySubscribe,
+    () => true,
+    () => false,
+  );
 
   const handleSignOut = async () => {
     await signOut();
@@ -63,7 +70,7 @@ export function Navbar() {
               <ModeToggle />
             </div>
 
-            {session?.user && (
+            {mounted && session?.user && (
               <div className="hidden sm:flex items-center gap-3">
                 <span className="text-sm text-muted-foreground">
                   {session.user.email}
@@ -109,7 +116,7 @@ export function Navbar() {
             </nav>
             <div className="flex items-center justify-between mt-4 pt-4 border-t border-border px-3">
               <ModeToggle />
-              {session?.user && (
+              {mounted && session?.user && (
                 <Button variant="ghost" size="sm" onClick={handleSignOut}>
                   <LogOut className="size-4 mr-2" /> Sign out
                 </Button>

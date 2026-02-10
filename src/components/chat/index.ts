@@ -6,4 +6,6 @@ export { ChatEmptyState } from "./ChatEmptyState";
 export { ChatInput } from "./ChatInput";
 export { ToolLoading } from "./ToolLoading";
 export { TransactionAttachment } from "./TransactionAttachment";
+export { ConversationSidebar, SidebarTrigger } from "./ConversationSidebar";
+export { ChatView } from "./ChatView";
 export type { SelectedTransaction } from "./TransactionAttachment";
