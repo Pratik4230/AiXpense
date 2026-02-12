@@ -227,27 +227,61 @@ export default function LandingPage() {
       </main>
 
       <footer className="border-t border-border/40 bg-muted/20">
-        <div className="container mx-auto px-4 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p className="text-sm text-muted-foreground">
-            © 2026 AiXpense. Built with ❤️ and AI.
-          </p>
-          <div className="flex items-center gap-4 text-sm">
+        <div className="container mx-auto px-4 py-8 space-y-6">
+          <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm">
             <Link
-              href="https://www.linkedin.com/in/pratikjadhav1438/"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="/terms"
               className="text-muted-foreground hover:text-foreground transition-colors"
             >
-              LinkedIn
+              Terms & Conditions
             </Link>
             <Link
-              href="https://x.com/Pratik4230"
-              target="_blank"
-              rel="noopener noreferrer"
+              href="/privacy"
               className="text-muted-foreground hover:text-foreground transition-colors"
             >
-              Twitter/X
+              Privacy Policy
             </Link>
+            <Link
+              href="/refund"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Refund Policy
+            </Link>
+            <Link
+              href="/shipping"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Shipping Policy
+            </Link>
+            <Link
+              href="/contact"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Contact Us
+            </Link>
+          </div>
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p className="text-sm text-muted-foreground">
+              &copy; 2026 AiXpense. Built with &hearts; and AI.
+            </p>
+            <div className="flex items-center gap-4 text-sm">
+              <Link
+                href="https://www.linkedin.com/in/pratikjadhav1438/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                LinkedIn
+              </Link>
+              <Link
+                href="https://x.com/Pratik4230"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-muted-foreground hover:text-foreground transition-colors"
+              >
+                Twitter/X
+              </Link>
+            </div>
           </div>
         </div>
       </footer>

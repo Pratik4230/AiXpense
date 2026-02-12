@@ -81,7 +81,7 @@ export default function PremiumPage() {
                 Monthly
               </CardTitle>
               <div className="flex items-baseline justify-center gap-1 mt-4">
-                <span className="text-4xl font-bold tracking-tight">₹199</span>
+                <span className="text-4xl font-bold tracking-tight">₹499</span>
                 <span className="text-muted-foreground text-sm font-medium">
                   /month
                 </span>
@@ -144,14 +144,14 @@ export default function PremiumPage() {
               </CardTitle>
               <div className="flex items-baseline justify-center gap-1 mt-4">
                 <span className="text-5xl font-bold tracking-tight text-foreground">
-                  ₹1,999
+                  ₹3,999
                 </span>
                 <span className="text-muted-foreground text-sm font-medium">
                   /year
                 </span>
               </div>
               <CardDescription className="pt-2 text-green-600 dark:text-green-400 font-medium bg-green-500/10 inline-block px-3 py-1 rounded-full text-xs mx-auto">
-                Save 17% (2 months free)
+                Save 33% (4 months free)
               </CardDescription>
             </CardHeader>
 
