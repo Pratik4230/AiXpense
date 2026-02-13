@@ -8,6 +8,7 @@ export const auth = betterAuth({
   secret: process.env.BETTER_AUTH_SECRET,
   emailAndPassword: {
     enabled: true,
+    requireEmailVerification: true,
     sendResetPassword: async ({ user, url }) => {
       void sendEmail({
         to: user.email,
@@ -24,6 +25,26 @@ export const auth = betterAuth({
         `,
       });
     },
+  },
+  emailVerification: {
+    sendVerificationEmail: async ({ user, url }) => {
+      void sendEmail({
+        to: user.email,
+        subject: "Verify your AiXpense email",
+        text: `Hi ${user.name},\n\nPlease verify your email address by clicking the link below:\n\n${url}\n\nIf you didn't create an account, you can safely ignore this email.`,
+        html: `
+          <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto; padding: 24px;">
+            <h2 style="color: #1a1a1a;">Verify your email</h2>
+            <p style="color: #4a4a4a;">Hi ${user.name},</p>
+            <p style="color: #4a4a4a;">Please verify your email address by clicking the button below:</p>
+            <a href="${url}" style="display: inline-block; background: #7c3aed; color: white; padding: 12px 24px; border-radius: 8px; text-decoration: none; margin: 16px 0;">Verify Email</a>
+            <p style="color: #888; font-size: 14px;">If you didn't create an account, you can safely ignore this email.</p>
+          </div>
+        `,
+      });
+    },
+    sendOnSignUp: true,
+    autoSignInAfterVerification: true,
   },
   socialProviders: {
     google: {

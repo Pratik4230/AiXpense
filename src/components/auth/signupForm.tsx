@@ -1,7 +1,6 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { signUp } from "@/lib/authClient";
 import { Button } from "@/components/ui/button";
@@ -17,14 +16,15 @@ import {
 } from "@/components/ui/card";
 import { OAuthButtons } from "./oauthButtons";
 import { Separator } from "@/components/ui/separator";
+import { CheckCircle2, ArrowLeft } from "lucide-react";
 
 export function SignupForm() {
-  const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,8 +44,31 @@ export function SignupForm() {
       return;
     }
 
-    router.push("/aixpense");
+    setIsSubmitted(true);
+    setIsLoading(false);
   };
+
+  if (isSubmitted) {
+    return (
+      <Card className="w-full max-w-md mx-auto">
+        <CardContent className="pt-6 text-center space-y-4">
+          <CheckCircle2 className="size-12 text-green-500 mx-auto" />
+          <h2 className="text-xl font-semibold">Verify your email</h2>
+          <p className="text-muted-foreground text-sm">
+            We&apos;ve sent a verification link to{" "}
+            <span className="font-medium">{email}</span>. Please check your
+            inbox and click the link to activate your account.
+          </p>
+          <Link href="/login">
+            <Button variant="outline" className="mt-4">
+              <ArrowLeft className="size-4 mr-2" />
+              Go to login
+            </Button>
+          </Link>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card className="w-full max-w-md mx-auto">

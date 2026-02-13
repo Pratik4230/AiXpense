@@ -24,3 +24,14 @@
 - [x] Contact Us page (`/contact`)
 - [x] Shipping & Delivery Policy page (`/shipping`)
 - [x] Footer links to all legal pages
+
+### Auth Features (Priority Order)
+
+- [x] Forgot/Reset Password (Resend email integration)
+- [ ] Email Verification (prevent fake accounts, protect free trials)
+- [ ] Middleware-Based Auth Guard (edge-level route protection, redirect logged-in users from /login)
+- [ ] Account/Profile Page (edit name, change password, view subscription status)
+- [ ] Active Session Management (view/revoke sessions on other devices)
+- [ ] Rate Limiting on Auth Endpoints (prevent brute-force login attempts)
+- [ ] Account Deletion (cascade-delete user data, GDPR compliance)
+- [ ] Two-Factor Authentication (TOTP-based 2FA via better-auth plugin)
