@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useSyncExternalStore } from "react";
-import { Menu, X, LogOut } from "lucide-react";
+import { Menu, X, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/ui/modeToggle";
 import { signOut, useSession } from "@/lib/authClient";
@@ -75,6 +75,11 @@ export function Navbar() {
                 <span className="text-sm text-muted-foreground">
                   {session.user.email}
                 </span>
+                <Link href="/profile">
+                  <Button variant="ghost" size="icon">
+                    <User className="size-4" />
+                  </Button>
+                </Link>
                 <Button variant="ghost" size="icon" onClick={handleSignOut}>
                   <LogOut className="size-4" />
                 </Button>
@@ -117,9 +122,16 @@ export function Navbar() {
             <div className="flex items-center justify-between mt-4 pt-4 border-t border-border px-3">
               <ModeToggle />
               {mounted && session?.user && (
-                <Button variant="ghost" size="sm" onClick={handleSignOut}>
-                  <LogOut className="size-4 mr-2" /> Sign out
-                </Button>
+                <div className="flex items-center gap-2">
+                  <Link href="/profile" onClick={() => setMobileOpen(false)}>
+                    <Button variant="ghost" size="sm">
+                      <User className="size-4 mr-2" /> Profile
+                    </Button>
+                  </Link>
+                  <Button variant="ghost" size="sm" onClick={handleSignOut}>
+                    <LogOut className="size-4 mr-2" /> Sign out
+                  </Button>
+                </div>
               )}
             </div>
           </div>

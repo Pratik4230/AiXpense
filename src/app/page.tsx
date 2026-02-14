@@ -200,8 +200,8 @@ export default function LandingPage() {
 
             <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                <CheckCircle2 className="size-4 text-green-500" /> Free Forever
-                Plan
+                <CheckCircle2 className="size-4 text-green-500" /> Start in
+                Seconds
               </div>
               <div className="hidden sm:block text-border">|</div>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
