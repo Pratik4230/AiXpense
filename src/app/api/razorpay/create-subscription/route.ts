@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { razorpay } from "@/lib/razorpay/client";
-import { getOrCreateCustomer } from "@/lib/razorpay/customer";
 import { Subscription } from "@/models/Subscription";
 import { PlanType } from "@/lib/razorpay/plans";
 
@@ -45,6 +44,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    console.log("[Create Subscription] Checking existing subscription...");
     const existingSub = await Subscription.findOne({
       userId: session.user.id,
       status: "active",
@@ -57,31 +57,30 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    console.log("[Create Subscription] Getting customer...");
-    const customer = await getOrCreateCustomer(
-      session.user.id,
-      session.user.email,
-      session.user.name,
-    );
-    console.log("[Create Subscription] Customer ID:", customer.id);
-
     interface RazorpaySubscriptionResponse {
       id: string;
       status: string;
       current_start: number;
       current_end: number;
       short_url: string;
+      customer_id?: string;
     }
 
-    console.log("[Create Subscription] Creating Razorpay subscription...");
+    console.log(
+      "[Create Subscription] Creating Razorpay subscription with customer details...",
+    );
     const subscriptionResponse = await razorpay.subscriptions.create({
       plan_id: planId,
-      customer_id: customer.id,
       total_count: 12,
       quantity: 1,
       customer_notify: 1,
+      notify_info: {
+        notify_email: session.user.email,
+      },
       notes: {
         userId: session.user.id,
+        customer_name: session.user.name,
+        customer_email: session.user.email,
       },
     } as never);
 
@@ -92,17 +91,23 @@ export async function POST(req: NextRequest) {
     const currentPeriodStart = new Date(subscription.current_start * 1000);
     const currentPeriodEnd = new Date(subscription.current_end * 1000);
 
+    console.log("[Create Subscription] Saving to database...");
     await Subscription.create({
       userId: session.user.id,
       plan: planType,
       status: subscription.status,
       razorpaySubscriptionId: subscription.id,
-      razorpayCustomerId: customer.id,
+      razorpayCustomerId: subscription.customer_id || "",
       razorpayPlanId: planId,
       currentPeriodStart,
       currentPeriodEnd,
       cancelAtPeriodEnd: false,
     });
+
+    console.log(
+      "[Create Subscription] Success! Payment URL:",
+      subscription.short_url,
+    );
 
     return NextResponse.json({
       subscriptionId: subscription.id,
