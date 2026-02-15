@@ -3,9 +3,9 @@ import mongoose from "mongoose";
 export interface ISubscription extends mongoose.Document {
   userId: string;
   plan: "monthly" | "yearly";
-  status: "active" | "cancelled" | "expired" | "past_due";
+  status: "created" | "active" | "cancelled" | "expired" | "past_due";
   razorpaySubscriptionId: string;
-  razorpayCustomerId: string;
+  razorpayCustomerId?: string;
   razorpayPlanId: string;
   currentPeriodStart: Date;
   currentPeriodEnd: Date;
@@ -28,9 +28,9 @@ const subscriptionSchema = new mongoose.Schema<ISubscription>(
     },
     status: {
       type: String,
-      enum: ["active", "cancelled", "expired", "past_due"],
+      enum: ["created", "active", "cancelled", "expired", "past_due"],
       required: true,
-      default: "active",
+      default: "created",
     },
     razorpaySubscriptionId: {
       type: String,
@@ -39,7 +39,7 @@ const subscriptionSchema = new mongoose.Schema<ISubscription>(
     },
     razorpayCustomerId: {
       type: String,
-      required: true,
+      required: false,
     },
     razorpayPlanId: {
       type: String,
