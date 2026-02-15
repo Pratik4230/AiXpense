@@ -12,9 +12,20 @@ export async function getOrCreateCustomer(
   email: string,
   name: string,
 ): Promise<RazorpayCustomer> {
+  console.log("[Get/Create Customer] Called with:", { userId, email, name });
+
   const user = await db.collection("user").findOne({ id: userId });
+  console.log("[Get/Create Customer] User from DB:", {
+    found: !!user,
+    hasRazorpayId: !!user?.razorpayCustomerId,
+    razorpayCustomerId: user?.razorpayCustomerId,
+  });
 
   if (user?.razorpayCustomerId) {
+    console.log(
+      "[Get/Create Customer] Returning existing customer:",
+      user.razorpayCustomerId,
+    );
     return {
       id: user.razorpayCustomerId,
       name,
@@ -22,21 +33,43 @@ export async function getOrCreateCustomer(
     };
   }
 
-  const customerResponse = await razorpay.customers.create({
+  console.log("[Get/Create Customer] Creating new customer in Razorpay...");
+  console.log("[Get/Create Customer] Parameters:", {
     name,
     email,
     fail_existing: 0,
   });
 
-  const customer = customerResponse as { id: string };
+  try {
+    const customerResponse = await razorpay.customers.create({
+      name,
+      email,
+      fail_existing: 0,
+    });
 
-  await db
-    .collection("user")
-    .updateOne({ id: userId }, { $set: { razorpayCustomerId: customer.id } });
+    const customer = customerResponse as { id: string };
+    console.log(
+      "[Get/Create Customer] Razorpay customer created:",
+      customer.id,
+    );
 
-  return {
-    id: customer.id,
-    name,
-    email,
-  };
+    await db
+      .collection("user")
+      .updateOne({ id: userId }, { $set: { razorpayCustomerId: customer.id } });
+
+    console.log("[Get/Create Customer] Saved customer ID to database");
+
+    return {
+      id: customer.id,
+      name,
+      email,
+    };
+  } catch (error) {
+    console.error("[Get/Create Customer] Razorpay error:", error);
+    console.error(
+      "[Get/Create Customer] Error details:",
+      JSON.stringify(error, null, 2),
+    );
+    throw error;
+  }
 }
