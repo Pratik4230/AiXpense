@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { razorpay } from "@/lib/razorpay/client";
+import { connectDB } from "@/lib/db";
 import { Subscription } from "@/models/Subscription";
 import { PlanType } from "@/lib/razorpay/plans";
 
@@ -43,6 +44,10 @@ export async function POST(req: NextRequest) {
         { status: 500 },
       );
     }
+
+    console.log("[Create Subscription] Connecting to database...");
+    await connectDB();
+    console.log("[Create Subscription] Database connected");
 
     console.log("[Create Subscription] Checking existing subscription...");
     const existingSub = await Subscription.findOne({
