@@ -16,3 +16,11 @@ api.interceptors.response.use(
     return Promise.reject(error);
   },
 );
+
+export const createSubscription = async (plan: "monthly" | "yearly") => {
+  const response = await api.post<{
+    subscriptionId: string;
+    paymentUrl: string;
+  }>("/razorpay/create-subscription", { plan });
+  return response.data;
+};

@@ -1,5 +1,8 @@
 "use client";
 
+import { useState } from "react";
+import { toast } from "sonner";
+import { createSubscription } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -19,9 +22,37 @@ import {
   TrendingUp,
   Download,
   PieChart,
+  Loader2,
 } from "lucide-react";
 
 export default function PremiumPage() {
+  const [loading, setLoading] = useState<"monthly" | "yearly" | null>(null);
+
+  const handleUpgrade = async (plan: "monthly" | "yearly") => {
+    try {
+      setLoading(plan);
+      const data = await createSubscription(plan);
+
+      if (data.paymentUrl) {
+        window.location.href = data.paymentUrl;
+      }
+    } catch (error: unknown) {
+      if (error instanceof Error && "response" in error) {
+        const axiosError = error as {
+          response?: { data?: { error?: string } };
+        };
+        toast.error(
+          axiosError.response?.data?.error || "Failed to create subscription",
+        );
+      } else {
+        toast.error("Something went wrong. Please try again.");
+      }
+      console.error("Subscription error:", error);
+    } finally {
+      setLoading(null);
+    }
+  };
+
   const features = [
     {
       icon: Sparkles,
@@ -96,9 +127,17 @@ export default function PremiumPage() {
                 variant="outline"
                 size="lg"
                 className="w-full gap-2 text-base font-semibold border-primary/20 hover:bg-primary/5 hover:text-primary hover:border-primary/50 transition-all"
-                onClick={() => {}}
+                onClick={() => handleUpgrade("monthly")}
+                disabled={loading !== null}
               >
-                Choose Monthly
+                {loading === "monthly" ? (
+                  <>
+                    <Loader2 className="size-4 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  "Choose Monthly"
+                )}
               </Button>
 
               <div className="space-y-4 pt-2">
@@ -159,9 +198,19 @@ export default function PremiumPage() {
               <Button
                 size="lg"
                 className="w-full gap-2 text-base font-semibold bg-linear-to-r from-amber-500 to-yellow-600 hover:from-amber-600 hover:to-yellow-700 text-white shadow-lg shadow-amber-500/25 border-none transition-all hover:scale-[1.02] active:scale-[0.98]"
-                onClick={() => {}}
+                onClick={() => handleUpgrade("yearly")}
+                disabled={loading !== null}
               >
-                Start Premium Year <Zap className="size-4 fill-current" />
+                {loading === "yearly" ? (
+                  <>
+                    <Loader2 className="size-4 animate-spin" />
+                    Processing...
+                  </>
+                ) : (
+                  <>
+                    Start Premium Year <Zap className="size-4 fill-current" />
+                  </>
+                )}
               </Button>
 
               <div className="space-y-4 pt-2">
