@@ -82,10 +82,19 @@ export async function POST(req: NextRequest) {
       notify_info: {
         notify_email: session.user.email,
       },
+      customer_details: {
+        email: session.user.email,
+        name: session.user.name,
+      },
       notes: {
         userId: session.user.id,
         customer_name: session.user.name,
         customer_email: session.user.email,
+      },
+      options: {
+        checkout: {
+          redirect_url: `${process.env.NEXT_PUBLIC_APP_URL}/premium/success`,
+        },
       },
     } as never);
 
