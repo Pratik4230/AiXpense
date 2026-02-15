@@ -4,10 +4,6 @@ import { headers } from "next/headers";
 import { connectDB } from "@/lib/db";
 import { Conversation, MAX_MESSAGES_PER_CONVERSATION } from "@/lib/models";
 
-export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
-export const maxDuration = 30;
-
 interface RouteParams {
   params: Promise<{ id: string }>;
 }
