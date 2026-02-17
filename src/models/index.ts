@@ -7,3 +7,4 @@ export {
   type IMessage,
   MAX_MESSAGES_PER_CONVERSATION,
 } from "./conversation";
+export { Subscription } from "./Subscription";

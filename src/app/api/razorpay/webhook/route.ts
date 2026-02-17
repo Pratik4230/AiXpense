@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
-import { Subscription } from "@/models/Subscription";
+import { Subscription } from "@/models";
 import { updateUserPremiumFlag } from "@/lib/razorpay/subscription";
 
 export async function POST(req: NextRequest) {

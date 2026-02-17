@@ -3,7 +3,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { razorpay } from "@/lib/razorpay/client";
 import { connectDB } from "@/lib/db";
-import { Subscription } from "@/models/Subscription";
+import { Subscription } from "@/models";
 import { PlanType } from "@/lib/razorpay/plans";
 
 const PLAN_IDS = {

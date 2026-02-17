@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { connectDB } from "@/lib/db";
-import { Conversation } from "@/lib/models";
+import { Conversation } from "@/models";
 
 export async function GET() {
   const session = await auth.api.getSession({

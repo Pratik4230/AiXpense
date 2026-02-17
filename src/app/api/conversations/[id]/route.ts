@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { connectDB } from "@/lib/db";
-import { Conversation, MAX_MESSAGES_PER_CONVERSATION } from "@/lib/models";
+import { Conversation, MAX_MESSAGES_PER_CONVERSATION } from "@/models";
 
 interface RouteParams {
   params: Promise<{ id: string }>;

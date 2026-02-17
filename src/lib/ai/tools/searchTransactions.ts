@@ -3,7 +3,7 @@ import { openai } from "@ai-sdk/openai";
 import { z } from "zod";
 import mongoose from "mongoose";
 import { connectDB } from "@/lib/db";
-import { Expense } from "@/lib/models";
+import { Expense } from "@/models";
 
 interface ToolParams {
   userId: string;

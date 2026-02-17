@@ -1,4 +1,4 @@
-import { Subscription } from "@/models/Subscription";
+import { Subscription } from "@/models";
 import { db } from "@/lib/db";
 import { ObjectId } from "mongodb";
 

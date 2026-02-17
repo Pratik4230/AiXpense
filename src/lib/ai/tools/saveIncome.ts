@@ -1,7 +1,7 @@
 import { tool } from "ai";
 import { z } from "zod";
 import { connectDB } from "@/lib/db";
-import { Expense } from "@/lib/models";
+import { Expense } from "@/models";
 import { CATEGORIES } from "@/lib/constants/expense";
 
 interface SaveIncomeParams {
