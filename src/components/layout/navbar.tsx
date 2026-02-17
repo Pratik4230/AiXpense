@@ -35,7 +35,7 @@ export function Navbar() {
           <div className="flex items-center gap-6">
             <Link href="/aixpense" className="flex items-center gap-2">
               <Image
-                src="/logo.png"
+                src="/icon.png"
                 alt="AiXpense Logo"
                 width={32}
                 height={32}

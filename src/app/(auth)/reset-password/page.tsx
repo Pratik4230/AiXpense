@@ -9,7 +9,7 @@ export default function ResetPasswordPage() {
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
             <Image
-              src="/logo.png"
+              src="/icon.png"
               alt="AiXpense Logo"
               width={80}
               height={80}
