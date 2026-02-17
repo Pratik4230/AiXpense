@@ -11,10 +11,7 @@ import { signOut, useSession } from "@/lib/authClient";
 
 const emptySubscribe = () => () => {};
 
-const navLinks = [
-  { href: "/aixpense", label: "AiXpense" },
-  { href: "/transactions", label: "Transactions" },
-];
+const navLinks = [{ href: "/aixpense", label: "AiXpense" }];
 
 export function Navbar() {
   const pathname = usePathname();
