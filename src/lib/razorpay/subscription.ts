@@ -1,5 +1,6 @@
 import { Subscription } from "@/models/Subscription";
 import { db } from "@/lib/db";
+import { ObjectId } from "mongodb";
 
 export async function checkUserPremiumStatus(userId: string): Promise<boolean> {
   const subscription = await Subscription.findOne({
@@ -19,7 +20,21 @@ export async function updateUserPremiumFlag(
   userId: string,
   isPremium: boolean,
 ) {
-  await db
+  console.log(
+    `[Update Premium Flag] Updating user ${userId} to isPremium: ${isPremium}`,
+  );
+  const result = await db
     .collection("user")
-    .updateOne({ id: userId }, { $set: { isPremium } });
+    .updateOne({ _id: new ObjectId(userId) }, { $set: { isPremium } });
+  console.log(
+    `[Update Premium Flag] Update result:`,
+    result.modifiedCount,
+    "documents modified",
+  );
+
+  if (result.modifiedCount === 0) {
+    console.log(
+      `[Update Premium Flag] WARNING: No user found with _id: ${userId}`,
+    );
+  }
 }
