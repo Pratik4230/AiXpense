@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { Crown, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface TrialStatusProps {
@@ -14,15 +14,7 @@ export function TrialStatus({
   onUpgradeClick,
 }: TrialStatusProps) {
   if (isPremium) {
-    return (
-      <Badge
-        variant="secondary"
-        className="gap-1 bg-amber-100 text-amber-700 hover:bg-amber-100/80 dark:bg-amber-900/30 dark:text-amber-400"
-      >
-        <Crown className="size-3" />
-        Premium
-      </Badge>
-    );
+    return null;
   }
 
   return (
@@ -34,7 +26,8 @@ export function TrialStatus({
       onClick={onUpgradeClick}
     >
       <Sparkles className="size-3" />
-      {freeTrials} / 5 Trials
+      <span className="hidden sm:inline">{freeTrials} / 5 Trials</span>
+      <span className="sm:hidden">{freeTrials}/5</span>
     </Badge>
   );
 }

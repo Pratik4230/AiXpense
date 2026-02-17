@@ -294,7 +294,7 @@ export function ChatView({
   return (
     <>
       <Conversation className="flex-1">
-        <ConversationContent className="px-4 sm:px-6 max-w-3xl mx-auto w-full">
+        <ConversationContent className="px-4 sm:px-6 max-w-3xl mx-auto w-full pt-14">
           {chatMessages.length === 0 ? (
             <ChatEmptyState />
           ) : (
@@ -302,6 +302,7 @@ export function ChatView({
               <Message
                 key={message.id}
                 from={message.role === "user" ? "user" : "assistant"}
+                isPremium={isPremium}
               >
                 <MessageContent>
                   {message.parts?.map((part, index) => {
