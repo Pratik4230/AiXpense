@@ -14,7 +14,15 @@ export function TrialStatus({
   onUpgradeClick,
 }: TrialStatusProps) {
   if (isPremium) {
-    return null;
+    return (
+      <Badge
+        variant="outline"
+        className="gap-1 hidden sm:flex border-amber-500/50 bg-amber-500/10 text-amber-600 hover:bg-amber-500/20 transition-colors cursor-default"
+      >
+        <Sparkles className="size-3 fill-amber-600 text-amber-600" />
+        <span className="font-medium">Premium</span>
+      </Badge>
+    );
   }
 
   return (
