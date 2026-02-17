@@ -64,7 +64,10 @@ export default function AiXpensePage() {
     router.push("/premium");
   };
 
+  const [newChatId, setNewChatId] = useState(() => Date.now().toString());
+
   const handleNewChat = () => {
+    setNewChatId(Date.now().toString());
     router.push("/aixpense");
   };
 
@@ -78,7 +81,7 @@ export default function AiXpensePage() {
 
   const chatKey = conversationId
     ? `conv-${conversationId}-${conversationData?.updatedAt || "loading"}`
-    : "new";
+    : `new-${newChatId}`;
 
   return (
     <div className="flex h-[calc(100dvh-3.5rem)] overflow-hidden">
