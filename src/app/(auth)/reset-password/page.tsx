@@ -14,6 +14,7 @@ export default function ResetPasswordPage() {
               width={80}
               height={80}
               className="w-20 h-20"
+              priority
             />
           </div>
           <h1 className="text-3xl font-bold bg-linear-to-r from-primary to-primary/60 bg-clip-text text-transparent">

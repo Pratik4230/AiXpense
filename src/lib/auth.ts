@@ -7,6 +7,7 @@ import { resetPasswordEmail, verifyEmailTemplate } from "@/lib/emailTemplates";
 export const auth = betterAuth({
   database: mongodbAdapter(db, { client }),
   secret: process.env.BETTER_AUTH_SECRET,
+  trustedOrigins: ["https://aixpense.in", "https://www.aixpense.in"],
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,

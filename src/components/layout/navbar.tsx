@@ -40,6 +40,7 @@ export function Navbar() {
                 width={32}
                 height={32}
                 className="w-8 h-8"
+                priority
               />
               <span className="text-xl font-bold bg-linear-to-r from-primary to-primary/60 bg-clip-text text-transparent">
                 AiXpense
