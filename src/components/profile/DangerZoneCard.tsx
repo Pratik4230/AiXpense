@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { deleteAccount } from "@/app/(protected)/profile/actions";
+import { signOut } from "@/lib/authClient";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import {
@@ -38,6 +39,7 @@ export function DangerZoneCard() {
       return;
     }
 
+    await signOut();
     window.location.href = "/login";
   };
 
