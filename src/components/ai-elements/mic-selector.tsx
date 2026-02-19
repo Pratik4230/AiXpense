@@ -227,8 +227,6 @@ export const MicSelectorLabel = ({
 }: MicSelectorLabelProps) => {
   const matches = device.label.match(deviceIdRegex);
 
-  console.log(matches, device.label);
-
   if (!matches) {
     return (
       <span className={className} {...props}>
@@ -287,7 +285,7 @@ export const useAudioDevices = () => {
 
       const deviceList = await navigator.mediaDevices.enumerateDevices();
       const audioInputs = deviceList.filter(
-        (device) => device.kind === "audioinput"
+        (device) => device.kind === "audioinput",
       );
 
       setDevices(audioInputs);
@@ -321,7 +319,7 @@ export const useAudioDevices = () => {
 
       const deviceList = await navigator.mediaDevices.enumerateDevices();
       const audioInputs = deviceList.filter(
-        (device) => device.kind === "audioinput"
+        (device) => device.kind === "audioinput",
       );
 
       setDevices(audioInputs);
@@ -355,7 +353,7 @@ export const useAudioDevices = () => {
     return () => {
       navigator.mediaDevices.removeEventListener(
         "devicechange",
-        handleDeviceChange
+        handleDeviceChange,
       );
     };
   }, [hasPermission, loadDevicesWithPermission, loadDevicesWithoutPermission]);

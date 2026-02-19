@@ -20,21 +20,11 @@ export async function updateUserPremiumFlag(
   userId: string,
   isPremium: boolean,
 ) {
-  console.log(
-    `[Update Premium Flag] Updating user ${userId} to isPremium: ${isPremium}`,
-  );
   const result = await db
     .collection("user")
     .updateOne({ _id: new ObjectId(userId) }, { $set: { isPremium } });
-  console.log(
-    `[Update Premium Flag] Update result:`,
-    result.modifiedCount,
-    "documents modified",
-  );
 
   if (result.modifiedCount === 0) {
-    console.log(
-      `[Update Premium Flag] WARNING: No user found with _id: ${userId}`,
-    );
+    console.error(`[updateUserPremiumFlag] No user found with _id: ${userId}`);
   }
 }

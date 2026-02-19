@@ -13,8 +13,8 @@
 
 - [x] Account deletion feature (Settings -> Delete Account -> wipes user data within 90 days)
 - [x] Account settings/profile page (manage subscription, view plan, cancel)
-- [ ] Payment receipts via email (Resend)
-- [ ] Subscription expiry handling (revert to free tier when period ends)
+- [x] Payment receipts via email (Resend)
+- [x] Subscription expiry handling (revert to free tier when period ends)
 
 ### Legal/Compliance
 
@@ -32,6 +32,6 @@
 - [x] Middleware-Based Auth Guard (proxy.ts route protection, redirect logged-in users from /login)
 - [x] Account/Profile Page (edit name, change password, view subscription status)
 - [ ] Active Session Management (view/revoke sessions on other devices)
-- [ ] Rate Limiting on Auth Endpoints (prevent brute-force login attempts)
+- [x] Rate Limiting on Auth Endpoints (prevent brute-force login attempts)
 - [x] Account Deletion (cascade-delete user data, GDPR compliance)
 - [ ] Two-Factor Authentication (TOTP-based 2FA via better-auth plugin)
