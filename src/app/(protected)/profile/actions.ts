@@ -107,3 +107,22 @@ export async function cancelSubscription() {
     return { error: "Failed to cancel subscription" };
   }
 }
+
+export async function getSessions() {
+  const hdrs = await headers();
+  const session = await auth.api.getSession({ headers: hdrs });
+  if (!session) return { sessions: [], currentSessionId: "" };
+
+  const result = await auth.api.listSessions({ headers: hdrs });
+  const currentSessionId = session.session.id;
+
+  const sessions = result.map((s) => ({
+    id: s.id,
+    ipAddress: s.ipAddress ?? null,
+    userAgent: s.userAgent ?? null,
+    createdAt: s.createdAt.toISOString(),
+    isCurrent: s.id === currentSessionId,
+  }));
+
+  return { sessions, currentSessionId };
+}

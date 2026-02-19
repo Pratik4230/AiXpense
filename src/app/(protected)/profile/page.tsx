@@ -9,8 +9,9 @@ import {
   ChangePasswordCard,
   PlanUsageCard,
   DangerZoneCard,
+  SessionsCard,
 } from "@/components/profile";
-import { getSubscription } from "./actions";
+import { getSubscription, getSessions } from "./actions";
 
 export default async function ProfilePage() {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -20,6 +21,7 @@ export default async function ProfilePage() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const user = session.user as any;
   const subscription = await getSubscription();
+  const { sessions, currentSessionId } = await getSessions();
 
   return (
     <div className="container mx-auto max-w-2xl px-4 py-8 space-y-6">
@@ -38,6 +40,7 @@ export default async function ProfilePage() {
         subscription={subscription}
       />
       <ChangePasswordCard />
+      <SessionsCard sessions={sessions} currentSessionId={currentSessionId} />
       <DangerZoneCard />
     </div>
   );

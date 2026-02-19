@@ -31,7 +31,7 @@
 - [x] Email Verification (prevent fake accounts, protect free trials)
 - [x] Middleware-Based Auth Guard (proxy.ts route protection, redirect logged-in users from /login)
 - [x] Account/Profile Page (edit name, change password, view subscription status)
-- [ ] Active Session Management (view/revoke sessions on other devices)
+- [x] Active Session Management (view/revoke sessions on other devices)
 - [x] Rate Limiting on Auth Endpoints (prevent brute-force login attempts)
 - [x] Account Deletion (cascade-delete user data, GDPR compliance)
 - [ ] Two-Factor Authentication (TOTP-based 2FA via better-auth plugin)
