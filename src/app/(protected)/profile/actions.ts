@@ -48,7 +48,7 @@ export async function deleteAccount() {
   try {
     await auth.api.deleteUser({
       headers: await headers(),
-      body: { callbackURL: "/login" },
+      body: {} as { callbackURL?: string; password?: string; token?: string },
     });
     return { success: true };
   } catch {

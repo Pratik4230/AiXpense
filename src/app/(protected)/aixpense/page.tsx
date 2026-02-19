@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { ConversationSidebar, SidebarTrigger } from "@/components/chat";
 import { TrialStatus } from "@/components/chat/TrialStatus";
 import { ChatView } from "@/components/chat/ChatView";
+import { OnboardingModal } from "@/components/onboarding/OnboardingModal";
 import {
   Dialog,
   DialogContent,
@@ -22,6 +23,7 @@ import { MAX_MESSAGES_PER_CONVERSATION } from "@/lib/constants/conversation";
 interface UserWithTrial {
   isPremium?: boolean;
   freeTrials?: number;
+  onboardingCompleted?: boolean;
 }
 
 export default function AiXpensePage() {
@@ -40,6 +42,7 @@ export default function AiXpensePage() {
   const user = session?.user as UserWithTrial | undefined;
   const isPremium = user?.isPremium ?? false;
   const serverFreeTrials = user?.freeTrials ?? 0;
+  const onboardingCompleted = user?.onboardingCompleted ?? true;
 
   const [decrementOffset, setDecrementOffset] = useState(0);
   const displayTrials = Math.max(0, serverFreeTrials - decrementOffset);
@@ -85,6 +88,7 @@ export default function AiXpensePage() {
 
   return (
     <div className="flex h-[calc(100dvh-3.5rem)] overflow-hidden">
+      {!isSessionLoading && <OnboardingModal open={!onboardingCompleted} />}
       <ConversationSidebar
         currentConversationId={conversationId}
         onSelectConversation={handleSelectConversation}

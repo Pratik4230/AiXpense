@@ -56,6 +56,10 @@ export const auth = betterAuth({
         type: "number",
         defaultValue: 5,
       },
+      onboardingCompleted: {
+        type: "boolean",
+        defaultValue: false,
+      },
     },
     deleteUser: {
       enabled: true,
