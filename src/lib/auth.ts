@@ -3,6 +3,8 @@ import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { client, db } from "@/lib/db";
 import { sendEmail } from "@/lib/email";
 import { resetPasswordEmail, verifyEmailTemplate } from "@/lib/emailTemplates";
+import { connectDB } from "@/lib/db";
+import { Expense, Budget, Conversation, Subscription } from "@/models";
 
 export const auth = betterAuth({
   database: mongodbAdapter(db, { client }),
@@ -53,6 +55,18 @@ export const auth = betterAuth({
       freeTrials: {
         type: "number",
         defaultValue: 5,
+      },
+    },
+    deleteUser: {
+      enabled: true,
+      afterDelete: async (user) => {
+        await connectDB();
+        await Promise.all([
+          Expense.deleteMany({ userId: user.id }),
+          Budget.deleteMany({ userId: user.id }),
+          Conversation.deleteMany({ userId: user.id }),
+          Subscription.deleteMany({ userId: user.id }),
+        ]);
       },
     },
   },

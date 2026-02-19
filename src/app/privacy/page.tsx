@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPage() {
   return (
-    <LegalPageLayout title="Privacy Policy" lastUpdated="February 12, 2026">
+    <LegalPageLayout title="Privacy Policy" lastUpdated="February 19, 2026">
       <section>
         <h2 className="text-xl font-semibold mb-3">1. Introduction</h2>
         <p>
@@ -145,11 +145,14 @@ export default function PrivacyPage() {
       <section>
         <h2 className="text-xl font-semibold mb-3">6. Data Retention</h2>
         <p>
-          We retain your personal data for as long as your account is active. If
-          you delete your account, we will delete your personal data within 90
-          days, except where retention is required by law or for legitimate
-          business purposes (e.g., fraud prevention, legal claims). Anonymized
-          and aggregated data may be retained indefinitely for analytics.
+          We retain your personal data for as long as your account remains
+          active. When you delete your account, all your personal data —
+          including expenses, budgets, AI conversations, and subscription
+          records — is permanently and immediately deleted from our systems.
+          This action is irreversible. Anonymized or aggregated statistical data
+          that cannot be linked back to you may be retained for analytics
+          purposes. We may also retain data where required by applicable law
+          (e.g., for fraud prevention or legal claims).
         </p>
       </section>
 

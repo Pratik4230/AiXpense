@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function TermsPage() {
   return (
-    <LegalPageLayout title="Terms & Conditions" lastUpdated="February 12, 2026">
+    <LegalPageLayout title="Terms & Conditions" lastUpdated="February 19, 2026">
       <section>
         <h2 className="text-xl font-semibold mb-3">1. Introduction</h2>
         <p>
@@ -167,10 +167,11 @@ export default function TermsPage() {
         <h2 className="text-xl font-semibold mb-3">13. Termination</h2>
         <p>
           We may suspend or terminate your account at any time for violation of
-          these Terms. You may delete your account at any time. Upon
-          termination, your right to use the Service ceases immediately. We may
-          retain your data as required by law or for legitimate business
-          purposes as outlined in our Privacy Policy.
+          these Terms. You may delete your account at any time from your account
+          settings. Upon deletion, your access ceases immediately and all your
+          personal data — including expenses, budgets, AI conversations, and
+          subscription records — is permanently and irreversibly deleted. This
+          action cannot be undone.
         </p>
       </section>
 
