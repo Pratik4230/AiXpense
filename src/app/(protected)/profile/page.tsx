@@ -10,6 +10,7 @@ import {
   PlanUsageCard,
   DangerZoneCard,
 } from "@/components/profile";
+import { getSubscription } from "./actions";
 
 export default async function ProfilePage() {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -18,6 +19,7 @@ export default async function ProfilePage() {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const user = session.user as any;
+  const subscription = await getSubscription();
 
   return (
     <div className="container mx-auto max-w-2xl px-4 py-8 space-y-6">
@@ -33,6 +35,7 @@ export default async function ProfilePage() {
       <PlanUsageCard
         isPremium={user.isPremium ?? false}
         freeTrials={user.freeTrials ?? 0}
+        subscription={subscription}
       />
       <ChangePasswordCard />
       <DangerZoneCard />

@@ -1,0 +1,51 @@
+import { NextResponse } from "next/server";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+import { razorpay } from "@/lib/razorpay/client";
+import { connectDB } from "@/lib/db";
+import { Subscription } from "@/models";
+
+export async function POST() {
+  try {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session?.user) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+
+    await connectDB();
+
+    const subscription = await Subscription.findOne({
+      userId: session.user.id,
+      status: "active",
+      cancelAtPeriodEnd: false,
+    });
+
+    if (!subscription) {
+      return NextResponse.json(
+        { error: "No active subscription found" },
+        { status: 404 },
+      );
+    }
+
+    await razorpay.subscriptions.cancel(
+      subscription.razorpaySubscriptionId,
+      false,
+    );
+
+    await Subscription.updateOne(
+      { _id: subscription._id },
+      { $set: { cancelAtPeriodEnd: true } },
+    );
+
+    return NextResponse.json({
+      success: true,
+      currentPeriodEnd: subscription.currentPeriodEnd,
+    });
+  } catch (error) {
+    console.error("[Cancel Subscription] ERROR:", error);
+    return NextResponse.json(
+      { error: "Failed to cancel subscription" },
+      { status: 500 },
+    );
+  }
+}

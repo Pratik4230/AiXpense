@@ -4,15 +4,15 @@
 
 ### High Priority (Pre/During Razorpay Integration)
 
-- [ ] Razorpay payment integration (create order, verify payment, webhooks)
-- [ ] Subscription model in MongoDB (plan, status, start/end dates, razorpay IDs)
-- [ ] Cancel subscription button in account settings (calls Razorpay cancel API)
-- [ ] Update `isPremium` flag based on subscription status
+- [x] Razorpay payment integration (create order, verify payment, webhooks)
+- [x] Subscription model in MongoDB (plan, status, start/end dates, razorpay IDs)
+- [x] Cancel subscription button in account settings (calls Razorpay cancel API)
+- [x] Update `isPremium` flag based on subscription status
 
 ### Post Razorpay Integration
 
-- [ ] Account deletion feature (Settings -> Delete Account -> wipes user data within 90 days)
-- [ ] Account settings/profile page (manage subscription, view plan, cancel)
+- [x] Account deletion feature (Settings -> Delete Account -> wipes user data within 90 days)
+- [x] Account settings/profile page (manage subscription, view plan, cancel)
 - [ ] Payment receipts via email (Resend)
 - [ ] Subscription expiry handling (revert to free tier when period ends)
 
