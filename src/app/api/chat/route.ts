@@ -2,6 +2,7 @@ import { convertToModelMessages, streamText, UIMessage, stepCountIs } from "ai";
 import { openai } from "@ai-sdk/openai";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { after } from "next/server";
 import { SYSTEM_PROMPT } from "@/constants/prompts";
 import {
   createSaveExpenseTool,
@@ -79,18 +80,20 @@ export async function POST(req: Request) {
       updateTransaction: createUpdateTransactionTool({ userId }),
     },
     stopWhen: stepCountIs(5),
-    onFinish: ({ usage }) => {
-      void recordAiUsage({
-        userId,
-        userEmail: session.user.email,
-        modelName: "gpt-5-mini",
-        promptTokens: usage.inputTokens ?? 0,
-        completionTokens: usage.outputTokens ?? 0,
-      });
-    },
   });
 
-  return result.toUIMessageStreamResponse({
-    sendReasoning: true,
+  const response = result.toUIMessageStreamResponse({ sendReasoning: true });
+
+  after(async () => {
+    const usage = await result.usage;
+    void recordAiUsage({
+      userId,
+      userEmail: session.user.email,
+      modelName: "gpt-5-mini",
+      promptTokens: usage.inputTokens ?? 0,
+      completionTokens: usage.outputTokens ?? 0,
+    });
   });
+
+  return response;
 }

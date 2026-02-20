@@ -1,9 +1,9 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 
-export interface IAiUsage extends Document {
+export interface IAiUsage extends Omit<Document, "model"> {
   userId: string;
   userEmail: string;
-  modelName: string;
+  model: string;
   promptTokens: number;
   completionTokens: number;
   totalTokens: number;
@@ -15,7 +15,7 @@ const AiUsageSchema = new Schema<IAiUsage>(
   {
     userId: { type: String, required: true, index: true },
     userEmail: { type: String, required: true },
-    modelName: { type: String, required: true },
+    model: { type: String, required: true },
     promptTokens: { type: Number, required: true },
     completionTokens: { type: Number, required: true },
     totalTokens: { type: Number, required: true },
@@ -27,5 +27,8 @@ const AiUsageSchema = new Schema<IAiUsage>(
 AiUsageSchema.index({ createdAt: -1 });
 AiUsageSchema.index({ userId: 1, createdAt: -1 });
 
-export const AiUsage: Model<IAiUsage> =
-  mongoose.models.AiUsage || mongoose.model<IAiUsage>("AiUsage", AiUsageSchema);
+delete mongoose.models.AiUsage;
+export const AiUsage: Model<IAiUsage> = mongoose.model<IAiUsage>(
+  "AiUsage",
+  AiUsageSchema,
+);

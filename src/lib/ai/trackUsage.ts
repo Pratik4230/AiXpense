@@ -36,11 +36,13 @@ export async function recordAiUsage({
     await AiUsage.create({
       userId,
       userEmail,
-      modelName,
+      model: modelName,
       promptTokens,
       completionTokens,
       totalTokens: promptTokens + completionTokens,
       costUsd: calcCost(modelName, promptTokens, completionTokens),
     });
-  } catch {}
+  } catch (e) {
+    console.error("[recordAiUsage]", e);
+  }
 }
