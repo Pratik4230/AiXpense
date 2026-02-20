@@ -2,7 +2,7 @@ import { tool } from "ai";
 import { z } from "zod";
 import { connectDB } from "@/lib/db";
 import { Expense } from "@/models";
-import { CATEGORIES } from "@/lib/constants/expense";
+import { CATEGORIES } from "@/constants/expense";
 
 interface SaveExpenseParams {
   userId: string;

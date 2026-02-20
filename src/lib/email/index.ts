@@ -30,3 +30,5 @@ export async function sendEmail({
 
   return data;
 }
+
+export * from "./templates";

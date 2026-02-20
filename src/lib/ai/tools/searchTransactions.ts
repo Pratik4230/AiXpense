@@ -4,9 +4,11 @@ import { z } from "zod";
 import mongoose from "mongoose";
 import { connectDB } from "@/lib/db";
 import { Expense } from "@/models";
+import { recordAiUsage } from "@/lib/ai/trackUsage";
 
 interface ToolParams {
   userId: string;
+  userEmail: string;
   currentDate: Date;
 }
 
@@ -130,6 +132,7 @@ function getMonthBoundsIST(date: Date): { start: Date; end: Date } {
 
 export const createSearchTransactionsTool = ({
   userId,
+  userEmail,
   currentDate,
 }: ToolParams) => {
   const istOffset = 5.5 * 60 * 60 * 1000;
@@ -180,13 +183,20 @@ export const createSearchTransactionsTool = ({
       // SPECIALIST AGENT: Generate MongoDB query if natural language query is provided
       if (query && !filter && !aggregation) {
         try {
-          const { text } = await generateText({
-            model: openai("gpt-5.1"), // Specialized High-Reasoning Model
-            // Tell it to return JSON explicitly
+          const { text, usage } = await generateText({
+            model: openai("gpt-5.1"),
             system:
               SPECIALIST_SYSTEM_PROMPT +
               "\n\nCRITICAL: OUTPUT MUST BE VALID JSON ONLY.",
             prompt: `Current Date: ${todayIST}\nUser Query: ${query}`,
+          });
+
+          void recordAiUsage({
+            userId,
+            userEmail,
+            modelName: "gpt-5.1",
+            promptTokens: usage.inputTokens ?? 0,
+            completionTokens: usage.outputTokens ?? 0,
           });
 
           // Clean up potential markdown code blocks (```json ... ```)

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { deleteAccount } from "@/app/(protected)/profile/actions";
+import { deleteAccount } from "@/actions/user";
 import { signOut } from "@/lib/authClient";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";

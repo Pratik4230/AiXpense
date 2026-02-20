@@ -31,7 +31,7 @@ import { toast } from "sonner";
 import {
   MAX_MESSAGES_PER_CONVERSATION,
   MESSAGE_WARNING_THRESHOLDS,
-} from "@/lib/constants/conversation";
+} from "@/constants/conversation";
 import {
   useCreateConversation,
   useUpdateConversation,
@@ -595,6 +595,7 @@ export function ChatView({
         onSubmit={handleSubmit}
         onSuggestionClick={handleSuggestionClick}
         isLoading={isLoading}
+        showSuggestions={chatMessages.length === 0}
         selectedTransaction={selectedTransaction}
         onClearTransaction={() => setSelectedTransaction(null)}
       />

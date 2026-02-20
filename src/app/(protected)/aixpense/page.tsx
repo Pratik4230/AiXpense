@@ -18,7 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Crown, AlertTriangle } from "lucide-react";
 import { useConversation } from "@/services/conversations";
-import { MAX_MESSAGES_PER_CONVERSATION } from "@/lib/constants/conversation";
+import { MAX_MESSAGES_PER_CONVERSATION } from "@/constants/conversation";
 
 interface UserWithTrial {
   isPremium?: boolean;
@@ -87,7 +87,7 @@ export default function AiXpensePage() {
     : `new-${newChatId}`;
 
   return (
-    <div className="flex h-[calc(100dvh-3.5rem)] overflow-hidden">
+    <div className="flex h-full overflow-hidden">
       {!isSessionLoading && <OnboardingModal open={!onboardingCompleted} />}
       <ConversationSidebar
         currentConversationId={conversationId}

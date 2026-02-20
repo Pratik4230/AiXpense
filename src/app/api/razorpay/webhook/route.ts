@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import crypto from "crypto";
 import { Subscription } from "@/models";
 import { updateUserPremiumFlag } from "@/lib/razorpay/subscription";
-import { sendEmail } from "@/lib/email";
+import { sendEmail } from "@/lib/email/index";
 import { paymentReceiptTemplate } from "@/lib/email/templates/paymentReceipt";
 import { db } from "@/lib/db";
 import { ObjectId } from "mongodb";

@@ -4,7 +4,7 @@ import {
   EXPENSE_TYPES,
   type Category,
   type ExpenseType,
-} from "@/lib/constants/expense";
+} from "@/constants/expense";
 
 export interface IExpense {
   userId: mongoose.Types.ObjectId;

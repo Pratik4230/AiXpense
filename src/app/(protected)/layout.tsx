@@ -17,9 +17,9 @@ export default async function ProtectedLayout({
   }
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="h-full flex flex-col">
       <Navbar />
-      <main className="flex-1">{children}</main>
+      <main className="flex-1 overflow-hidden">{children}</main>
     </div>
   );
 }

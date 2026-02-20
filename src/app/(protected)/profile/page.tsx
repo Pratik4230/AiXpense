@@ -11,7 +11,8 @@ import {
   DangerZoneCard,
   SessionsCard,
 } from "@/components/profile";
-import { getSubscription, getSessions } from "./actions";
+import { getSubscription } from "@/actions/subscription";
+import { getSessions } from "@/actions/user";
 
 export default async function ProfilePage() {
   const session = await auth.api.getSession({ headers: await headers() });

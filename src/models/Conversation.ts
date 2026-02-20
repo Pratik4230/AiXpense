@@ -1,5 +1,5 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
-import { MAX_MESSAGES_PER_CONVERSATION } from "@/lib/constants/conversation";
+import { MAX_MESSAGES_PER_CONVERSATION } from "@/constants/conversation";
 
 export { MAX_MESSAGES_PER_CONVERSATION };
 

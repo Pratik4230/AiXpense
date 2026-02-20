@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Suggestions, Suggestion } from "@/components/ai-elements/suggestion";
-import { SUGGESTIONS } from "@/lib/constants/suggestions";
+import { SUGGESTIONS } from "@/constants/suggestions";
 import { cn } from "@/lib/utils";
 import { SendHorizonal, Loader2 } from "lucide-react";
 import {

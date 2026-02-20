@@ -1,6 +1,6 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
-import { CATEGORIES, type Category } from "@/lib/constants/expense";
-import { BUDGET_PERIODS, type BudgetPeriod } from "@/lib/constants/budget";
+import { CATEGORIES, type Category } from "@/constants/expense";
+import { BUDGET_PERIODS, type BudgetPeriod } from "@/constants/budget";
 
 export interface IBudget {
   userId: mongoose.Types.ObjectId;

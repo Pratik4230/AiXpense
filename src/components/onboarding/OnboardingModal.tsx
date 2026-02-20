@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/dialog";
 import { VisuallyHidden } from "@radix-ui/react-visually-hidden";
 import { Button } from "@/components/ui/button";
-import { completeOnboarding } from "@/app/(protected)/aixpense/actions";
+import { completeOnboarding } from "@/actions/onboarding";
 import {
   Sparkles,
   MessageSquare,

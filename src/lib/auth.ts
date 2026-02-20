@@ -1,8 +1,9 @@
 import { betterAuth } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { client, db } from "@/lib/db";
-import { sendEmail } from "@/lib/email";
-import { resetPasswordEmail, verifyEmailTemplate } from "@/lib/emailTemplates";
+import { sendEmail } from "@/lib/email/index";
+import { resetPasswordEmail } from "@/lib/email/templates/resetPassword";
+import { verifyEmailTemplate } from "@/lib/email/templates/verifyEmail";
 import { connectDB } from "@/lib/db";
 import { Expense, Budget, Conversation, Subscription } from "@/models";
 

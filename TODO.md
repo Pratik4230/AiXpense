@@ -11,10 +11,10 @@
 
 ### 2. OpenAI Cost Monitoring (admin: pratikjadhav1438@gmail.com only)
 
-- [ ] Track tokens used per AI request (prompt + completion tokens)
-- [ ] Store in `aiUsage` collection: `{ userId, tokens, model, cost, createdAt }`
-- [ ] Admin dashboard page (`/admin`) showing total cost, per-user breakdown, daily graph
-- [ ] Only accessible to pratikjadhav1438@gmail.com
+- [x] Track tokens used per AI request (prompt + completion tokens)
+- [x] Store in `aiUsage` collection: `{ userId, tokens, model, cost, createdAt }`
+- [x] Admin dashboard page (`/admin`) showing total cost, per-user breakdown, daily graph
+- [x] Only accessible to pratikjadhav1438@gmail.com
 
 ### 3. Recurring Transactions
 

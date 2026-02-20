@@ -18,7 +18,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Crown, Sparkles, Loader2 } from "lucide-react";
-import { cancelSubscription } from "@/app/(protected)/profile/actions";
+import { cancelSubscription } from "@/actions/subscription";
 
 interface Subscription {
   status: string;

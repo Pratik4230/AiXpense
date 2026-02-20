@@ -2,7 +2,7 @@ import { convertToModelMessages, streamText, UIMessage, stepCountIs } from "ai";
 import { openai } from "@ai-sdk/openai";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { SYSTEM_PROMPT } from "@/lib/constants/prompts";
+import { SYSTEM_PROMPT } from "@/constants/prompts";
 import {
   createSaveExpenseTool,
   createSaveIncomeTool,
@@ -10,6 +10,7 @@ import {
   createDeleteTransactionTool,
   createUpdateTransactionTool,
 } from "@/lib/ai/tools";
+import { recordAiUsage } from "@/lib/ai/trackUsage";
 import { db } from "@/lib/db";
 import { ObjectId } from "mongodb";
 
@@ -71,12 +72,22 @@ export async function POST(req: Request) {
       saveIncome: createSaveIncomeTool(toolParams),
       searchTransactions: createSearchTransactionsTool({
         userId,
+        userEmail: session.user.email,
         currentDate: now,
       }),
       deleteTransaction: createDeleteTransactionTool({ userId }),
       updateTransaction: createUpdateTransactionTool({ userId }),
     },
     stopWhen: stepCountIs(5),
+    onFinish: ({ usage }) => {
+      void recordAiUsage({
+        userId,
+        userEmail: session.user.email,
+        modelName: "gpt-5-mini",
+        promptTokens: usage.inputTokens ?? 0,
+        completionTokens: usage.outputTokens ?? 0,
+      });
+    },
   });
 
   return result.toUIMessageStreamResponse({
