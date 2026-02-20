@@ -5,6 +5,7 @@ export type IssueStatus = "open" | "in_progress" | "resolved" | "closed";
 
 export interface IIssue {
   userId: mongoose.Types.ObjectId;
+  userEmail: string;
   title: string;
   description: string;
   type: IssueType;
@@ -21,6 +22,11 @@ const issueSchema = new Schema<IIssueDocument>(
     userId: {
       type: Schema.Types.ObjectId,
       ref: "user",
+      required: true,
+      index: true,
+    },
+    userEmail: {
+      type: String,
       required: true,
       index: true,
     },

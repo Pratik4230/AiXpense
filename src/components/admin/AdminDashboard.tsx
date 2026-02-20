@@ -19,7 +19,8 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
-import { DollarSign, Zap, Hash, TrendingUp } from "lucide-react";
+import { DollarSign, Zap, Hash, TrendingUp, Bug } from "lucide-react";
+import Link from "next/link";
 
 interface Props {
   stats: AdminStats;
@@ -39,7 +40,7 @@ export function AdminDashboard({ stats }: Props) {
   return (
     <div className="container mx-auto max-w-5xl px-4 py-8 space-y-6">
       <div>
-        <h1 className="text-2xl font-bold">OpenAI Usage Monitor</h1>
+        <h1 className="text-2xl font-bold">Admin Dashboard</h1>
         <p className="text-sm text-muted-foreground mt-1">
           All costs are in USD based on OpenAI pricing
         </p>
@@ -70,6 +71,17 @@ export function AdminDashboard({ stats }: Props) {
           value={fmtTokens(stats.totalTokens)}
           iconColor="text-amber-500"
         />
+        <Link href="/admin/issues" className="block">
+          <Card className="hover:bg-muted/50 transition-colors h-full cursor-pointer">
+            <CardContent className="pt-4 pb-4">
+              <div className="flex items-center gap-2 mb-1">
+                <Bug className="size-4 text-rose-500" />
+                <span className="text-xs text-muted-foreground">Issues</span>
+              </div>
+              <p className="text-xl font-bold font-mono">View All</p>
+            </CardContent>
+          </Card>
+        </Link>
       </div>
 
       <Card>

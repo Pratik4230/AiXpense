@@ -30,6 +30,7 @@ export async function POST(req: Request) {
 
   const issue = await Issue.create({
     userId: session.user.id,
+    userEmail: session.user.email,
     ...parsed.data,
   });
 
