@@ -8,6 +8,7 @@ import { Menu, X, LogOut, User } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/ui/modeToggle";
 import { signOut, useSession } from "@/lib/authClient";
+import { ReportIssueDialog } from "@/components/report-issue/ReportIssueDialog";
 
 const emptySubscribe = () => () => {};
 
@@ -73,6 +74,7 @@ export function Navbar() {
                 <span className="text-sm text-muted-foreground">
                   {session.user.email}
                 </span>
+                <ReportIssueDialog />
                 <Link href="/profile">
                   <Button variant="ghost" size="icon">
                     <User className="size-4" />

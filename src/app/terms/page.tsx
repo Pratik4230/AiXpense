@@ -203,10 +203,10 @@ export default function TermsPage() {
         <p>
           For questions regarding these Terms, contact us at:{" "}
           <a
-            href="mailto:pratikjadhav1438@gmail.com"
+            href={`mailto:${process.env.ADMIN_EMAIL}`}
             className="text-primary hover:underline"
           >
-            pratikjadhav1438@gmail.com
+            {process.env.ADMIN_EMAIL}
           </a>
         </p>
       </section>

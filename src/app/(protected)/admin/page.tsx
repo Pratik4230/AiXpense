@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   title: "Admin | AiXpense",
 };
 
-const ADMIN_EMAIL = "pratikjadhav1438@gmail.com";
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL!;
 
 export default async function AdminPage() {
   const session = await auth.api.getSession({ headers: await headers() });

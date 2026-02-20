@@ -58,10 +58,10 @@ export default function ShippingPage() {
           payment processing. If your Premium access is not activated within 30
           minutes of payment, please contact us at{" "}
           <a
-            href="mailto:pratikjadhav1438@gmail.com"
+            href={`mailto:${process.env.ADMIN_EMAIL}`}
             className="text-primary hover:underline"
           >
-            pratikjadhav1438@gmail.com
+            {process.env.ADMIN_EMAIL}
           </a>{" "}
           with your transaction ID.
         </p>
@@ -76,10 +76,10 @@ export default function ShippingPage() {
           </a>{" "}
           page or email us at{" "}
           <a
-            href="mailto:pratikjadhav1438@gmail.com"
+            href={`mailto:${process.env.ADMIN_EMAIL}`}
             className="text-primary hover:underline"
           >
-            pratikjadhav1438@gmail.com
+            {process.env.ADMIN_EMAIL}
           </a>
           .
         </p>

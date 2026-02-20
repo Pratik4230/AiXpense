@@ -9,3 +9,4 @@ export {
 } from "./Conversation";
 export { Subscription } from "./Subscription";
 export { AiUsage, type IAiUsage } from "./AiUsage";
+export { Issue, type IIssue, type IIssueDocument } from "./Issue";

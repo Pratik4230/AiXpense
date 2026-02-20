@@ -233,10 +233,10 @@ export default function PrivacyPage() {
           <p>
             <strong>Email:</strong>{" "}
             <a
-              href="mailto:pratikjadhav1438@gmail.com"
+              href={`mailto:${process.env.ADMIN_EMAIL}`}
               className="text-primary hover:underline"
             >
-              pratikjadhav1438@gmail.com
+              {process.env.ADMIN_EMAIL}
             </a>
           </p>
           <p className="text-sm text-muted-foreground mt-2">

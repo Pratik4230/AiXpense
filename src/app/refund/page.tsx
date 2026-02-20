@@ -116,10 +116,10 @@ export default function RefundPage() {
         <p>
           For any questions regarding this policy, reach out to us at{" "}
           <a
-            href="mailto:pratikjadhav1438@gmail.com"
+            href={`mailto:${process.env.ADMIN_EMAIL}`}
             className="text-primary hover:underline"
           >
-            pratikjadhav1438@gmail.com
+            {process.env.ADMIN_EMAIL}
           </a>{" "}
           or visit our{" "}
           <a href="/contact" className="text-primary hover:underline">
