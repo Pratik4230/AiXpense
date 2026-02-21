@@ -39,11 +39,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} h-full overflow-hidden`}
+      className={`${inter.variable} h-full`}
       suppressHydrationWarning
     >
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased h-full overflow-hidden`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased h-full`}
       >
         <ThemeProvider
           attribute="class"
