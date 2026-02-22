@@ -22,6 +22,8 @@ const emptySubscribe = () => () => {};
 const navLinks = [
   { href: "/aixpense", label: "AiXpense" },
   { href: "/budgets", label: "Budgets" },
+  { href: "/reports", label: "Reports" },
+  { href: "/transactions", label: "Transactions" },
 ];
 
 export function Navbar() {

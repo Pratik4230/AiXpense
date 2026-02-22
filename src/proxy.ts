@@ -4,6 +4,7 @@ import { getSessionCookie } from "better-auth/cookies";
 const protectedRoutes = [
   "/aixpense",
   "/transactions",
+  "/reports",
   "/premium",
   "/profile",
   "/budgets",

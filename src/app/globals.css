@@ -124,3 +124,25 @@
     @apply bg-background text-foreground;
   }
 }
+
+.recharts-text {
+  fill: var(--muted-foreground) !important;
+}
+
+.recharts-cartesian-grid line {
+  stroke: var(--border) !important;
+}
+
+.recharts-tooltip-wrapper .recharts-default-tooltip {
+  background: var(--card) !important;
+  border-color: var(--border) !important;
+  color: var(--foreground) !important;
+}
+
+.recharts-legend-item-text {
+  color: var(--foreground) !important;
+}
+
+.recharts-pie-label-text {
+  fill: var(--muted-foreground) !important;
+}

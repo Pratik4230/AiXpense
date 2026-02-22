@@ -2,40 +2,52 @@
 
 ## In Progress / Up Next
 
-### 1. Onboarding Flow
+### 1. Receipt / Bill OCR Upload
 
-- [x] Detect new user (first login, no expenses yet)
-- [x] Show onboarding modal/steps: welcome → natural language demo → AI insights intro
-- [x] Mark onboarding complete in user record (`onboardingCompleted: true`)
-- [x] Skip button available at any step
+- [ ] Upload receipt image (photo/file)
+- [ ] AI extracts: amount, category, merchant, date via GPT-4o Vision
+- [ ] Pre-fill "add expense" form from extracted data
+- [ ] User confirms before saving
 
-### 2. OpenAI Cost Monitoring (admin: pratikjadhav1438@gmail.com only)
+### 2. Voice Agent Support
 
-- [x] Track tokens used per AI request (prompt + completion tokens)
-- [x] Store in `aiUsage` collection: `{ userId, tokens, model, cost, createdAt }`
-- [x] Admin dashboard page (`/admin`) showing total cost, per-user breakdown, daily graph
-- [x] Only accessible to pratikjadhav1438@gmail.com
+- [ ] Voice input for adding expenses ("I spent 500 on groceries")
+- [ ] Speech-to-text → AI parses and saves expense
+- [ ] Available on dashboard as mic button
 
-### 3. Recurring Transactions
+### 3. AI Monthly Summary
 
-- [ ] Add `isRecurring` and `recurrenceInterval` fields to Expense model (daily/weekly/monthly)
-- [ ] UI to mark an expense as recurring when adding
-- [ ] Vercel Cron job to auto-create recurring expenses on schedule
-- [ ] Show recurring badge on transaction list
+- [ ] AI-generated monthly insight on /reports page
+- [ ] Streaming response for better UX
+- [ ] POST /api/reports/summary endpoint
 
-### 4. Budgets & Budget Alerts
+---
 
-- [x] Budget model: `{ userId, category, amount }` (monthly only, no period field)
-- [x] Budget CRUD API + `/budgets` page with progress bars
-- [x] Spend computed live from Expense records (no cron/reset needed)
-- [x] AI notifies user of budget usage after saving an expense (piggybacked in saveExpense tool)
-- [x] Color-coded progress: green → amber (≥80%) → red (>100%)
-- [x] Budget + admin routes added to middleware protection
+## Future / Backlog
+
+- [ ] Multi-Currency Support (store currency on expense, convert to base for totals)
 
 ---
 
 ## Completed
 
+- [x] Analytics & Reports page (/reports)
+  - [x] Overview cards (total, count, top category, largest expense)
+  - [x] Spending Trend chart (daily for 1m, monthly for 3m/6m/1y)
+  - [x] Category Breakdown donut chart (24 distinct colors)
+  - [x] Budget vs Actual progress bars
+  - [x] Top Expenses / Top Income list with "View All" link
+  - [x] Expenses / Income tab toggle (URL-based, persists on refresh)
+  - [x] Date range selector (1m, 3m, 6m, 1y)
+- [x] Transactions page (/transactions)
+  - [x] Infinite scroll with useInfiniteQuery + IntersectionObserver
+  - [x] Draft/applied filter pattern (Search button, no per-keystroke API calls)
+  - [x] Filters: type, category multi-select, date range, amount range
+  - [x] Sortable columns (date, amount, category)
+  - [x] Color-coded amounts (red = expense, green = income)
+- [x] Onboarding Flow (welcome → demo → AI insights intro)
+- [x] OpenAI Cost Monitoring (admin dashboard at /admin, per-user breakdown)
+- [x] Budgets & Budget Alerts (CRUD, progress bars, AI alerts on save)
 - [x] Razorpay payment integration (create order, verify payment, webhooks)
 - [x] Subscription model in MongoDB (plan, status, start/end dates, razorpay IDs)
 - [x] Cancel subscription button in account settings
