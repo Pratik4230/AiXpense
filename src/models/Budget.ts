@@ -1,14 +1,10 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 import { CATEGORIES, type Category } from "@/constants/expense";
-import { BUDGET_PERIODS, type BudgetPeriod } from "@/constants/budget";
 
 export interface IBudget {
   userId: mongoose.Types.ObjectId;
-  category: Category | "all";
+  category: Category;
   amount: number;
-  period: BudgetPeriod;
-  startDate: Date;
-  isActive: boolean;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -25,7 +21,7 @@ const budgetSchema = new Schema<IBudgetDocument>(
     },
     category: {
       type: String,
-      enum: [...CATEGORIES, "all"],
+      enum: CATEGORIES,
       required: true,
     },
     amount: {
@@ -33,30 +29,11 @@ const budgetSchema = new Schema<IBudgetDocument>(
       required: true,
       min: 0,
     },
-    period: {
-      type: String,
-      enum: BUDGET_PERIODS,
-      required: true,
-      default: "monthly",
-    },
-    startDate: {
-      type: Date,
-      required: true,
-      default: Date.now,
-    },
-    isActive: {
-      type: Boolean,
-      required: true,
-      default: true,
-    },
   },
-  {
-    timestamps: true,
-  },
+  { timestamps: true },
 );
 
-budgetSchema.index({ userId: 1, category: 1 });
-budgetSchema.index({ userId: 1, isActive: 1 });
+budgetSchema.index({ userId: 1, category: 1 }, { unique: true });
 
 export const Budget: Model<IBudgetDocument> =
   mongoose.models.budget ||

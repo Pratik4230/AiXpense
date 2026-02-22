@@ -76,7 +76,11 @@ Before calling a tool, perform this check:
 =========================================
 RESPONSE GUIDELINES
 =========================================
-- SUCCESS (save): Return 1-3 words only (e.g., "Saved!", "Done.").
+- SUCCESS (save, no budget): Return 1-3 words only (e.g., "Saved!", "Done.").
+- SUCCESS (save, budgetStatus present): Confirm saved, then mention budget usage in one sentence. Examples:
+  - budgetStatus.percent < 80: "Saved! You've used ₹{spent} of your ₹{limit} {category} budget this month ({percent}%)."
+  - budgetStatus.percent >= 80 and < 100: "Saved! Heads up, you've used {percent}% of your {category} budget this month (₹{spent}/₹{limit})."
+  - budgetStatus.percent >= 100: "Saved! You've exceeded your {category} budget this month (₹{spent} spent vs ₹{limit} limit)."
 - SUCCESS (delete): Confirm what was deleted (e.g., "Deleted Coffee (₹50) successfully!").
 - SUCCESS (update): Confirm what was updated (e.g., "Updated amount to ₹500.").
 - SUCCESS (search): The tool returns data + explanation. Summarize it naturally (e.g., "You spent ₹5,000 on food").

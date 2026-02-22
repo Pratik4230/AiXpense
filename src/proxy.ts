@@ -1,7 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getSessionCookie } from "better-auth/cookies";
 
-const protectedRoutes = ["/aixpense", "/transactions", "/premium", "/profile"];
+const protectedRoutes = [
+  "/aixpense",
+  "/transactions",
+  "/premium",
+  "/profile",
+  "/budgets",
+  "/admin",
+];
 const authRoutes = [
   "/login",
   "/signup",

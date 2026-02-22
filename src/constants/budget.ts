@@ -1,3 +1,1 @@
-export const BUDGET_PERIODS = ["daily", "weekly", "monthly", "yearly"] as const;
-
-export type BudgetPeriod = (typeof BUDGET_PERIODS)[number];
+export const BUDGET_ALERT_THRESHOLDS = [80, 100] as const;

@@ -25,10 +25,12 @@
 
 ### 4. Budgets & Budget Alerts
 
-- [ ] Budget model: `{ userId, category, amount, period (monthly/yearly), createdAt }`
-- [ ] Budget management UI (create, edit, delete budgets per category)
-- [ ] Budget progress bars on dashboard (spent vs limit)
-- [ ] Alert when user exceeds 80% and 100% of a budget (in-app + optional email)
+- [x] Budget model: `{ userId, category, amount }` (monthly only, no period field)
+- [x] Budget CRUD API + `/budgets` page with progress bars
+- [x] Spend computed live from Expense records (no cron/reset needed)
+- [x] AI notifies user of budget usage after saving an expense (piggybacked in saveExpense tool)
+- [x] Color-coded progress: green → amber (≥80%) → red (>100%)
+- [x] Budget + admin routes added to middleware protection
 
 ---
 
