@@ -27,24 +27,35 @@ export async function POST(req: Request) {
   }
 
   const userId = session.user.id;
-  const user = session.user as { isPremium?: boolean; freeTrials?: number };
 
-  const isPremium = user.isPremium ?? false;
-  const freeTrials = user.freeTrials ?? 5;
+  const dbUser = await db.collection("user").findOneAndUpdate(
+    {
+      _id: new ObjectId(userId),
+      $or: [{ isPremium: true }, { freeTrials: { $gt: 0 } }],
+    },
+    [
+      {
+        $set: {
+          freeTrials: {
+            $cond: {
+              if: { $eq: ["$isPremium", true] },
+              then: "$freeTrials",
+              else: { $subtract: ["$freeTrials", 1] },
+            },
+          },
+        },
+      },
+    ],
+    { returnDocument: "before" },
+  );
 
-  if (!isPremium && freeTrials <= 0) {
+  if (!dbUser) {
     return new Response(
       JSON.stringify({
         error: "No free trials remaining. Upgrade to premium.",
       }),
       { status: 403, headers: { "Content-Type": "application/json" } },
     );
-  }
-
-  if (!isPremium) {
-    await db
-      .collection("user")
-      .updateOne({ _id: new ObjectId(userId) }, { $inc: { freeTrials: -1 } });
   }
 
   const { messages }: { messages: UIMessage[] } = await req.json();

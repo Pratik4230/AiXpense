@@ -1,11 +1,18 @@
-import { betterAuth } from "better-auth";
+import { betterAuth, APIError } from "better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { client, db } from "@/lib/db";
 import { sendEmail } from "@/lib/email/index";
 import { resetPasswordEmail } from "@/lib/email/templates/resetPassword";
 import { verifyEmailTemplate } from "@/lib/email/templates/verifyEmail";
 import { connectDB } from "@/lib/db";
-import { Expense, Budget, Conversation, Subscription } from "@/models";
+import {
+  Expense,
+  Budget,
+  Conversation,
+  Subscription,
+  DeletedEmail,
+} from "@/models";
+import { isDisposableEmail } from "@/lib/auth/blockedDomains";
 
 export const auth = betterAuth({
   database: mongodbAdapter(db, { client }),
@@ -66,12 +73,45 @@ export const auth = betterAuth({
       enabled: true,
       afterDelete: async (user) => {
         await connectDB();
+        const u = user as { freeTrials?: number };
         await Promise.all([
+          DeletedEmail.findOneAndUpdate(
+            { email: user.email.toLowerCase() },
+            { trialsRemaining: u.freeTrials ?? 0, deletedAt: new Date() },
+            { upsert: true },
+          ),
           Expense.deleteMany({ userId: user.id }),
           Budget.deleteMany({ userId: user.id }),
           Conversation.deleteMany({ userId: user.id }),
           Subscription.deleteMany({ userId: user.id }),
         ]);
+      },
+    },
+  },
+  databaseHooks: {
+    user: {
+      create: {
+        before: async (user) => {
+          if (isDisposableEmail(user.email)) {
+            throw new APIError("BAD_REQUEST", {
+              message:
+                "This email domain is not allowed. Please use a valid email address.",
+            });
+          }
+
+          await connectDB();
+          const deleted = await DeletedEmail.findOne({
+            email: user.email.toLowerCase(),
+          });
+          if (deleted) {
+            return {
+              data: {
+                ...user,
+                freeTrials: deleted.trialsRemaining,
+              },
+            };
+          }
+        },
       },
     },
   },
