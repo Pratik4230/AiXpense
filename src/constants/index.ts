@@ -5,4 +5,4 @@ export {
   type ExpenseType,
 } from "./expense";
 
-export { BUDGET_PERIODS, type BudgetPeriod } from "./budget";
+export { BUDGET_ALERT_THRESHOLDS } from "./budget";
