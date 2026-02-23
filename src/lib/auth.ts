@@ -1,4 +1,5 @@
 import { betterAuth, APIError } from "better-auth";
+import { expo } from "@better-auth/expo";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { client, db } from "@/lib/db";
 import { sendEmail } from "@/lib/email/index";
@@ -17,7 +18,15 @@ import { isDisposableEmail } from "@/lib/auth/blockedDomains";
 export const auth = betterAuth({
   database: mongodbAdapter(db, { client }),
   secret: process.env.BETTER_AUTH_SECRET,
-  trustedOrigins: ["https://aixpense.in", "https://www.aixpense.in"],
+  trustedOrigins: [
+    "https://aixpense.in",
+    "https://www.aixpense.in",
+    "http://localhost:8081",
+    "exp://localhost:8081",
+    "aixpensemobile://",
+    "exp://**",
+  ],
+  plugins: [expo()],
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,
