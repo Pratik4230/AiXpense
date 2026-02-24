@@ -34,6 +34,9 @@ export default function AiXpensePage() {
   const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
   const [showLimitDialog, setShowLimitDialog] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [justCreatedConvId, setJustCreatedConvId] = useState<string | null>(
+    null,
+  );
 
   const { data: session, isPending: isSessionLoading } = useSession();
   const { data: conversationData, isLoading: isConversationLoading } =
@@ -70,11 +73,18 @@ export default function AiXpensePage() {
   const [newChatId, setNewChatId] = useState(() => Date.now().toString());
 
   const handleNewChat = () => {
+    setJustCreatedConvId(null);
     setNewChatId(Date.now().toString());
     router.push("/aixpense");
   };
 
+  const handleConversationCreated = (id: string) => {
+    setJustCreatedConvId(id);
+    window.history.replaceState(null, "", `/aixpense?c=${id}`);
+  };
+
   const handleSelectConversation = (id: string | null) => {
+    setJustCreatedConvId(null);
     if (id) {
       router.push(`/aixpense?c=${id}`);
     } else {
@@ -82,9 +92,13 @@ export default function AiXpensePage() {
     }
   };
 
-  const chatKey = conversationId
-    ? `conv-${conversationId}-${conversationData?.updatedAt || "loading"}`
-    : `new-${newChatId}`;
+  const isJustCreated =
+    !!justCreatedConvId && conversationId === justCreatedConvId;
+
+  const chatKey =
+    conversationId && !isJustCreated
+      ? `conv-${conversationId}-${conversationData?.updatedAt || "loading"}`
+      : `new-${newChatId}`;
 
   return (
     <div className="flex h-full overflow-hidden">
@@ -97,7 +111,7 @@ export default function AiXpensePage() {
       />
 
       <div className="flex-1 flex flex-col relative min-w-0">
-        {isConversationLoading && conversationId ? (
+        {isConversationLoading && conversationId && !isJustCreated ? (
           <div className="flex-1 flex items-center justify-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
           </div>
@@ -112,6 +126,7 @@ export default function AiXpensePage() {
             onDecrementTrials={decrementTrials}
             onShowUpgradeDialog={() => setShowUpgradeDialog(true)}
             onShowLimitDialog={() => setShowLimitDialog(true)}
+            onConversationCreated={handleConversationCreated}
           />
         )}
 

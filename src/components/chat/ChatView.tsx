@@ -52,6 +52,7 @@ interface ChatViewProps {
   onDecrementTrials: () => void;
   onShowUpgradeDialog: () => void;
   onShowLimitDialog: () => void;
+  onConversationCreated: (id: string) => void;
 }
 
 export function ChatView({
@@ -63,6 +64,7 @@ export function ChatView({
   onDecrementTrials,
   onShowUpgradeDialog,
   onShowLimitDialog,
+  onConversationCreated,
 }: ChatViewProps) {
   const [input, setInput] = useState("");
   const [selectedTransaction, setSelectedTransaction] =
@@ -74,8 +76,6 @@ export function ChatView({
 
   const createConversation = useCreateConversation();
   const updateConversation = useUpdateConversation();
-
-  conversationIdRef.current = conversationId;
 
   const saveMessages = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -121,6 +121,7 @@ export function ChatView({
 
           const newConv = await createConversation.mutateAsync(title);
           conversationIdRef.current = newConv._id;
+          onConversationCreated(newConv._id);
           await updateConversation.mutateAsync({
             id: newConv._id,
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -138,7 +139,12 @@ export function ChatView({
         pendingSaveRef.current = false;
       }
     },
-    [createConversation, updateConversation, onShowLimitDialog],
+    [
+      createConversation,
+      updateConversation,
+      onShowLimitDialog,
+      onConversationCreated,
+    ],
   );
 
   const {
