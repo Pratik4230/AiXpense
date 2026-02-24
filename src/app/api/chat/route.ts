@@ -76,9 +76,17 @@ export async function POST(req: Request) {
   });
 
   const result = streamText({
-    model: openai("gpt-5-mini"),
+    model: openai("gpt-5-nano"),
     system: SYSTEM_PROMPT(currentDateStr),
     messages: await convertToModelMessages(messages),
+    providerOptions: {
+      openai: {
+        textVerbosity: "low",
+        user: userId,
+        safetyIdentifier: userId,
+        maxToolCalls: 5,
+      },
+    },
     tools: {
       saveExpense: createSaveExpenseTool(toolParams),
       saveIncome: createSaveIncomeTool(toolParams),
@@ -100,7 +108,7 @@ export async function POST(req: Request) {
     void recordAiUsage({
       userId,
       userEmail: session.user.email,
-      modelName: "gpt-5-mini",
+      modelName: "gpt-5-nano",
       promptTokens: usage.inputTokens ?? 0,
       completionTokens: usage.outputTokens ?? 0,
     });

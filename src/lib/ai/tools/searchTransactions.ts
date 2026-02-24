@@ -224,7 +224,7 @@ export const createSearchTransactionsTool = ({
       if (query && !filter && !aggregation) {
         try {
           const { text, usage } = await generateText({
-            model: openai("gpt-5.1"),
+            model: openai("gpt-5-nano"),
             system:
               SPECIALIST_SYSTEM_PROMPT +
               "\n\nCRITICAL: OUTPUT MUST BE VALID JSON ONLY.",
@@ -240,7 +240,7 @@ IMPORTANT: When user refers to "today", use the exact UTC range above. All date 
           void recordAiUsage({
             userId,
             userEmail,
-            modelName: "gpt-5.1",
+            modelName: "gpt-5-nano",
             promptTokens: usage.inputTokens ?? 0,
             completionTokens: usage.outputTokens ?? 0,
           });
