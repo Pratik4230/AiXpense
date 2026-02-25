@@ -6,6 +6,7 @@ import { Bug, Lightbulb, HelpCircle, Flag } from "lucide-react";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -89,11 +90,14 @@ export function ReportIssueDialog({ children }: ReportIssueDialogProps) {
               return (
                 <DialogTitle className="flex items-center gap-2">
                   <TypeIcon className="size-5" />
-                  Report an Issue
+                  {found?.label ?? "Feedback"}
                 </DialogTitle>
               );
             }}
           </form.Subscribe>
+          <DialogDescription className="sr-only">
+            Submit a bug report, feature request, or other feedback.
+          </DialogDescription>
         </DialogHeader>
 
         <form

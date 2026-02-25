@@ -4,7 +4,14 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useState, useSyncExternalStore } from "react";
-import { Menu, X, LogOut, User, ChevronDown } from "lucide-react";
+import {
+  Menu,
+  X,
+  LogOut,
+  User,
+  ChevronDown,
+  MessagesSquare,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/ui/modeToggle";
 import { signOut, useSession } from "@/lib/authClient";
@@ -99,8 +106,6 @@ export function Navbar() {
               <ModeToggle />
             </div>
 
-            <ReportIssueDialog />
-
             {mounted && session?.user && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -126,6 +131,15 @@ export function Navbar() {
                       <User className="size-4 mr-2" /> Profile
                     </Link>
                   </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <ReportIssueDialog>
+                    <DropdownMenuItem
+                      onSelect={(e) => e.preventDefault()}
+                      className="cursor-pointer"
+                    >
+                      <MessagesSquare className="size-4 mr-2" /> Feedback
+                    </DropdownMenuItem>
+                  </ReportIssueDialog>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
                     onClick={handleSignOut}
@@ -182,6 +196,15 @@ export function Navbar() {
                       <User className="size-4 mr-1.5" /> Profile
                     </Button>
                   </Link>
+                  <ReportIssueDialog>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-muted-foreground"
+                    >
+                      <MessagesSquare className="size-4 mr-1.5" /> Feedback
+                    </Button>
+                  </ReportIssueDialog>
                   <Button
                     variant="ghost"
                     size="sm"
