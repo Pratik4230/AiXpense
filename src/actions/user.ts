@@ -3,9 +3,10 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { revalidatePath } from "next/cache";
+import { getSession } from "@/lib/session";
 
 export async function updateName(name: string) {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session) return { error: "Not authenticated" };
 
   try {
@@ -24,7 +25,7 @@ export async function changePassword(
   currentPassword: string,
   newPassword: string,
 ) {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session) return { error: "Not authenticated" };
 
   try {
@@ -39,7 +40,7 @@ export async function changePassword(
 }
 
 export async function deleteAccount() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
   if (!session) return { error: "Not authenticated" };
 
   try {
@@ -55,7 +56,7 @@ export async function deleteAccount() {
 
 export async function getSessions() {
   const hdrs = await headers();
-  const session = await auth.api.getSession({ headers: hdrs });
+  const session = await getSession();
   if (!session) return { sessions: [], currentSessionId: "" };
 
   const result = await auth.api.listSessions({ headers: hdrs });

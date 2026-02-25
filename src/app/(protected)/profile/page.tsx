@@ -1,6 +1,5 @@
-import { auth } from "@/lib/auth";
-import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { getSession } from "@/lib/session";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -15,14 +14,16 @@ import { getSubscription } from "@/actions/subscription";
 import { getSessions } from "@/actions/user";
 
 export default async function ProfilePage() {
-  const session = await auth.api.getSession({ headers: await headers() });
+  const session = await getSession();
 
   if (!session) redirect("/login");
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const user = session.user as any;
-  const subscription = await getSubscription();
-  const { sessions, currentSessionId } = await getSessions();
+  const [subscription, { sessions, currentSessionId }] = await Promise.all([
+    getSubscription(user.id),
+    getSessions(),
+  ]);
 
   return (
     <div className="container mx-auto max-w-2xl px-4 py-8 space-y-6">

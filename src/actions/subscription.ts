@@ -7,12 +7,16 @@ import { connectDB } from "@/lib/db";
 import { Subscription } from "@/models";
 import { razorpay } from "@/lib/razorpay/client";
 
-export async function getSubscription() {
-  const session = await auth.api.getSession({ headers: await headers() });
-  if (!session) return null;
+export async function getSubscription(userId?: string) {
+  let uid = userId;
+  if (!uid) {
+    const session = await auth.api.getSession({ headers: await headers() });
+    if (!session) return null;
+    uid = session.user.id;
+  }
 
   await connectDB();
-  const sub = await Subscription.findOne({ userId: session.user.id }).sort({
+  const sub = await Subscription.findOne({ userId: uid }).sort({
     createdAt: -1,
   });
 
