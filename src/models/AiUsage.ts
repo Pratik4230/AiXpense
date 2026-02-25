@@ -5,6 +5,7 @@ export interface IAiUsage extends Omit<Document, "model"> {
   userEmail: string;
   model: string;
   promptTokens: number;
+  cachedTokens: number;
   completionTokens: number;
   totalTokens: number;
   costUsd: number;
@@ -17,6 +18,7 @@ const AiUsageSchema = new Schema<IAiUsage>(
     userEmail: { type: String, required: true },
     model: { type: String, required: true },
     promptTokens: { type: Number, required: true },
+    cachedTokens: { type: Number, default: 0 },
     completionTokens: { type: Number, required: true },
     totalTokens: { type: Number, required: true },
     costUsd: { type: Number, required: true },

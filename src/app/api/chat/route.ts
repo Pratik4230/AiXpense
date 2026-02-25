@@ -85,6 +85,8 @@ export async function POST(req: Request) {
         user: userId,
         safetyIdentifier: userId,
         maxToolCalls: 5,
+        truncation: "auto",
+        store: false,
       },
     },
     tools: {
@@ -105,12 +107,15 @@ export async function POST(req: Request) {
 
   after(async () => {
     const usage = await result.usage;
+    const metadata = await result.providerMetadata;
+    const cachedTokens = (metadata?.openai?.cachedPromptTokens as number) ?? 0;
     void recordAiUsage({
       userId,
       userEmail: session.user.email,
       modelName: "gpt-5-nano",
       promptTokens: usage.inputTokens ?? 0,
       completionTokens: usage.outputTokens ?? 0,
+      cachedTokens,
     });
   });
 

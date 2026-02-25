@@ -235,6 +235,11 @@ This month UTC start: "${monthStartUTC0.toISOString()}"
 User Query: ${query}
 
 IMPORTANT: When user refers to "today", use the exact UTC range above. All date values in your JSON must be ISO strings in UTC.`,
+            providerOptions: {
+              openai: {
+                promptCacheKey: "specialist-system-v1",
+              },
+            },
           });
 
           void recordAiUsage({
