@@ -1,5 +1,14 @@
+import { Metadata } from "next";
 import { SignupForm } from "@/components/auth";
 import Image from "next/image";
+
+export const metadata: Metadata = {
+  title: "Sign Up",
+  description:
+    "Create a free AiXpense account and start tracking expenses with AI in seconds.",
+  alternates: { canonical: "https://aixpense.in/signup" },
+  robots: { index: false, follow: false },
+};
 
 export default function SignupPage() {
   return (

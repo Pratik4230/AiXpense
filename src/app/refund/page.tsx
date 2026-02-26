@@ -2,9 +2,10 @@ import { Metadata } from "next";
 import LegalPageLayout from "@/components/legal/LegalPageLayout";
 
 export const metadata: Metadata = {
-  title: "Refund & Cancellation Policy | AiXpense",
+  title: "Refund & Cancellation Policy",
   description:
     "Refund and cancellation policy for AiXpense premium subscriptions.",
+  alternates: { canonical: "https://aixpense.in/refund" },
 };
 
 export default function RefundPage() {

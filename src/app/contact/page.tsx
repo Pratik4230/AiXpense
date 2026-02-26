@@ -3,8 +3,10 @@ import LegalPageLayout from "@/components/legal/LegalPageLayout";
 import { Mail, Clock, MessageSquare } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Contact Us | AiXpense",
-  description: "Get in touch with the AiXpense team for support or inquiries.",
+  title: "Contact Us",
+  description:
+    "Get in touch with the AiXpense team for billing, support, or general inquiries. We respond within 48 hours.",
+  alternates: { canonical: "https://aixpense.in/contact" },
 };
 
 export default function ContactPage() {

@@ -18,9 +18,51 @@ import {
 } from "lucide-react";
 import { SmartLink, SmartTextLink } from "@/components/auth/SmartLink";
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebApplication",
+  name: "AiXpense",
+  url: "https://aixpense.in",
+  description:
+    "AI-powered expense tracker. Track income and expenses using natural language. Just type 'Lunch 250' and AiXpense categorizes and logs it instantly.",
+  applicationCategory: "FinanceApplication",
+  operatingSystem: "Web",
+  offers: [
+    {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "INR",
+      name: "Free Plan",
+    },
+    {
+      "@type": "Offer",
+      price: "499",
+      priceCurrency: "INR",
+      name: "Premium Monthly",
+      billingIncrement: "P1M",
+    },
+    {
+      "@type": "Offer",
+      price: "3999",
+      priceCurrency: "INR",
+      name: "Premium Yearly",
+      billingIncrement: "P1Y",
+    },
+  ],
+  author: {
+    "@type": "Person",
+    name: "Pratik Jadhav",
+    url: "https://www.linkedin.com/in/pratikjadhav1438/",
+  },
+};
+
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-background relative overflow-hidden selection:bg-primary/20">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       {/* Background Gradients */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-125 bg-primary/20 blur-[120px] rounded-full opacity-50 pointer-events-none" />
       <div className="absolute bottom-0 right-0 w-125 h-125 bg-purple-500/10 blur-[100px] rounded-full pointer-events-none" />
@@ -186,6 +228,75 @@ export default function LandingPage() {
         </section>
 
         {/* CTA Section */}
+
+        {/* How it works Section */}
+        <section className="py-24 sm:py-32 relative">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+              How AiXpense works
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Start tracking your income and expenses in under 30 seconds. No
+              setup. No spreadsheets. No categories to configure.
+            </p>
+          </div>
+
+          <div className="grid gap-8 sm:grid-cols-3 max-w-6xl mx-auto">
+            <div className="relative flex flex-col items-start p-8 rounded-2xl border border-border/50 bg-card/30 backdrop-blur-sm">
+              <div className="size-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-6 text-primary font-bold text-xl">
+                1
+              </div>
+              <h3 className="text-xl font-semibold mb-3">
+                Type your expense naturally
+              </h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Just write what you spent — in plain English or Hindi. Try{" "}
+                <span className="text-foreground font-medium">
+                  &quot;Zomato dinner 450&quot;
+                </span>{" "}
+                or{" "}
+                <span className="text-foreground font-medium">
+                  &quot;petrol 800 today&quot;
+                </span>
+                . No forms, no dropdowns.
+              </p>
+            </div>
+
+            <div className="relative flex flex-col items-start p-8 rounded-2xl border border-border/50 bg-card/30 backdrop-blur-sm">
+              <div className="size-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mb-6 text-purple-400 font-bold text-xl">
+                2
+              </div>
+              <h3 className="text-xl font-semibold mb-3">
+                AI categorizes it instantly
+              </h3>
+              <p className="text-muted-foreground leading-relaxed">
+                Our AI automatically detects the amount, merchant, category,
+                tags, and date. Income vs expense is handled too — just say{" "}
+                <span className="text-foreground font-medium">
+                  &quot;received salary 50000&quot;
+                </span>
+                .
+              </p>
+            </div>
+
+            <div className="relative flex flex-col items-start p-8 rounded-2xl border border-border/50 bg-card/30 backdrop-blur-sm">
+              <div className="size-12 rounded-xl bg-green-500/10 border border-green-500/20 flex items-center justify-center mb-6 text-green-400 font-bold text-xl">
+                3
+              </div>
+              <h3 className="text-xl font-semibold mb-3">
+                Track, budget &amp; analyse
+              </h3>
+              <p className="text-muted-foreground leading-relaxed">
+                View spending reports by category, set monthly budgets with
+                alerts, and get AI-powered insights on where your money actually
+                goes — all in real time.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* CTA Section */}
+
         <section className="py-24 text-center">
           <div className="max-w-4xl mx-auto p-12 rounded-3xl border border-border bg-linear-to-b from-muted/50 to-background relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-primary/50 to-transparent" />
@@ -229,6 +340,12 @@ export default function LandingPage() {
       <footer className="border-t border-border/40 bg-muted/20">
         <div className="container mx-auto px-4 py-8 space-y-6">
           <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm">
+            <Link
+              href="/blog"
+              className="text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Blog
+            </Link>
             <Link
               href="/terms"
               className="text-muted-foreground hover:text-foreground transition-colors"

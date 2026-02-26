@@ -2,8 +2,10 @@ import { Metadata } from "next";
 import LegalPageLayout from "@/components/legal/LegalPageLayout";
 
 export const metadata: Metadata = {
-  title: "Shipping & Delivery Policy | AiXpense",
-  description: "Shipping and delivery policy for AiXpense digital services.",
+  title: "Shipping & Delivery Policy",
+  description:
+    "AiXpense is a digital SaaS product. Access is granted instantly upon signup or payment - no physical shipping involved.",
+  alternates: { canonical: "https://aixpense.in/shipping" },
 };
 
 export default function ShippingPage() {

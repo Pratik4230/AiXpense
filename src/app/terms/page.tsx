@@ -2,9 +2,10 @@ import { Metadata } from "next";
 import LegalPageLayout from "@/components/legal/LegalPageLayout";
 
 export const metadata: Metadata = {
-  title: "Terms & Conditions | AiXpense",
+  title: "Terms & Conditions",
   description:
     "Terms and conditions for using AiXpense AI-powered expense tracking service.",
+  alternates: { canonical: "https://aixpense.in/terms" },
 };
 
 export default function TermsPage() {

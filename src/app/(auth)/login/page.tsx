@@ -1,5 +1,13 @@
+import { Metadata } from "next";
 import { LoginForm } from "@/components/auth";
 import Image from "next/image";
+
+export const metadata: Metadata = {
+  title: "Login",
+  description: "Sign in to your AiXpense account to track expenses with AI.",
+  alternates: { canonical: "https://aixpense.in/login" },
+  robots: { index: false, follow: false },
+};
 
 export default function LoginPage() {
   return (

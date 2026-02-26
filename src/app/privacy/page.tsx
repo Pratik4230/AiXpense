@@ -2,9 +2,10 @@ import { Metadata } from "next";
 import LegalPageLayout from "@/components/legal/LegalPageLayout";
 
 export const metadata: Metadata = {
-  title: "Privacy Policy | AiXpense",
+  title: "Privacy Policy",
   description:
-    "Privacy policy for AiXpense - how we collect, use, and protect your data.",
+    "AiXpense privacy policy - how we collect, use, and protect your personal and financial data. Compliant with the DPDP Act 2023.",
+  alternates: { canonical: "https://aixpense.in/privacy" },
 };
 
 export default function PrivacyPage() {
