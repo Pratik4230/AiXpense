@@ -13,6 +13,7 @@ export async function GET() {
 
   const sessions = result.map((s) => ({
     id: s.id,
+    token: s.token,
     ipAddress: s.ipAddress ?? null,
     userAgent: s.userAgent ?? null,
     createdAt: s.createdAt.toISOString(),
