@@ -36,12 +36,16 @@ export const auth = betterAuth({
           "sign-in": "Sign in to AiXpense",
           "forget-password": "Reset your AiXpense password",
         };
-        void sendEmail({
-          to: email,
-          subject: subjects[type],
-          html,
-          text,
-        });
+        try {
+          await sendEmail({
+            to: email,
+            subject: subjects[type],
+            html,
+            text,
+          });
+        } catch (err) {
+          console.error(`[OTP] Failed to send ${type} email to ${email}:`, err);
+        }
       },
       sendVerificationOnSignUp: true,
       otpLength: 6,
