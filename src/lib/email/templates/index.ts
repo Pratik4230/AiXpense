@@ -1,4 +1,3 @@
-export { resetPasswordEmail } from "./resetPassword";
-export { verifyEmailTemplate } from "./verifyEmail";
+export { otpEmail } from "./otp";
 export { paymentReceiptTemplate } from "./paymentReceipt";
 export { newIssueEmailTemplate } from "./newIssue";

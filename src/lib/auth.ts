@@ -1,10 +1,10 @@
 import { betterAuth, APIError } from "better-auth";
 import { expo } from "@better-auth/expo";
+import { emailOTP } from "better-auth/plugins";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { client, db } from "@/lib/db";
 import { sendEmail } from "@/lib/email/index";
-import { resetPasswordEmail } from "@/lib/email/templates/resetPassword";
-import { verifyEmailTemplate } from "@/lib/email/templates/verifyEmail";
+import { otpEmail } from "@/lib/email/templates/otp";
 import { connectDB } from "@/lib/db";
 import {
   Expense,
@@ -26,32 +26,31 @@ export const auth = betterAuth({
     "aixpensemobile://",
     "exp://**",
   ],
-  plugins: [expo()],
+  plugins: [
+    expo(),
+    emailOTP({
+      sendVerificationOTP: async ({ email, otp, type }) => {
+        const { html, text } = otpEmail(otp, type);
+        const subjects: Record<string, string> = {
+          "email-verification": "Verify your AiXpense email",
+          "sign-in": "Sign in to AiXpense",
+          "forget-password": "Reset your AiXpense password",
+        };
+        void sendEmail({
+          to: email,
+          subject: subjects[type],
+          html,
+          text,
+        });
+      },
+      sendVerificationOnSignUp: true,
+      otpLength: 6,
+      expiresIn: 300,
+    }),
+  ],
   emailAndPassword: {
     enabled: true,
     requireEmailVerification: true,
-    sendResetPassword: async ({ user, url }) => {
-      const { html, text } = resetPasswordEmail(user.name, url);
-      void sendEmail({
-        to: user.email,
-        subject: "Reset your AiXpense password",
-        html,
-        text,
-      });
-    },
-  },
-  emailVerification: {
-    sendVerificationEmail: async ({ user, url }) => {
-      const { html, text } = verifyEmailTemplate(user.name, url);
-      void sendEmail({
-        to: user.email,
-        subject: "Verify your AiXpense email",
-        html,
-        text,
-      });
-    },
-    sendOnSignUp: true,
-    autoSignInAfterVerification: true,
   },
   socialProviders: {
     google: {

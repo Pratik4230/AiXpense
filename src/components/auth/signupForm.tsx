@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { signUp } from "@/lib/authClient";
+import { signUp, signIn, authClient } from "@/lib/authClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,7 +16,11 @@ import {
 } from "@/components/ui/card";
 import { OAuthButtons } from "./oauthButtons";
 import { Separator } from "@/components/ui/separator";
-import { CheckCircle2, ArrowLeft } from "lucide-react";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
 
 export function SignupForm() {
   const [name, setName] = useState("");
@@ -24,7 +28,8 @@ export function SignupForm() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [showOtp, setShowOtp] = useState(false);
+  const [otp, setOtp] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,7 +40,6 @@ export function SignupForm() {
       name,
       email,
       password,
-      callbackURL: "/aixpense",
     });
 
     if (error) {
@@ -44,27 +48,83 @@ export function SignupForm() {
       return;
     }
 
-    setIsSubmitted(true);
+    setShowOtp(true);
     setIsLoading(false);
   };
 
-  if (isSubmitted) {
+  const handleVerifyOtp = async () => {
+    setError("");
+    setIsLoading(true);
+
+    const { error } = await authClient.emailOtp.verifyEmail({
+      email,
+      otp,
+    });
+
+    if (error) {
+      setError(error.message || "Invalid code");
+      setIsLoading(false);
+      return;
+    }
+
+    await signIn.email({ email, password, callbackURL: "/aixpense" });
+    window.location.href = "/aixpense";
+  };
+
+  const handleResend = async () => {
+    setError("");
+    await authClient.emailOtp.sendVerificationOtp({
+      email,
+      type: "email-verification",
+    });
+  };
+
+  if (showOtp) {
     return (
       <Card className="w-full max-w-md mx-auto">
-        <CardContent className="pt-6 text-center space-y-4">
-          <CheckCircle2 className="size-12 text-green-500 mx-auto" />
-          <h2 className="text-xl font-semibold">Verify your email</h2>
-          <p className="text-muted-foreground text-sm">
-            We&apos;ve sent a verification link to{" "}
-            <span className="font-medium">{email}</span>. Please check your
-            inbox and click the link to activate your account.
+        <CardHeader className="text-center">
+          <CardTitle className="text-2xl font-bold">
+            Verify your email
+          </CardTitle>
+          <CardDescription>
+            Enter the 6-digit code sent to{" "}
+            <span className="font-medium">{email}</span>
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {error && (
+            <div className="rounded-md bg-destructive/10 p-3 text-sm text-destructive">
+              {error}
+            </div>
+          )}
+          <div className="flex justify-center">
+            <InputOTP maxLength={6} value={otp} onChange={setOtp}>
+              <InputOTPGroup>
+                <InputOTPSlot index={0} />
+                <InputOTPSlot index={1} />
+                <InputOTPSlot index={2} />
+                <InputOTPSlot index={3} />
+                <InputOTPSlot index={4} />
+                <InputOTPSlot index={5} />
+              </InputOTPGroup>
+            </InputOTP>
+          </div>
+          <Button
+            onClick={handleVerifyOtp}
+            className="w-full h-11"
+            disabled={isLoading || otp.length !== 6}
+          >
+            {isLoading ? "Verifying..." : "Verify Email"}
+          </Button>
+          <p className="text-center text-sm text-muted-foreground">
+            Didn&apos;t receive the code?{" "}
+            <button
+              onClick={handleResend}
+              className="font-medium text-primary hover:underline"
+            >
+              Resend
+            </button>
           </p>
-          <Link href="/login">
-            <Button variant="outline" className="mt-4">
-              <ArrowLeft className="size-4 mr-2" />
-              Go to login
-            </Button>
-          </Link>
         </CardContent>
       </Card>
     );

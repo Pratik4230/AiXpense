@@ -17,9 +17,12 @@ import {
 } from "@/components/ui/card";
 import { OAuthButtons } from "./oauthButtons";
 import { Separator } from "@/components/ui/separator";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
 import { Mail } from "lucide-react";
-
-const MAX_RESEND_ATTEMPTS = 3;
 
 export function LoginForm() {
   const router = useRouter();
@@ -28,9 +31,9 @@ export function LoginForm() {
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [needsVerification, setNeedsVerification] = useState(false);
-  const [resendCount, setResendCount] = useState(0);
-  const [resendLoading, setResendLoading] = useState(false);
-  const [resendSuccess, setResendSuccess] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [verifying, setVerifying] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -60,19 +63,43 @@ export function LoginForm() {
     router.push("/aixpense");
   };
 
-  const handleResend = async () => {
-    if (resendCount >= MAX_RESEND_ATTEMPTS) return;
-    setResendLoading(true);
-    setResendSuccess(false);
-
-    await authClient.sendVerificationEmail({
+  const handleSendOtp = async () => {
+    setError("");
+    await authClient.emailOtp.sendVerificationOtp({
       email,
+      type: "email-verification",
+    });
+    setOtpSent(true);
+  };
+
+  const handleVerifyOtp = async () => {
+    setError("");
+    setVerifying(true);
+
+    const { error } = await authClient.emailOtp.verifyEmail({
+      email,
+      otp,
+    });
+
+    if (error) {
+      setError(error.message || "Invalid code");
+      setVerifying(false);
+      return;
+    }
+
+    const { error: signInError } = await signIn.email({
+      email,
+      password,
       callbackURL: "/aixpense",
     });
 
-    setResendCount((prev) => prev + 1);
-    setResendSuccess(true);
-    setResendLoading(false);
+    if (signInError) {
+      setError(signInError.message || "Sign in failed after verification");
+      setVerifying(false);
+      return;
+    }
+
+    router.push("/aixpense");
   };
 
   return (
@@ -102,34 +129,49 @@ export function LoginForm() {
                 <div className="space-y-1">
                   <p className="text-sm font-medium">Email not verified</p>
                   <p className="text-xs text-muted-foreground">
-                    Please check your inbox for a verification link before
-                    signing in.
+                    Verify your email to sign in.
                   </p>
                 </div>
               </div>
-              {resendSuccess && (
-                <p className="text-xs text-green-600">
-                  Verification email sent!
-                </p>
-              )}
-              {resendCount < MAX_RESEND_ATTEMPTS ? (
+              {otpSent ? (
+                <div className="space-y-3">
+                  {error && (
+                    <div className="rounded-md bg-destructive/10 p-2 text-xs text-destructive">
+                      {error}
+                    </div>
+                  )}
+                  <div className="flex justify-center">
+                    <InputOTP maxLength={6} value={otp} onChange={setOtp}>
+                      <InputOTPGroup>
+                        <InputOTPSlot index={0} />
+                        <InputOTPSlot index={1} />
+                        <InputOTPSlot index={2} />
+                        <InputOTPSlot index={3} />
+                        <InputOTPSlot index={4} />
+                        <InputOTPSlot index={5} />
+                      </InputOTPGroup>
+                    </InputOTP>
+                  </div>
+                  <Button
+                    type="button"
+                    className="w-full"
+                    size="sm"
+                    onClick={handleVerifyOtp}
+                    disabled={verifying || otp.length !== 6}
+                  >
+                    {verifying ? "Verifying..." : "Verify & Sign In"}
+                  </Button>
+                </div>
+              ) : (
                 <Button
                   type="button"
                   variant="outline"
                   size="sm"
                   className="w-full"
-                  onClick={handleResend}
-                  disabled={resendLoading}
+                  onClick={handleSendOtp}
                 >
-                  {resendLoading
-                    ? "Sending..."
-                    : `Resend verification email (${MAX_RESEND_ATTEMPTS - resendCount} left)`}
+                  Send verification code
                 </Button>
-              ) : (
-                <p className="text-xs text-muted-foreground text-center">
-                  Maximum resend attempts reached. Please check your spam folder
-                  or try again later.
-                </p>
               )}
             </div>
           )}
