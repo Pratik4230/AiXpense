@@ -32,10 +32,10 @@ export default function LegalPageLayout({
         </Link>
       </header>
 
-      <main className="container mx-auto px-4 pb-20 relative z-10">
+      <main className="container mx-auto px-4 pb-12 sm:pb-20 relative z-10">
         <div className="max-w-3xl mx-auto">
-          <div className="mb-10">
-            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight mb-2">
+          <div className="mb-6 sm:mb-10">
+            <h1 className="text-2xl sm:text-4xl font-bold tracking-tight mb-2">
               {title}
             </h1>
             <p className="text-sm text-muted-foreground">

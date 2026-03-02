@@ -98,12 +98,14 @@ export function OverviewCards({ data, isLoading, mode }: Props) {
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
       {cards.map((c) => (
         <Card key={c.label} className="border-border/60">
-          <CardContent className="p-4 space-y-2">
+          <CardContent className="p-3 sm:p-4 space-y-1.5 sm:space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-xs text-muted-foreground">{c.label}</span>
-              <c.icon className="size-4 text-muted-foreground" />
+              <c.icon className="size-3.5 sm:size-4 text-muted-foreground shrink-0" />
             </div>
-            <p className="text-xl font-bold tracking-tight">{c.value}</p>
+            <p className="text-base sm:text-xl font-bold tracking-tight truncate">
+              {c.value}
+            </p>
             {c.sub}
           </CardContent>
         </Card>

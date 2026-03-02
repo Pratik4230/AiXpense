@@ -15,24 +15,24 @@ export default function BudgetsPage() {
   const existingCategories = budgets?.map((b) => b.category) ?? [];
 
   return (
-    <div className="container mx-auto max-w-2xl px-4 py-8 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="container mx-auto max-w-2xl px-4 py-5 sm:py-8 space-y-6">
+      <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <Link href="/aixpense">
-            <Button variant="ghost" size="icon" className="size-8">
+            <Button variant="ghost" size="icon" className="size-8 shrink-0">
               <ArrowLeft className="size-4" />
             </Button>
           </Link>
-          <div>
-            <h1 className="text-2xl font-bold">Budgets</h1>
+          <div className="min-w-0">
+            <h1 className="text-xl sm:text-2xl font-bold">Budgets</h1>
             <p className="text-sm text-muted-foreground">
               Monthly spending limits per category
             </p>
           </div>
         </div>
-        <Button size="sm" onClick={() => setAddOpen(true)}>
-          <Plus className="size-4 mr-1.5" />
-          Add budget
+        <Button size="sm" onClick={() => setAddOpen(true)} className="shrink-0">
+          <Plus className="size-4" />
+          <span className="hidden sm:inline ml-1.5">Add budget</span>
         </Button>
       </div>
 

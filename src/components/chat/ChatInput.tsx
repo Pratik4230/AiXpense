@@ -31,12 +31,12 @@ export function ChatInput({
 }: ChatInputProps) {
   const getPlaceholder = () => {
     if (!selectedTransaction) {
-      return "Type an expense... e.g., Coffee 50";
+      return "Coffee 50";
     }
     if (selectedTransaction.action === "delete") {
-      return "Send to confirm deletion...";
+      return "Send to confirm...";
     }
-    return "Type changes... e.g., change amount to 500";
+    return "Change amount to 500";
   };
 
   const canSubmit = selectedTransaction
@@ -44,8 +44,8 @@ export function ChatInput({
     : value.trim();
 
   return (
-    <div className="border-t border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 p-4">
-      <div className="max-w-3xl mx-auto space-y-3">
+    <div className="border-t border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 px-3 py-3 sm:px-4 sm:py-4">
+      <div className="sm:max-w-3xl sm:mx-auto space-y-3">
         {selectedTransaction && onClearTransaction && (
           <TransactionAttachment
             transaction={selectedTransaction}
@@ -85,7 +85,7 @@ export function ChatInput({
             disabled={isLoading}
             rows={1}
             className={cn(
-              "flex-1 min-h-12 max-h-30 px-4 py-3 rounded-xl border border-border bg-background resize-none overflow-hidden",
+              "flex-1 min-h-12 max-h-30 px-3 sm:px-4 py-3 rounded-xl border border-border bg-background resize-none overflow-hidden",
               "text-foreground placeholder:text-muted-foreground",
               "focus:outline-none focus:ring-2 focus:ring-primary/50",
               "disabled:opacity-50",

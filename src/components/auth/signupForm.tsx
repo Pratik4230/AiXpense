@@ -97,7 +97,7 @@ export function SignupForm() {
               {error}
             </div>
           )}
-          <div className="flex justify-center">
+          <div className="flex justify-center overflow-x-auto">
             <InputOTP maxLength={6} value={otp} onChange={setOtp}>
               <InputOTPGroup>
                 <InputOTPSlot index={0} />

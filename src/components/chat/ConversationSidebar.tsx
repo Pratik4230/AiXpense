@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Sheet,
   SheetContent,
@@ -99,7 +98,10 @@ export function ConversationSidebar({
   return (
     <>
       <Sheet open={open} onOpenChange={onOpenChange}>
-        <SheetContent side="left" className="w-72 p-0 flex flex-col">
+        <SheetContent
+          side="left"
+          className="w-72 p-0 flex flex-col overflow-y-hidden"
+        >
           <SheetHeader className="p-4 pb-2 border-b">
             <SheetTitle className="text-base">Conversations</SheetTitle>
             <SheetDescription className="sr-only">
@@ -118,7 +120,7 @@ export function ConversationSidebar({
             </Button>
           </div>
 
-          <ScrollArea className="flex-1">
+          <div className="flex-1 min-h-0 overflow-y-auto w-full">
             {isLoading ? (
               <div className="flex items-center justify-center py-8">
                 <Loader2 className="size-5 animate-spin text-muted-foreground" />
@@ -139,19 +141,19 @@ export function ConversationSidebar({
                         <div
                           key={conv._id}
                           className={cn(
-                            "group flex items-center gap-2 px-2 py-2 rounded-lg cursor-pointer hover:bg-muted transition-colors",
+                            "group flex items-center gap-2 px-2 py-2 rounded-lg cursor-pointer hover:bg-muted transition-colors w-full min-w-0",
                             currentConversationId === conv._id && "bg-muted",
                           )}
                           onClick={() => handleSelectConversation(conv._id)}
                         >
                           <MessageSquare className="size-4 shrink-0 text-muted-foreground" />
-                          <span className="flex-1 truncate text-sm">
+                          <span className="flex-1 text-sm truncate min-w-0">
                             {conv.title}
                           </span>
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="size-6 opacity-0 group-hover:opacity-100 transition-opacity"
+                            className="size-6 shrink-0 opacity-60 hover:opacity-100 transition-opacity"
                             onClick={(e) => {
                               e.stopPropagation();
                               setDeleteId(conv._id);
@@ -166,7 +168,7 @@ export function ConversationSidebar({
                 ))}
               </div>
             )}
-          </ScrollArea>
+          </div>
         </SheetContent>
       </Sheet>
 

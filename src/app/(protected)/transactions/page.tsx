@@ -90,15 +90,15 @@ function TransactionsContent() {
 
 export default function TransactionsPage() {
   return (
-    <div className="container mx-auto max-w-5xl px-4 py-8 space-y-6">
+    <div className="container mx-auto max-w-5xl px-4 py-5 sm:py-8 space-y-6">
       <div className="flex items-center gap-3">
         <Link href="/reports">
-          <Button variant="ghost" size="icon" className="size-8">
+          <Button variant="ghost" size="icon" className="size-8 shrink-0">
             <ArrowLeft className="size-4" />
           </Button>
         </Link>
         <div>
-          <h1 className="text-2xl font-bold">Transactions</h1>
+          <h1 className="text-xl sm:text-2xl font-bold">Transactions</h1>
           <p className="text-sm text-muted-foreground">
             All your expenses and income
           </p>

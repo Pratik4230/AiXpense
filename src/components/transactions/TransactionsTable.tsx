@@ -107,11 +107,11 @@ export function TransactionsTable({
   }
 
   return (
-    <div>
+    <div className="overflow-x-auto">
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead className="text-xs text-muted-foreground w-28">
+            <TableHead className="text-xs text-muted-foreground w-24 sm:w-28">
               <SortHeader
                 label="Date"
                 field="date"
@@ -153,7 +153,7 @@ export function TransactionsTable({
                   year: "numeric",
                 })}
               </TableCell>
-              <TableCell className="text-sm font-medium max-w-48 truncate">
+              <TableCell className="text-sm font-medium max-w-32 sm:max-w-48 truncate">
                 {tx.item}
               </TableCell>
               <TableCell>

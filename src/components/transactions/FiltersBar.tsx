@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Search, X, ChevronDown } from "lucide-react";
+import { Search, X, ChevronDown, SlidersHorizontal } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -17,6 +17,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 import { CATEGORIES } from "@/constants/expense";
 import type { TransactionFilters } from "@/services/transactions";
 
@@ -56,12 +57,12 @@ export function FiltersBar({
 
   return (
     <div className="space-y-3">
-      <div className="flex items-center flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2">
         <Select
           value={draft.type}
           onValueChange={(v) => onDraftChange({ type: v })}
         >
-          <SelectTrigger className="w-36 h-8 text-xs">
+          <SelectTrigger className="h-9 w-32 text-xs">
             <SelectValue placeholder="Type" />
           </SelectTrigger>
           <SelectContent>
@@ -73,11 +74,12 @@ export function FiltersBar({
 
         <Popover open={catOpen} onOpenChange={setCatOpen}>
           <PopoverTrigger asChild>
-            <Button variant="outline" size="sm" className="h-8 text-xs gap-1.5">
+            <Button variant="outline" className="h-9 text-xs gap-1.5 px-3">
+              <SlidersHorizontal className="size-3.5" />
               {draft.categories.length > 0
                 ? `${draft.categories.length} categories`
                 : "Category"}
-              <ChevronDown className="size-3" />
+              <ChevronDown className="size-3 ml-0.5" />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-56 p-2" align="start">
@@ -99,65 +101,78 @@ export function FiltersBar({
           </PopoverContent>
         </Popover>
 
-        <Input
-          type="date"
-          value={draft.from}
-          onChange={(e) => onDraftChange({ from: e.target.value })}
-          className="w-36 h-8 text-xs"
-        />
-        <span className="text-xs text-muted-foreground">to</span>
-        <Input
-          type="date"
-          value={draft.to}
-          onChange={(e) => onDraftChange({ to: e.target.value })}
-          className="w-36 h-8 text-xs"
-        />
+        <Separator orientation="vertical" className="h-9 hidden sm:block" />
 
-        <Input
-          type="number"
-          placeholder="Min ₹"
-          value={draft.minAmount}
-          onChange={(e) => onDraftChange({ minAmount: e.target.value })}
-          className="w-24 h-8 text-xs"
-        />
-        <Input
-          type="number"
-          placeholder="Max ₹"
-          value={draft.maxAmount}
-          onChange={(e) => onDraftChange({ maxAmount: e.target.value })}
-          className="w-24 h-8 text-xs"
-        />
+        <div className="flex items-center gap-1.5">
+          <Input
+            type="date"
+            value={draft.from}
+            onChange={(e) => onDraftChange({ from: e.target.value })}
+            className="h-9 w-32 text-xs"
+          />
+          <span className="text-xs text-muted-foreground shrink-0">to</span>
+          <Input
+            type="date"
+            value={draft.to}
+            onChange={(e) => onDraftChange({ to: e.target.value })}
+            className="h-9 w-32 text-xs"
+          />
+        </div>
 
-        <Button size="sm" className="h-8 gap-1.5 text-xs" onClick={onSearch}>
-          <Search className="size-3" />
-          Search
-        </Button>
+        <div className="flex items-center gap-1.5">
+          <Input
+            type="number"
+            placeholder="Min ₹"
+            value={draft.minAmount}
+            onChange={(e) => onDraftChange({ minAmount: e.target.value })}
+            className="h-9 w-20 text-xs"
+          />
+          <Input
+            type="number"
+            placeholder="Max ₹"
+            value={draft.maxAmount}
+            onChange={(e) => onDraftChange({ maxAmount: e.target.value })}
+            className="h-9 w-20 text-xs"
+          />
+        </div>
 
-        {hasActive && (
-          <Button
-            variant="ghost"
-            size="sm"
-            className="h-8 text-xs text-muted-foreground"
-            onClick={onClear}
-          >
-            <X className="size-3 mr-1" /> Clear
+        <div className="flex items-center gap-1.5 ml-auto">
+          {hasActive && (
+            <Button
+              variant="ghost"
+              className="h-9 text-xs text-muted-foreground px-2.5"
+              onClick={onClear}
+            >
+              <X className="size-3.5 mr-1" />
+              Clear
+            </Button>
+          )}
+          <Button className="h-9 gap-1.5 text-xs px-4" onClick={onSearch}>
+            <Search className="size-3.5" />
+            Search
           </Button>
-        )}
-
-        <span className="ml-auto text-xs text-muted-foreground">
-          {total} transactions
-        </span>
+        </div>
       </div>
 
-      {applied.categories.length > 0 && (
-        <div className="flex flex-wrap gap-1">
-          {applied.categories.map((cat) => (
-            <Badge key={cat} variant="secondary" className="text-xs capitalize">
-              {cat}
-            </Badge>
-          ))}
-        </div>
-      )}
+      <div className="flex items-center gap-2 flex-wrap">
+        <span className="text-xs text-muted-foreground">
+          {total} transactions
+        </span>
+        {applied.categories.length > 0 && (
+          <>
+            <Separator orientation="vertical" className="h-3" />
+            {applied.categories.map((cat) => (
+              <Badge
+                key={cat}
+                variant="secondary"
+                className="text-xs capitalize"
+              >
+                {cat}
+              </Badge>
+            ))}
+          </>
+        )}
+      </div>
     </div>
   );
 }

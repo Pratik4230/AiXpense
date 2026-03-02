@@ -2,6 +2,7 @@
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogFooter,
@@ -74,9 +75,14 @@ export function BudgetDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-sm">
+      <DialogContent className="w-[calc(100%-2rem)] sm:max-w-sm rounded-xl">
         <DialogHeader>
           <DialogTitle>{isEdit ? "Edit budget" : "Add budget"}</DialogTitle>
+          <DialogDescription className="sr-only">
+            {isEdit
+              ? "Update the monthly spending limit for this category."
+              : "Set a monthly spending limit for a category."}
+          </DialogDescription>
         </DialogHeader>
 
         <form
@@ -154,7 +160,7 @@ export function BudgetDialog({
             )}
           </form.Field>
 
-          <DialogFooter>
+          <DialogFooter className="flex-row gap-2 sm:gap-0">
             <Button
               type="button"
               variant="outline"

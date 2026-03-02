@@ -67,16 +67,16 @@ export default function ReportsPage() {
   );
 
   return (
-    <div className="container mx-auto max-w-5xl px-4 py-8 space-y-6">
+    <div className="container mx-auto max-w-5xl px-4 py-5 sm:py-8 space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
         <div className="flex items-center gap-3">
           <Link href="/aixpense">
-            <Button variant="ghost" size="icon" className="size-8">
+            <Button variant="ghost" size="icon" className="size-8 shrink-0">
               <ArrowLeft className="size-4" />
             </Button>
           </Link>
           <div>
-            <h1 className="text-2xl font-bold">Reports</h1>
+            <h1 className="text-xl sm:text-2xl font-bold">Reports</h1>
             <p className="text-sm text-muted-foreground">
               {mode === "expense" ? "Spending" : "Income"} insights and
               analytics
@@ -84,13 +84,13 @@ export default function ReportsPage() {
           </div>
         </div>
 
-        <div className="flex items-center gap-2 flex-wrap">
-          <div className="flex items-center gap-1 bg-muted/50 rounded-lg p-1">
+        <div className="overflow-x-auto">
+          <div className="flex items-center gap-1 bg-muted/50 rounded-lg p-1 whitespace-nowrap">
             {RANGES.map((r) => (
               <button
                 key={r.value}
                 onClick={() => updateParam("range", r.value)}
-                className={`px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
+                className={`px-2.5 sm:px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
                   range === r.value
                     ? "bg-background shadow-sm text-foreground"
                     : "text-muted-foreground hover:text-foreground"

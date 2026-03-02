@@ -72,7 +72,7 @@ export default async function BlogPostPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
 
-      <div className="container mx-auto px-4 py-20 relative z-10 max-w-3xl">
+      <div className="container mx-auto px-4 py-10 sm:py-20 relative z-10 max-w-3xl">
         <Link
           href="/blog"
           className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-10"
@@ -92,11 +92,11 @@ export default async function BlogPostPage({
           ))}
         </div>
 
-        <h1 className="text-4xl sm:text-5xl font-bold tracking-tight mb-6 leading-tight">
+        <h1 className="text-3xl sm:text-5xl font-bold tracking-tight mb-4 sm:mb-6 leading-tight">
           {post.title}
         </h1>
 
-        <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
+        <p className="text-base sm:text-xl text-muted-foreground mb-6 sm:mb-8 leading-relaxed">
           {post.description}
         </p>
 

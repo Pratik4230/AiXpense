@@ -88,7 +88,7 @@ export default function LandingPage() {
 
       <main className="container mx-auto px-4 relative z-10">
         {/* Hero Section */}
-        <section className="py-20 sm:py-32 text-center max-w-5xl mx-auto flex flex-col items-center">
+        <section className="py-14 sm:py-24 lg:py-32 text-center max-w-5xl mx-auto flex flex-col items-center">
           <div className="animate-in fade-in slide-in-from-bottom-4 duration-1000">
             <Badge
               variant="outline"
@@ -99,14 +99,14 @@ export default function LandingPage() {
             </Badge>
           </div>
 
-          <h1 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight mb-8 leading-[1.1] animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-100">
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight mb-6 sm:mb-8 leading-[1.15] animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-100">
             Track expenses with <br className="hidden sm:block" />
             <span className="bg-linear-to-r from-primary via-purple-500 to-pink-500 bg-clip-text text-transparent">
               Natural Language
             </span>
           </h1>
 
-          <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
+          <p className="text-base sm:text-xl text-muted-foreground mb-8 sm:mb-10 max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
             Stop filling out boring forms. Just type{" "}
             <span className="text-foreground font-medium">
               &quot;Lunch 250&quot;
@@ -118,10 +118,10 @@ export default function LandingPage() {
             . Our AI handles the categorization, tagging, and dates instantly.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300">
+          <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300">
             <SmartLink
               size="lg"
-              className="h-12 px-8 rounded-full text-lg shadow-xl shadow-primary/20 hover:shadow-primary/30 hover:scale-105 transition-all"
+              className="h-12 px-8 rounded-full text-base sm:text-lg shadow-xl shadow-primary/20 hover:shadow-primary/30 hover:scale-105 transition-all"
             >
               Start Tracking Free
               <ArrowRight className="ml-2 size-5" />
@@ -129,7 +129,7 @@ export default function LandingPage() {
           </div>
 
           {/* Chat Demo UI */}
-          <div className="mt-20 w-full max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-500">
+          <div className="mt-14 sm:mt-20 w-full sm:max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-500">
             <div className="rounded-2xl border border-border/50 bg-background/50 backdrop-blur-xl shadow-2xl overflow-hidden">
               <div className="border-b border-border/50 px-4 py-3 flex items-center gap-2 bg-muted/30">
                 <div className="flex gap-1.5">
@@ -141,10 +141,10 @@ export default function LandingPage() {
                   AiXpense Assistant
                 </div>
               </div>
-              <div className="p-6 sm:p-8 space-y-6 text-left">
+              <div className="p-3 sm:p-6 space-y-6 text-left">
                 {/* User Message */}
                 <div className="flex justify-end">
-                  <div className="bg-primary text-primary-foreground px-5 py-3 rounded-2xl rounded-tr-sm max-w-[80%] shadow-md">
+                  <div className="bg-primary text-primary-foreground px-4 py-3 rounded-2xl rounded-tr-sm max-w-[85%] shadow-md">
                     <p className="text-sm sm:text-base">
                       Ordered Pizza for team lunch 1200rs
                     </p>
@@ -152,16 +152,16 @@ export default function LandingPage() {
                 </div>
 
                 {/* AI Response */}
-                <div className="flex items-start gap-4 max-w-[90%]">
-                  <div className="size-8 rounded-full bg-linear-to-br from-purple-500 to-pink-500 flex items-center justify-center shrink-0 shadow-lg">
-                    <Sparkles className="size-4 text-white" />
+                <div className="flex items-start gap-3 sm:gap-4 max-w-[95%] sm:max-w-[90%]">
+                  <div className="size-7 sm:size-8 rounded-full bg-linear-to-br from-purple-500 to-pink-500 flex items-center justify-center shrink-0 shadow-lg">
+                    <Sparkles className="size-3.5 sm:size-4 text-white" />
                   </div>
-                  <div className="space-y-2">
-                    <div className="bg-muted/50 border border-border/50 px-5 py-4 rounded-2xl rounded-tl-sm shadow-sm backdrop-blur-sm">
+                  <div className="space-y-2 min-w-0 flex-1">
+                    <div className="bg-muted/50 border border-border/50 px-3 py-3 sm:px-4 sm:py-4 rounded-2xl rounded-tl-sm shadow-sm backdrop-blur-sm">
                       <p className="text-sm font-medium text-muted-foreground mb-2">
                         Expense added successfully!
                       </p>
-                      <div className="grid grid-cols-2 gap-x-8 gap-y-2 text-sm">
+                      <div className="grid grid-cols-2 gap-x-4 sm:gap-x-8 gap-y-2 text-sm">
                         <div className="text-muted-foreground">Item</div>
                         <div className="font-medium">Pizza</div>
 
@@ -170,11 +170,11 @@ export default function LandingPage() {
 
                         <div className="text-muted-foreground">Category</div>
                         <div className="font-medium text-purple-400">
-                          Food & Dining
+                          Food &amp; Dining
                         </div>
 
                         <div className="text-muted-foreground">Tags</div>
-                        <div className="font-medium text-xs flex gap-1">
+                        <div className="font-medium text-xs flex flex-wrap gap-1">
                           <span className="bg-primary/10 text-primary px-1.5 py-0.5 rounded">
                             #team
                           </span>
@@ -194,18 +194,18 @@ export default function LandingPage() {
         </section>
 
         {/* Features Section */}
-        <section className="py-24 sm:py-32 relative">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+        <section className="py-16 sm:py-24 lg:py-32 relative">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-2xl sm:text-4xl font-bold mb-4">
               Why use AiXpense?
             </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base px-2">
               Built for speed and simplicity. We stripped away the complex forms
               and kept only what matters.
             </p>
           </div>
 
-          <div className="grid gap-8 sm:grid-cols-3 max-w-6xl mx-auto">
+          <div className="grid gap-4 sm:gap-8 sm:grid-cols-3 max-w-6xl mx-auto">
             <FeatureCard
               icon={<MessageSquare className="size-6 text-blue-500" />}
               title="Natural Language"
@@ -227,29 +227,27 @@ export default function LandingPage() {
           </div>
         </section>
 
-        {/* CTA Section */}
-
         {/* How it works Section */}
-        <section className="py-24 sm:py-32 relative">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl font-bold mb-4">
+        <section className="py-16 sm:py-24 lg:py-32 relative">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-2xl sm:text-4xl font-bold mb-4">
               How AiXpense works
             </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base px-2">
               Start tracking your income and expenses in under 30 seconds. No
               setup. No spreadsheets. No categories to configure.
             </p>
           </div>
 
-          <div className="grid gap-8 sm:grid-cols-3 max-w-6xl mx-auto">
-            <div className="relative flex flex-col items-start p-8 rounded-2xl border border-border/50 bg-card/30 backdrop-blur-sm">
-              <div className="size-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-6 text-primary font-bold text-xl">
+          <div className="grid gap-4 sm:gap-8 sm:grid-cols-3 max-w-6xl mx-auto">
+            <div className="relative flex flex-col items-start p-6 sm:p-8 rounded-2xl border border-border/50 bg-card/30 backdrop-blur-sm">
+              <div className="size-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-5 sm:mb-6 text-primary font-bold text-xl">
                 1
               </div>
-              <h3 className="text-xl font-semibold mb-3">
+              <h3 className="text-lg sm:text-xl font-semibold mb-3">
                 Type your expense naturally
               </h3>
-              <p className="text-muted-foreground leading-relaxed">
+              <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
                 Just write what you spent — in plain English or Hindi. Try{" "}
                 <span className="text-foreground font-medium">
                   &quot;Zomato dinner 450&quot;
@@ -262,14 +260,14 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="relative flex flex-col items-start p-8 rounded-2xl border border-border/50 bg-card/30 backdrop-blur-sm">
-              <div className="size-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mb-6 text-purple-400 font-bold text-xl">
+            <div className="relative flex flex-col items-start p-6 sm:p-8 rounded-2xl border border-border/50 bg-card/30 backdrop-blur-sm">
+              <div className="size-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mb-5 sm:mb-6 text-purple-400 font-bold text-xl">
                 2
               </div>
-              <h3 className="text-xl font-semibold mb-3">
+              <h3 className="text-lg sm:text-xl font-semibold mb-3">
                 AI categorizes it instantly
               </h3>
-              <p className="text-muted-foreground leading-relaxed">
+              <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
                 Our AI automatically detects the amount, merchant, category,
                 tags, and date. Income vs expense is handled too — just say{" "}
                 <span className="text-foreground font-medium">
@@ -279,14 +277,14 @@ export default function LandingPage() {
               </p>
             </div>
 
-            <div className="relative flex flex-col items-start p-8 rounded-2xl border border-border/50 bg-card/30 backdrop-blur-sm">
-              <div className="size-12 rounded-xl bg-green-500/10 border border-green-500/20 flex items-center justify-center mb-6 text-green-400 font-bold text-xl">
+            <div className="relative flex flex-col items-start p-6 sm:p-8 rounded-2xl border border-border/50 bg-card/30 backdrop-blur-sm">
+              <div className="size-12 rounded-xl bg-green-500/10 border border-green-500/20 flex items-center justify-center mb-5 sm:mb-6 text-green-400 font-bold text-xl">
                 3
               </div>
-              <h3 className="text-xl font-semibold mb-3">
+              <h3 className="text-lg sm:text-xl font-semibold mb-3">
                 Track, budget &amp; analyse
               </h3>
-              <p className="text-muted-foreground leading-relaxed">
+              <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
                 View spending reports by category, set monthly budgets with
                 alerts, and get AI-powered insights on where your money actually
                 goes — all in real time.
@@ -296,20 +294,19 @@ export default function LandingPage() {
         </section>
 
         {/* CTA Section */}
-
-        <section className="py-24 text-center">
-          <div className="max-w-4xl mx-auto p-12 rounded-3xl border border-border bg-linear-to-b from-muted/50 to-background relative overflow-hidden">
+        <section className="py-16 sm:py-24 text-center">
+          <div className="max-w-4xl mx-auto p-6 sm:p-12 rounded-3xl border border-border bg-linear-to-b from-muted/50 to-background relative overflow-hidden">
             <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-primary/50 to-transparent" />
 
-            <h2 className="text-3xl sm:text-4xl font-bold mb-6">
+            <h2 className="text-2xl sm:text-4xl font-bold mb-4 sm:mb-6">
               Ready to take control?
             </h2>
-            <p className="text-lg text-muted-foreground mb-10 max-w-xl mx-auto">
+            <p className="text-base sm:text-lg text-muted-foreground mb-8 sm:mb-10 max-w-xl mx-auto">
               Join thousands of users who are saving time and money with
               AiXpense. No credit card required.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-6">
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <CheckCircle2 className="size-4 text-green-500" /> Start in
                 Seconds
@@ -325,10 +322,10 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="mt-10">
+            <div className="mt-8 sm:mt-10">
               <SmartLink
                 size="lg"
-                className="h-12 px-10 rounded-full text-lg shadow-lg hover:shadow-xl transition-all"
+                className="h-12 px-8 sm:px-10 rounded-full text-base sm:text-lg shadow-lg hover:shadow-xl transition-all"
               >
                 Get Started Now
               </SmartLink>

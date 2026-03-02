@@ -49,8 +49,8 @@ export function DangerZoneCard() {
         <CardTitle className="text-lg text-destructive">Danger Zone</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="flex items-center justify-between">
-          <div>
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0">
             <p className="text-sm font-medium">Delete account</p>
             <p className="text-xs text-muted-foreground">
               Permanently delete your account and all data
@@ -63,7 +63,7 @@ export function DangerZoneCard() {
                 Delete
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="w-[calc(100%-2rem)] sm:max-w-lg rounded-xl">
               <DialogHeader>
                 <DialogTitle>Delete your account?</DialogTitle>
                 <DialogDescription>
@@ -84,7 +84,7 @@ export function DangerZoneCard() {
                 />
                 {error && <p className="text-xs text-destructive">{error}</p>}
               </div>
-              <DialogFooter>
+              <DialogFooter className="flex-row gap-2 sm:gap-0">
                 <Button
                   variant="outline"
                   onClick={() => setOpen(false)}

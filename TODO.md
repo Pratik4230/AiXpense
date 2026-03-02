@@ -4,6 +4,12 @@ Sorted from easiest to hardest. Complete in order.
 
 ---
 
+## TOP PRIORITY
+
+- [ ] **Remove manual memoization across entire app** — React 19 + React Compiler handles memoization automatically. Strip all `useMemo`, `useCallback`, and `React.memo`/`memo()`. They are redundant. `useRef` and `useState` should stay.
+
+---
+
 ## EASY
 
 - [x] **textVerbosity: "low"** — Add `providerOptions.openai.textVerbosity: "low"` to `streamText` in `/api/chat/route.ts`.

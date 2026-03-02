@@ -187,12 +187,19 @@ export function Navbar() {
                 );
               })}
             </nav>
-            <div className="flex items-center justify-between pt-3 border-t border-border/50 px-1">
-              <ModeToggle />
+            <div className="pt-3 border-t border-border/50 space-y-2">
+              <div className="flex items-center justify-between px-1">
+                <span className="text-xs text-muted-foreground">Theme</span>
+                <ModeToggle />
+              </div>
               {mounted && session?.user && (
-                <div className="flex items-center gap-1">
+                <div className="grid grid-cols-2 gap-1">
                   <Link href="/profile" onClick={() => setMobileOpen(false)}>
-                    <Button variant="ghost" size="sm">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="w-full justify-start"
+                    >
                       <User className="size-4 mr-1.5" /> Profile
                     </Button>
                   </Link>
@@ -200,7 +207,7 @@ export function Navbar() {
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="text-muted-foreground"
+                      className="w-full justify-start text-muted-foreground"
                     >
                       <MessagesSquare className="size-4 mr-1.5" /> Feedback
                     </Button>
@@ -209,7 +216,7 @@ export function Navbar() {
                     variant="ghost"
                     size="sm"
                     onClick={handleSignOut}
-                    className="text-destructive hover:text-destructive"
+                    className="w-full justify-start text-destructive hover:text-destructive col-span-2"
                   >
                     <LogOut className="size-4 mr-1.5" /> Sign out
                   </Button>

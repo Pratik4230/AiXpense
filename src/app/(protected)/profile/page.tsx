@@ -8,10 +8,8 @@ import {
   ChangePasswordCard,
   PlanUsageCard,
   DangerZoneCard,
-  SessionsCard,
 } from "@/components/profile";
 import { getSubscription } from "@/actions/subscription";
-import { getSessions } from "@/actions/user";
 
 export default async function ProfilePage() {
   const session = await getSession();
@@ -20,20 +18,17 @@ export default async function ProfilePage() {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const user = session.user as any;
-  const [subscription, { sessions, currentSessionId }] = await Promise.all([
-    getSubscription(user.id),
-    getSessions(),
-  ]);
+  const subscription = await getSubscription(user.id);
 
   return (
-    <div className="container mx-auto max-w-2xl px-4 py-8 space-y-6">
+    <div className="container mx-auto max-w-2xl px-4 py-5 sm:py-8 space-y-6">
       <div className="flex items-center gap-3">
         <Link href="/aixpense">
-          <Button variant="ghost" size="icon" className="size-8">
+          <Button variant="ghost" size="icon" className="size-8 shrink-0">
             <ArrowLeft className="size-4" />
           </Button>
         </Link>
-        <h1 className="text-2xl font-bold">Settings</h1>
+        <h1 className="text-xl sm:text-2xl font-bold">Settings</h1>
       </div>
       <ProfileInfoCard name={user.name} email={user.email} />
       <PlanUsageCard
@@ -42,7 +37,6 @@ export default async function ProfilePage() {
         subscription={subscription}
       />
       <ChangePasswordCard />
-      <SessionsCard sessions={sessions} currentSessionId={currentSessionId} />
       <DangerZoneCard />
     </div>
   );
