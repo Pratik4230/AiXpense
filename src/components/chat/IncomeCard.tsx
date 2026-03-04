@@ -75,7 +75,7 @@ export function IncomeCard({
             </span>
           </div>
           {id && !isOutdated && (onEdit || onDelete) && (
-            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+            <div className="flex items-center gap-1 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
               {onEdit && (
                 <Button
                   variant="ghost"
