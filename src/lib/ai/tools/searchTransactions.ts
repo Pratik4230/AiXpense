@@ -238,6 +238,8 @@ IMPORTANT: When user refers to "today", use the exact UTC range above. All date 
             providerOptions: {
               openai: {
                 promptCacheKey: "specialist-system-v1",
+                store: false,
+                textVerbosity: "low",
               },
             },
           });

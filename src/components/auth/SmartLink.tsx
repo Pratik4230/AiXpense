@@ -1,7 +1,4 @@
-"use client";
-
-import { useRouter } from "next/navigation";
-import { useSession } from "@/lib/authClient";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ComponentProps, ReactNode } from "react";
 
@@ -21,25 +18,9 @@ export function SmartLink({
   size,
   className,
 }: SmartLinkProps) {
-  const router = useRouter();
-  const { data: session } = useSession();
-
-  const handleClick = () => {
-    if (session?.user) {
-      router.push("/aixpense");
-    } else {
-      router.push("/login");
-    }
-  };
-
   return (
-    <Button
-      onClick={handleClick}
-      variant={variant}
-      size={size}
-      className={className}
-    >
-      {children}
+    <Button variant={variant} size={size} className={className} asChild>
+      <Link href="/aixpense">{children}</Link>
     </Button>
   );
 }
@@ -51,20 +32,9 @@ export function SmartTextLink({
   children: ReactNode;
   className?: string;
 }) {
-  const router = useRouter();
-  const { data: session } = useSession();
-
-  const handleClick = () => {
-    if (session?.user) {
-      router.push("/aixpense");
-    } else {
-      router.push("/login");
-    }
-  };
-
   return (
-    <button onClick={handleClick} className={className}>
+    <Link href="/aixpense" className={className}>
       {children}
-    </button>
+    </Link>
   );
 }

@@ -39,18 +39,11 @@ export async function connectDB() {
   return cached.conn;
 }
 
-const mongoClientOptions = {};
-
-let mongoClient: MongoClient;
-
-if (process.env.NODE_ENV === "development") {
-  if (!global.mongoClient) {
-    global.mongoClient = new MongoClient(MONGO_URI, mongoClientOptions);
-  }
-  mongoClient = global.mongoClient;
-} else {
-  mongoClient = new MongoClient(MONGO_URI, mongoClientOptions);
+if (!global.mongoClient) {
+  global.mongoClient = new MongoClient(MONGO_URI);
 }
+
+const mongoClient: MongoClient = global.mongoClient;
 
 export const client = mongoClient;
 export const db = mongoClient.db();
