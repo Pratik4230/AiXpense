@@ -154,14 +154,14 @@ export function PlanUsageCard({
           <>
             <div className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground">
-                Free trials remaining
+                Free messages today
               </span>
               <span className="text-sm font-medium">{freeTrials}</span>
             </div>
             <div className="w-full bg-muted rounded-full h-2">
               <div
                 className="bg-primary rounded-full h-2 transition-all"
-                style={{ width: `${(freeTrials / 5) * 100}%` }}
+                style={{ width: `${(freeTrials / 7) * 100}%` }}
               />
             </div>
             <Link href="/premium">

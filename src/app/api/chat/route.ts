@@ -28,19 +28,49 @@ export async function POST(req: Request) {
 
   const userId = session.user.id;
 
+  const now = new Date();
+  const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+
   const dbUser = await db.collection("user").findOneAndUpdate(
     {
       _id: new ObjectId(userId),
-      $or: [{ isPremium: true }, { freeTrials: { $gt: 0 } }],
+      $or: [
+        { isPremium: true },
+        { freeTrials: { $gt: 0 } },
+        { freeTrialResetAt: { $lt: oneDayAgo } },
+      ],
     },
     [
       {
         $set: {
+          freeTrialResetAt: {
+            $cond: {
+              if: {
+                $and: [
+                  { $ne: ["$isPremium", true] },
+                  { $lt: ["$freeTrialResetAt", oneDayAgo] },
+                ],
+              },
+              then: now,
+              else: "$freeTrialResetAt",
+            },
+          },
           freeTrials: {
             $cond: {
               if: { $eq: ["$isPremium", true] },
               then: "$freeTrials",
-              else: { $subtract: ["$freeTrials", 1] },
+              else: {
+                $subtract: [
+                  {
+                    $cond: {
+                      if: { $lt: ["$freeTrialResetAt", oneDayAgo] },
+                      then: 7,
+                      else: "$freeTrials",
+                    },
+                  },
+                  1,
+                ],
+              },
             },
           },
         },
@@ -66,7 +96,6 @@ export async function POST(req: Request) {
     lastUserMessage && "text" in lastUserMessage ? lastUserMessage.text : "";
 
   const toolParams = { userId, rawInput };
-  const now = new Date();
 
   const currentDateStr = now.toLocaleDateString("en-IN", {
     weekday: "long",

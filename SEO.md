@@ -25,25 +25,25 @@
 
 ## SEO Done (this session)
 
-| File                             | What it does                                                                 |
-| -------------------------------- | ---------------------------------------------------------------------------- |
-| `src/app/layout.tsx`             | Root metadata — title template, description, keywords, OG, Twitter, manifest |
-| `src/app/sitemap.ts`             | Auto-generates `/sitemap.xml` with all public + blog URLs                    |
-| `src/app/robots.ts`              | Allows public pages, blocks all protected routes and API                     |
-| `src/app/opengraph-image.tsx`    | DELETED — replaced by static screenshot                                      |
-| `public/og-image.png`            | Real 1200×630 homepage screenshot — used as OG/Twitter image                 |
-| `public/site.webmanifest`        | PWA manifest for "Add to Home Screen" + browser branding                     |
-| `src/app/page.tsx`               | JSON-LD WebApplication schema + "How it works" section + Blog footer link    |
-| `src/app/(auth)/login/page.tsx`  | `robots: noindex` + canonical                                                |
-| `src/app/(auth)/signup/page.tsx` | `robots: noindex` + canonical                                                |
-| `src/app/contact/page.tsx`       | Improved description + canonical                                             |
-| `src/app/privacy/page.tsx`       | Improved description + canonical                                             |
-| `src/app/terms/page.tsx`         | Title template + canonical                                                   |
-| `src/app/refund/page.tsx`        | Title template + canonical                                                   |
-| `src/app/shipping/page.tsx`      | Better description + canonical                                               |
-| `src/lib/blog.ts`                | Reads MDX files from `src/content/blog/` automatically                       |
-| `src/app/blog/page.tsx`          | Blog listing at `/blog`                                                      |
-| `src/app/blog/[slug]/page.tsx`   | Individual posts with JSON-LD BlogPosting schema                             |
+| File                             | What it does                                                                                        |
+| -------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `src/app/layout.tsx`             | Root metadata — title template, description, keywords, OG, Twitter, manifest                        |
+| `src/app/sitemap.ts`             | Auto-generates `/sitemap.xml` with all public + blog URLs                                           |
+| `src/app/robots.ts`              | Allows public pages, blocks all protected routes and API                                            |
+| `src/app/opengraph-image.tsx`    | DELETED — replaced by static screenshot                                                             |
+| `public/og-image.png`            | Real 1200×630 homepage screenshot — used as OG/Twitter image                                        |
+| `public/site.webmanifest`        | PWA manifest for "Add to Home Screen" + browser branding                                            |
+| `src/app/page.tsx`               | JSON-LD WebApplication schema + Person schema (founder) + "How it works" section + Blog footer link |
+| `src/app/(auth)/login/page.tsx`  | `robots: noindex` + canonical                                                                       |
+| `src/app/(auth)/signup/page.tsx` | `robots: noindex` + canonical                                                                       |
+| `src/app/contact/page.tsx`       | Improved description + canonical                                                                    |
+| `src/app/privacy/page.tsx`       | Improved description + canonical                                                                    |
+| `src/app/terms/page.tsx`         | Title template + canonical                                                                          |
+| `src/app/refund/page.tsx`        | Title template + canonical                                                                          |
+| `src/app/shipping/page.tsx`      | Better description + canonical                                                                      |
+| `src/lib/blog.ts`                | Reads MDX files from `src/content/blog/` automatically                                              |
+| `src/app/blog/page.tsx`          | Blog listing at `/blog`                                                                             |
+| `src/app/blog/[slug]/page.tsx`   | Individual posts with JSON-LD BlogPosting schema                                                    |
 
 ### Blog posts live
 

@@ -11,7 +11,10 @@ async function resetTrials() {
 
     const result = await db
       .collection("user")
-      .updateMany({}, { $set: { isPremium: false, freeTrials: 5 } });
+      .updateMany(
+        {},
+        { $set: { freeTrials: 7, freeTrialResetAt: new Date(0) } },
+      );
 
     console.log(`Updated ${result.modifiedCount} users`);
     console.log(`Matched ${result.matchedCount} users`);

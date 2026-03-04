@@ -17,6 +17,25 @@ import {
   Zap,
 } from "lucide-react";
 import { SmartLink, SmartTextLink } from "@/components/auth/SmartLink";
+import { Button } from "@/components/ui/button";
+
+const personJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Person",
+  name: "Pratik Jadhav",
+  url: "https://www.linkedin.com/in/pratikjadhav1438/",
+  sameAs: [
+    "https://www.linkedin.com/in/pratikjadhav1438/",
+    "https://x.com/Pratik4230",
+    "https://twitter.com/Pratik4230",
+  ],
+  jobTitle: "Founder",
+  worksFor: {
+    "@type": "Organization",
+    name: "AiXpense",
+    url: "https://aixpense.in",
+  },
+};
 
 const jsonLd = {
   "@context": "https://schema.org",
@@ -62,6 +81,10 @@ export default function LandingPage() {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
       />
       {/* Background Gradients */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-125 bg-primary/20 blur-[120px] rounded-full opacity-50 pointer-events-none" />
@@ -289,6 +312,133 @@ export default function LandingPage() {
                 alerts, and get AI-powered insights on where your money actually
                 goes — all in real time.
               </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Pricing Section */}
+        <section id="pricing" className="py-16 sm:py-24 lg:py-32 relative">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-2xl sm:text-4xl font-bold mb-4">
+              Simple, honest pricing
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base px-2">
+              Start free. Upgrade when you need more.
+            </p>
+          </div>
+
+          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto items-start">
+            <div className="rounded-2xl border border-border/50 bg-card/30 backdrop-blur-sm p-6 sm:p-8 space-y-6">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground mb-1">
+                  Free
+                </p>
+                <p className="text-4xl font-bold">₹0</p>
+                <p className="text-sm text-muted-foreground mt-1">
+                  7 messages / day
+                </p>
+              </div>
+              <ul className="space-y-3 text-sm">
+                {[
+                  "7 AI messages per day",
+                  "Expense & income tracking",
+                  "AI categorization",
+                  "Search & filter transactions",
+                  "Mobile app access",
+                ].map((f) => (
+                  <li
+                    key={f}
+                    className="flex items-center gap-2 text-muted-foreground"
+                  >
+                    <CheckCircle2 className="size-4 text-green-500 shrink-0" />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <SmartLink variant="outline" className="w-full rounded-full">
+                Get Started Free
+              </SmartLink>
+            </div>
+
+            <div className="rounded-2xl border border-primary/40 bg-primary/5 backdrop-blur-sm p-6 sm:p-8 space-y-6 relative shadow-lg shadow-primary/10">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                <span className="bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full">
+                  Monthly
+                </span>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-muted-foreground mb-1">
+                  Premium
+                </p>
+                <div className="flex items-end gap-1">
+                  <p className="text-4xl font-bold">₹499</p>
+                  <p className="text-muted-foreground mb-1">/month</p>
+                </div>
+                <p className="text-sm text-muted-foreground mt-1">
+                  Unlimited everything
+                </p>
+              </div>
+              <ul className="space-y-3 text-sm">
+                {[
+                  "Unlimited AI messages",
+                  "Everything in Free",
+                  "AI spending coach (weekly/monthly)",
+                  "Shareable report cards",
+                  "Priority support",
+                ].map((f) => (
+                  <li key={f} className="flex items-center gap-2">
+                    <CheckCircle2 className="size-4 text-primary shrink-0" />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <Button
+                className="w-full rounded-full shadow-lg shadow-primary/20"
+                asChild
+              >
+                <Link href="/premium">Upgrade to Premium</Link>
+              </Button>
+            </div>
+
+            <div className="rounded-2xl border border-amber-500/30 bg-amber-500/5 backdrop-blur-sm p-6 sm:p-8 space-y-6 relative">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                <span className="bg-amber-500 text-white text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1">
+                  <Sparkles className="size-3" />
+                  Best Value
+                </span>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-muted-foreground mb-1">
+                  Premium Yearly
+                </p>
+                <div className="flex items-end gap-1">
+                  <p className="text-4xl font-bold">₹4,000</p>
+                  <p className="text-muted-foreground mb-1">/year</p>
+                </div>
+                <p className="text-sm text-green-500 font-medium mt-1">
+                  Save ₹2,000 vs monthly
+                </p>
+              </div>
+              <ul className="space-y-3 text-sm">
+                {[
+                  "Everything in Premium",
+                  "2 months free",
+                  "Locked-in pricing",
+                  "Receipt scanning (coming soon)",
+                  "Bank statement import (coming soon)",
+                ].map((f) => (
+                  <li key={f} className="flex items-center gap-2">
+                    <CheckCircle2 className="size-4 text-amber-500 shrink-0" />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <Button
+                className="w-full rounded-full bg-amber-500 hover:bg-amber-500/90 text-white border-0 shadow-lg shadow-amber-500/20"
+                asChild
+              >
+                <Link href="/premium">Get Best Value</Link>
+              </Button>
             </div>
           </div>
         </section>

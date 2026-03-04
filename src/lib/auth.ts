@@ -74,7 +74,11 @@ export const auth = betterAuth({
       },
       freeTrials: {
         type: "number",
-        defaultValue: 5,
+        defaultValue: 7,
+      },
+      freeTrialResetAt: {
+        type: "string",
+        defaultValue: new Date().toISOString(),
       },
       onboardingCompleted: {
         type: "boolean",

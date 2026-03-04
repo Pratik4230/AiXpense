@@ -16,6 +16,7 @@ bun lint         # Run ESLint (eslint-config-next)
 ```
 
 Scripts in `scripts/`:
+
 - `createRazorpayPlans.ts` - Create Razorpay subscription plans
 - `reset-trials.ts` - Reset user free trial counts
 
@@ -52,10 +53,11 @@ The chat system uses a **two-tier agent pattern**:
 2. **Specialist Agent** (inside `searchTransactions` tool): Converts natural language to MongoDB queries using a separate LLM call
 
 AI tools use a **factory pattern** that injects user context:
+
 ```typescript
 // Tools are created per-request with user context
-createSaveExpenseTool({ userId, rawInput })
-createSearchTransactionsTool({ userId, currentDate })
+createSaveExpenseTool({ userId, rawInput });
+createSearchTransactionsTool({ userId, currentDate });
 ```
 
 Available tools: `saveExpense`, `saveIncome`, `searchTransactions`, `deleteTransaction`, `updateTransaction`
@@ -63,6 +65,7 @@ Available tools: `saveExpense`, `saveIncome`, `searchTransactions`, `deleteTrans
 ### Data Models
 
 **Expense** (used for both expenses and incomes):
+
 - `userId`, `item`, `amount`, `category`, `type` ("expense" | "income"), `date`, `rawInput`
 - Categories defined in `src/lib/constants/expense.ts`
 
@@ -73,8 +76,10 @@ Available tools: `saveExpense`, `saveIncome`, `searchTransactions`, `deleteTrans
 ### Authentication
 
 Uses `better-auth` with MongoDB adapter. User model includes:
+
 - `isPremium: boolean` - Premium subscription status
-- `freeTrials: number` - Remaining free AI interactions (default 5)
+- `freeTrials: number` - Remaining free AI messages for today (resets to 7 every 24h)
+- `freeTrialResetAt: string` (ISO date) - Timestamp of last daily reset
 
 Auth client: `src/lib/authClient.ts` (React hooks)
 Auth server: `src/lib/auth.ts` (API configuration)

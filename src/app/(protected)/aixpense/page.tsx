@@ -16,9 +16,11 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Crown, AlertTriangle } from "lucide-react";
+import { Crown, AlertTriangle, Sparkles, X } from "lucide-react";
 import { useConversation } from "@/services/conversations";
 import { MAX_MESSAGES_PER_CONVERSATION } from "@/constants/conversation";
+
+const FREE_DAILY_LIMIT = 7;
 
 interface UserWithTrial {
   isPremium?: boolean;
@@ -33,6 +35,7 @@ export default function AiXpensePage() {
 
   const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
   const [showLimitDialog, setShowLimitDialog] = useState(false);
+  const [bannerDismissed, setBannerDismissed] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [justCreatedConvId, setJustCreatedConvId] = useState<string | null>(
     null,
@@ -100,6 +103,9 @@ export default function AiXpensePage() {
       ? `conv-${conversationId}-${conversationData?.updatedAt || "loading"}`
       : `new-${newChatId}`;
 
+  const showUpgradeBanner =
+    !isPremium && !bannerDismissed && displayTrials <= 2 && displayTrials > 0;
+
   return (
     <div className="flex h-full overflow-hidden">
       {!isSessionLoading && <OnboardingModal open={!onboardingCompleted} />}
@@ -111,6 +117,32 @@ export default function AiXpensePage() {
       />
 
       <div className="flex-1 flex flex-col relative min-w-0">
+        {showUpgradeBanner && (
+          <div className="relative z-20 flex items-center justify-between gap-3 px-4 py-2.5 bg-amber-500/10 border-b border-amber-500/20 text-sm">
+            <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400 font-medium">
+              <Sparkles className="size-4 shrink-0" />
+              <span>
+                {displayTrials === 1
+                  ? "Last free message today — "
+                  : `${displayTrials} free messages left today — `}
+                <button
+                  onClick={() => router.push("/premium")}
+                  className="underline underline-offset-2 hover:text-amber-500 transition-colors"
+                >
+                  Upgrade for unlimited
+                </button>
+              </span>
+            </div>
+            <button
+              onClick={() => setBannerDismissed(true)}
+              className="text-amber-600/60 hover:text-amber-600 transition-colors shrink-0"
+              aria-label="Dismiss banner"
+            >
+              <X className="size-4" />
+            </button>
+          </div>
+        )}
+
         {isConversationLoading && conversationId && !isJustCreated ? (
           <div className="flex-1 flex items-center justify-center">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -152,8 +184,8 @@ export default function AiXpensePage() {
                 Upgrade to Premium
               </DialogTitle>
               <DialogDescription>
-                You&apos;ve used all your free AI interactions for this account.
-                Upgrade to Premium to unlock unlimited access.
+                You&apos;ve used all your free messages for today. Upgrade to
+                Premium for unlimited access — resets every day.
               </DialogDescription>
             </DialogHeader>
             <div className="py-4">
@@ -161,7 +193,7 @@ export default function AiXpensePage() {
                 <div className="flex items-center justify-between text-sm">
                   <span>Free Plan</span>
                   <span className="text-muted-foreground">
-                    5 messages / user
+                    {FREE_DAILY_LIMIT} messages / day
                   </span>
                 </div>
                 <div className="flex items-center justify-between font-semibold">

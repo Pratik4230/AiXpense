@@ -34,8 +34,8 @@ export function TrialStatus({
       onClick={onUpgradeClick}
     >
       <Sparkles className="size-3" />
-      <span className="hidden sm:inline">{freeTrials} / 5 Trials</span>
-      <span className="sm:hidden">{freeTrials}/5</span>
+      <span className="hidden sm:inline">{freeTrials} / 7 today</span>
+      <span className="sm:hidden">{freeTrials}/7</span>
     </Badge>
   );
 }
