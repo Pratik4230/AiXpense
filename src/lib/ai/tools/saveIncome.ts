@@ -3,6 +3,7 @@ import { z } from "zod";
 import { connectDB } from "@/lib/db";
 import { Expense } from "@/models";
 import { CATEGORIES } from "@/constants/expense";
+import mongoose from "mongoose";
 
 interface SaveIncomeParams {
   userId: string;
@@ -28,8 +29,11 @@ export const createSaveIncomeTool = ({ userId, rawInput }: SaveIncomeParams) =>
     execute: async ({ source, amount, category, subcategory, tags }) => {
       await connectDB();
 
+      // Fix: cast to ObjectId for consistent querying (was raw string before)
+      const userObjectId = new mongoose.Types.ObjectId(userId);
+
       const income = await Expense.create({
-        userId,
+        userId: userObjectId,
         item: source,
         amount,
         category,
@@ -50,7 +54,6 @@ export const createSaveIncomeTool = ({ userId, rawInput }: SaveIncomeParams) =>
           category: income.category,
           subcategory: income.subcategory,
           tags: income.tags,
-
           date: income.date.toISOString(),
         },
       };

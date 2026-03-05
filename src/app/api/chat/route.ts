@@ -110,7 +110,7 @@ export async function POST(req: Request) {
     messages: await convertToModelMessages(messages),
     providerOptions: {
       openai: {
-        reasoningEffort: "minimal",
+        reasoningEffort: "low",
         textVerbosity: "low",
         user: userId,
         safetyIdentifier: userId,

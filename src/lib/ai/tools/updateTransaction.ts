@@ -1,8 +1,9 @@
 import { tool } from "ai";
 import { z } from "zod";
 import { connectDB } from "@/lib/db";
-import { Expense } from "@/models";
+import { Expense, Budget } from "@/models";
 import { CATEGORIES } from "@/constants/expense";
+import mongoose from "mongoose";
 
 interface UpdateTransactionParams {
   userId: string;
@@ -61,11 +62,47 @@ export const createUpdateTransactionTool = ({
       const updated = await Expense.findByIdAndUpdate(
         transactionId,
         { $set: updateData },
-        { new: true },
+        { returnDocument: "after" },
       );
+
+      let budgetStatus = null;
+
+      if (updated?.type === "expense" && (updates.amount || updates.category)) {
+        const effectiveCategory = updated.category;
+        const userObjectId = new mongoose.Types.ObjectId(userId);
+        const start = new Date(now.getFullYear(), now.getMonth(), 1);
+        const end = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+
+        const budget = await Budget.findOne({
+          userId: userObjectId,
+          category: effectiveCategory,
+        }).lean();
+
+        if (budget) {
+          const [agg] = await Expense.aggregate([
+            {
+              $match: {
+                userId: userObjectId,
+                category: effectiveCategory,
+                type: "expense",
+                date: { $gte: start, $lt: end },
+              },
+            },
+            { $group: { _id: null, total: { $sum: "$amount" } } },
+          ]);
+          const spent = agg?.total ?? 0;
+          budgetStatus = {
+            category: effectiveCategory,
+            limit: budget.amount,
+            spent,
+            percent: Math.round((spent / budget.amount) * 100),
+          };
+        }
+      }
 
       return {
         success: true,
+        previousAmount: transaction.amount,
         transaction: {
           id: transactionId,
           item: updated?.item,
@@ -75,6 +112,7 @@ export const createUpdateTransactionTool = ({
           type: updated?.type,
           tags: updated?.tags || [],
         },
+        budgetStatus,
       };
     },
   });
