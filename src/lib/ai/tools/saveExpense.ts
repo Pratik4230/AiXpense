@@ -58,6 +58,7 @@ export const createSaveExpenseTool = ({
         Budget.findOne({ userId: userObjectId, category }).lean(),
       ]);
 
+
       let budgetStatus = null;
 
       if (budget) {

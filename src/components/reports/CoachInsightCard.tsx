@@ -1,0 +1,142 @@
+"use client";
+
+import { useState } from "react";
+import { Download, Lock, Sparkles } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useLatestInsight } from "@/services/insights";
+import { useSession } from "@/lib/authClient";
+import Link from "next/link";
+
+function fmt(n: number) {
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0,
+  }).format(n);
+}
+
+function getPeriodLabel(periodKey: string) {
+  if (periodKey.startsWith("week-")) {
+    const date = new Date(periodKey.replace("week-", ""));
+    return `Week of ${date.toLocaleDateString("en-IN", { day: "numeric", month: "long" })}`;
+  }
+  if (periodKey.startsWith("month-")) {
+    const [year, month] = periodKey.replace("month-", "").split("-");
+    const date = new Date(Number(year), Number(month) - 1, 1);
+    return date.toLocaleDateString("en-IN", { month: "long", year: "numeric" });
+  }
+  return periodKey;
+}
+
+export function CoachInsightCard() {
+  const { data: insight, isLoading } = useLatestInsight();
+  const { data: session } = useSession();
+  const isPremium = (session?.user as { isPremium?: boolean })?.isPremium ?? false;
+  const [downloading, setDownloading] = useState(false);
+
+  async function handleDownload() {
+    if (!insight) return;
+    setDownloading(true);
+    try {
+      const res = await fetch(`/api/og/insight?id=${insight.id}`);
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `aixpense-insight-${insight.periodKey}.png`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } finally {
+      setDownloading(false);
+    }
+  }
+
+  if (isLoading) {
+    return <Skeleton className="h-48 rounded-xl" />;
+  }
+
+  if (!isPremium) {
+    return (
+      <Card className="border-border/60 overflow-hidden">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm font-medium flex items-center gap-2">
+            <Sparkles className="size-4 text-amber-500" />
+            AI Coach Insight
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="relative">
+          <div className="space-y-2 select-none">
+            <div className="h-3 bg-muted rounded w-full" />
+            <div className="h-3 bg-muted rounded w-5/6" />
+            <div className="h-3 bg-muted rounded w-4/6" />
+            <div className="h-3 bg-muted rounded w-full" />
+            <div className="h-3 bg-muted rounded w-3/4" />
+          </div>
+          <div className="absolute inset-0 bg-linear-to-b from-transparent via-background/60 to-background flex flex-col items-center justify-end pb-4 gap-3">
+            <div className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground">
+              <Lock className="size-3.5" />
+              Premium feature
+            </div>
+            <Link href="/premium">
+              <Button size="sm" className="bg-amber-600 hover:bg-amber-700 text-white">
+                Upgrade to unlock
+              </Button>
+            </Link>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (!insight) {
+    return (
+      <Card className="border-border/60">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-sm font-medium flex items-center gap-2">
+            <Sparkles className="size-4 text-amber-500" />
+            AI Coach Insight
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-sm text-muted-foreground">
+            Your first insight will arrive after your weekly or monthly summary is generated. Keep logging!
+          </p>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  const period = getPeriodLabel(insight.periodKey);
+
+  return (
+    <Card className="border-amber-500/20 bg-linear-to-br from-amber-950/10 to-background overflow-hidden">
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-sm font-medium flex items-center gap-2">
+            <Sparkles className="size-4 text-amber-500" />
+            AI Coach Insight
+          </CardTitle>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleDownload}
+            disabled={downloading}
+            className="gap-1.5 text-xs text-muted-foreground hover:text-amber-500 h-7 px-2"
+          >
+            <Download className="size-3.5" />
+            {downloading ? "Saving..." : "Save for Instagram"}
+          </Button>
+        </div>
+        <div className="flex items-baseline gap-2 mt-1">
+          <span className="text-2xl font-bold tracking-tight">{fmt(insight.totalSpent)}</span>
+          <span className="text-xs text-muted-foreground">{period}</span>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <p className="text-sm leading-relaxed text-foreground/80">{insight.content}</p>
+      </CardContent>
+    </Card>
+  );
+}

@@ -11,3 +11,4 @@ export { Subscription } from "./Subscription";
 export { AiUsage, type IAiUsage } from "./AiUsage";
 export { DeletedEmail } from "./DeletedEmail";
 export { Issue, type IIssue, type IIssueDocument } from "./Issue";
+export { Insight, type IInsight, type IInsightDocument } from "./Insight";

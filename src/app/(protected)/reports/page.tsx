@@ -11,6 +11,7 @@ import {
   CategoryChart,
   BudgetVsActual,
   TopExpenses,
+  CoachInsightCard,
 } from "@/components/reports";
 import {
   useReportOverview,
@@ -125,6 +126,8 @@ export default function ReportsPage() {
           isLoading={overviewLoading}
           mode={mode}
         />
+
+        <CoachInsightCard />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <TrendChart

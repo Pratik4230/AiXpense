@@ -14,6 +14,7 @@ import {
   DeletedEmail,
 } from "@/models";
 import { isDisposableEmail } from "@/lib/auth/blockedDomains";
+import { inngest } from "@/inngest/client";
 
 export const auth = betterAuth({
   database: mongodbAdapter(db, { client }),
@@ -126,6 +127,23 @@ export const auth = betterAuth({
                 freeTrials: deleted.trialsRemaining,
               },
             };
+          }
+        },
+        after: async (user) => {
+          try {
+            await inngest.send({
+              name: "user/created",
+              data: {
+                userId: user.id,
+                email: user.email,
+                name: user.name,
+              },
+            });
+          } catch (error) {
+            console.error(
+              "[Inngest] Failed to send user/created event:",
+              error,
+            );
           }
         },
       },
