@@ -1,6 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Suggestions, Suggestion } from "@/components/ai-elements/suggestion";
-import { SUGGESTIONS } from "@/constants/suggestions";
 import { cn } from "@/lib/utils";
 import { SendHorizonal, Loader2 } from "lucide-react";
 import {
@@ -12,9 +10,7 @@ interface ChatInputProps {
   value: string;
   onChange: (value: string) => void;
   onSubmit: (e: React.FormEvent) => void;
-  onSuggestionClick?: (suggestion: string) => void;
   isLoading: boolean;
-  showSuggestions?: boolean;
   selectedTransaction?: SelectedTransaction | null;
   onClearTransaction?: () => void;
 }
@@ -23,19 +19,13 @@ export function ChatInput({
   value,
   onChange,
   onSubmit,
-  onSuggestionClick,
   isLoading,
-  showSuggestions = true,
   selectedTransaction,
   onClearTransaction,
 }: ChatInputProps) {
   const getPlaceholder = () => {
-    if (!selectedTransaction) {
-      return "Coffee 50";
-    }
-    if (selectedTransaction.action === "delete") {
-      return "Send to confirm...";
-    }
+    if (!selectedTransaction) return "Coffee 50";
+    if (selectedTransaction.action === "delete") return "Send to confirm...";
     return "Change amount to 500";
   };
 
@@ -53,18 +43,6 @@ export function ChatInput({
           />
         )}
 
-        {showSuggestions && !selectedTransaction && (
-          <Suggestions>
-            {SUGGESTIONS.map((suggestion) => (
-              <Suggestion
-                key={suggestion}
-                suggestion={suggestion}
-                onClick={onSuggestionClick}
-                disabled={isLoading}
-              />
-            ))}
-          </Suggestions>
-        )}
         <form onSubmit={onSubmit} className="flex gap-2 items-end">
           <textarea
             value={value}

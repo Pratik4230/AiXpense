@@ -146,3 +146,23 @@
 .recharts-pie-label-text {
   fill: var(--muted-foreground) !important;
 }
+
+@property --beam-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes beam-spin {
+  to { --beam-angle: 360deg; }
+}
+
+.suggestion-beam {
+  background: conic-gradient(
+    from var(--beam-angle),
+    transparent 75%,
+    var(--primary) 88%,
+    transparent 95%
+  );
+  animation: beam-spin 2.5s linear infinite;
+}

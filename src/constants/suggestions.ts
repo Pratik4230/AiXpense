@@ -1,7 +1,9 @@
 export const SUGGESTIONS = [
-  "Ordered pizza for team lunch 1500",
-  "Uber to airport 450",
-  "Salary credited 1.5L",
-  "Paid rent 15000",
-  "Netflix subscription 499",
+  "Coffee 80",
+  "Zomato dinner 450",
+  "Salary received 55000",
+  "Paid rent 12000",
+  "Groceries at DMart 1800",
+  "Electricity bill 800",
+  "Netflix 499",
 ];

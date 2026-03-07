@@ -302,7 +302,10 @@ export function ChatView({
       <Conversation className="flex-1">
         <ConversationContent className="px-4 sm:px-6 max-w-3xl mx-auto w-full pt-14">
           {chatMessages.length === 0 ? (
-            <ChatEmptyState />
+            <ChatEmptyState
+              onSuggestionClick={handleSuggestionClick}
+              isLoading={isLoading}
+            />
           ) : (
             chatMessages.map((message) => (
               <Message
@@ -599,9 +602,7 @@ export function ChatView({
         value={input}
         onChange={setInput}
         onSubmit={handleSubmit}
-        onSuggestionClick={handleSuggestionClick}
         isLoading={isLoading}
-        showSuggestions={chatMessages.length === 0}
         selectedTransaction={selectedTransaction}
         onClearTransaction={() => setSelectedTransaction(null)}
       />

@@ -11,6 +11,7 @@ const protectedRoutes = [
   "/admin",
 ];
 const authRoutes = [
+  "/",
   "/login",
   "/signup",
   "/forgot-password",
