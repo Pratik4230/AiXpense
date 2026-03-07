@@ -12,6 +12,7 @@ export function useSarvamSTT() {
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const streamRef = useRef<MediaStream | null>(null);
+  const mimeTypeRef = useRef<string>("audio/webm");
   const audioContextRef = useRef<AudioContext | null>(null);
   const silenceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const rafRef = useRef<number | null>(null);
@@ -62,9 +63,11 @@ export function useSarvamSTT() {
   const sendAudio = async (chunks: Blob[]) => {
     setStatus("processing");
 
-    const audioBlob = new Blob(chunks, { type: "audio/webm" });
+    const mimeType = mimeTypeRef.current;
+    const ext = mimeType.includes("mp4") ? "mp4" : "webm";
+    const audioBlob = new Blob(chunks, { type: mimeType });
     const formData = new FormData();
-    formData.append("audio", audioBlob, "audio.webm");
+    formData.append("audio", audioBlob, `audio.${ext}`);
 
     try {
       const res = await fetch("/api/voice", {
@@ -94,7 +97,12 @@ export function useSarvamSTT() {
       streamRef.current = stream;
       chunksRef.current = [];
 
-      const mediaRecorder = new MediaRecorder(stream, { mimeType: "audio/webm" });
+      const mimeType = MediaRecorder.isTypeSupported("audio/webm")
+        ? "audio/webm"
+        : "audio/mp4";
+      mimeTypeRef.current = mimeType;
+
+      const mediaRecorder = new MediaRecorder(stream, { mimeType });
       mediaRecorderRef.current = mediaRecorder;
 
       mediaRecorder.ondataavailable = (e) => {

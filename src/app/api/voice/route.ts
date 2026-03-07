@@ -11,7 +11,7 @@ export async function POST(req: Request) {
     }
 
     const sarvamForm = new FormData();
-    sarvamForm.append("file", audio, "audio.webm");
+    sarvamForm.append("file", audio, audio.name || "audio.webm");
     sarvamForm.append("model", "saaras:v3");
     sarvamForm.append("mode", "codemix");
 
@@ -24,6 +24,8 @@ export async function POST(req: Request) {
     });
 
     if (!response.ok) {
+      const errBody = await response.text();
+      console.error(`Sarvam error ${response.status}:`, errBody);
       throw new Error(`Sarvam error: ${response.status}`);
     }
 
