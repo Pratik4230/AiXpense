@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
+import { useSession } from "@/lib/authClient";
 import {
   Dialog,
   DialogContent,
@@ -67,7 +67,7 @@ interface OnboardingModalProps {
 }
 
 export function OnboardingModal({ open }: OnboardingModalProps) {
-  const router = useRouter();
+  const { refetch } = useSession();
   const [step, setStep] = useState(0);
   const [done, setDone] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -79,7 +79,7 @@ export function OnboardingModal({ open }: OnboardingModalProps) {
     setDone(true);
     startTransition(async () => {
       await completeOnboarding();
-      router.refresh();
+      await refetch();
     });
   }
 
