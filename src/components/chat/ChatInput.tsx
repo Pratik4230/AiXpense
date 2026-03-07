@@ -1,11 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { SendHorizonal, Loader2 } from "lucide-react";
+import { SendHorizonal, Loader2, MicOff, Mic } from "lucide-react";
 import { useRef, useEffect } from "react";
 import {
   TransactionAttachment,
   type SelectedTransaction,
 } from "./TransactionAttachment";
+import { useSarvamSTT } from "@/hooks/useSarvamSTT";
 
 interface ChatInputProps {
   value: string;
@@ -17,7 +18,8 @@ interface ChatInputProps {
 }
 
 const isMobile = () =>
-  typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
+  typeof window !== "undefined" &&
+  window.matchMedia("(pointer: coarse)").matches;
 
 export function ChatInput({
   value,
@@ -29,11 +31,46 @@ export function ChatInput({
 }: ChatInputProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  const { status, transcript, startRecording, stopRecording, resetTranscript } =
+    useSarvamSTT();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    if (isMobile()) {
+      textareaRef.current?.blur();
+    }
+    onSubmit(e);
+  };
+
+  const shouldAutoSubmitRef = useRef(false);
+
+  useEffect(() => {
+    if (transcript) {
+      shouldAutoSubmitRef.current = true;
+      onChange(transcript);
+      resetTranscript();
+    }
+  }, [transcript]);
+
+  useEffect(() => {
+    if (shouldAutoSubmitRef.current && value.trim()) {
+      shouldAutoSubmitRef.current = false;
+      handleSubmit({ preventDefault: () => {} } as React.FormEvent);
+    }
+  }, [value]);
+
   useEffect(() => {
     if (!isLoading && !isMobile()) {
       textareaRef.current?.focus();
     }
   }, [isLoading]);
+
+  const handleMicClick = () => {
+    if (status === "recording") {
+      stopRecording();
+    } else {
+      startRecording();
+    }
+  };
 
   const getPlaceholder = () => {
     if (!selectedTransaction) return "Coffee 50";
@@ -44,13 +81,6 @@ export function ChatInput({
   const canSubmit = selectedTransaction
     ? selectedTransaction.action === "delete" || value.trim()
     : value.trim();
-
-  const handleSubmit = (e: React.FormEvent) => {
-    if (isMobile()) {
-      textareaRef.current?.blur();
-    }
-    onSubmit(e);
-  };
 
   return (
     <div className="border-t border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 px-3 py-3 sm:px-4 sm:py-4">
@@ -89,6 +119,24 @@ export function ChatInput({
               "disabled:opacity-50",
             )}
           />
+
+          <Button
+            type="button"
+            size="lg"
+            variant="outline"
+            onClick={handleMicClick}
+            disabled={isLoading || status === "processing"}
+            className="h-12 w-12 rounded-xl shrink-0"
+          >
+            {status === "recording" ? (
+              <MicOff className="size-5 text-red-500" />
+            ) : status === "processing" ? (
+              <Loader2 className="size-5 animate-spin" />
+            ) : (
+              <Mic className="size-5" />
+            )}
+          </Button>
+
           <Button
             type="submit"
             size="lg"

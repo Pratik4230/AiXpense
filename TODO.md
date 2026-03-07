@@ -78,15 +78,18 @@
 
 ---
 
-## Pending — Sprint: Voice Input (1 day)
+## Done — Sprint: Voice Input
 
-- [ ] Add mic button next to chat input
-- [ ] Implement Web Speech API (`window.SpeechRecognition`), set `lang` to `en-IN`
-- [ ] Show live interim transcript in input field while user speaks (italic/gray style)
-- [ ] After speech ends, show "Confirm & Send" button — let user edit before submitting
-- [ ] Hide mic button if browser doesn't support it, show tooltip "Works best on Chrome"
-- [ ] Test with Hinglish: "aaj lunch 200 tha", "petrol bhara 800", "received salary 50000"
-- [ ] Handle mic permission denied error with friendly message
+- [x] Mic button next to chat input
+- [x] Sarvam AI saaras:v3 via `POST /api/voice` (backend-proxied, key never exposed)
+- [x] MediaRecorder records `webm/opus` in browser
+- [x] Silence detection via AudioContext + AnalyserNode (800ms, threshold 20)
+- [x] Hardware noise suppression via getUserMedia constraints
+- [x] Auto-submit after transcript fills input (useRef bridge for async state)
+- [x] Manual mic click stop also supported
+- [x] codemix mode — Hinglish, Marathi+Hindi+English all supported
+- [x] System prompt updated for all Indian languages
+- [x] Android-ready: same `/api/voice` route works for mobile app
 
 ---
 
