@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { SendHorizonal, Loader2 } from "lucide-react";
+import { useRef, useEffect } from "react";
 import {
   TransactionAttachment,
   type SelectedTransaction,
@@ -15,6 +16,9 @@ interface ChatInputProps {
   onClearTransaction?: () => void;
 }
 
+const isMobile = () =>
+  typeof window !== "undefined" && window.matchMedia("(pointer: coarse)").matches;
+
 export function ChatInput({
   value,
   onChange,
@@ -23,6 +27,14 @@ export function ChatInput({
   selectedTransaction,
   onClearTransaction,
 }: ChatInputProps) {
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (!isLoading && !isMobile()) {
+      textareaRef.current?.focus();
+    }
+  }, [isLoading]);
+
   const getPlaceholder = () => {
     if (!selectedTransaction) return "Coffee 50";
     if (selectedTransaction.action === "delete") return "Send to confirm...";
@@ -32,6 +44,13 @@ export function ChatInput({
   const canSubmit = selectedTransaction
     ? selectedTransaction.action === "delete" || value.trim()
     : value.trim();
+
+  const handleSubmit = (e: React.FormEvent) => {
+    if (isMobile()) {
+      textareaRef.current?.blur();
+    }
+    onSubmit(e);
+  };
 
   return (
     <div className="border-t border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 px-3 py-3 sm:px-4 sm:py-4">
@@ -43,8 +62,9 @@ export function ChatInput({
           />
         )}
 
-        <form onSubmit={onSubmit} className="flex gap-2 items-end">
+        <form onSubmit={handleSubmit} className="flex gap-2 items-end">
           <textarea
+            ref={textareaRef}
             value={value}
             onChange={(e) => {
               onChange(e.target.value);
@@ -55,7 +75,7 @@ export function ChatInput({
               if (e.key === "Enter" && !e.shiftKey) {
                 e.preventDefault();
                 if (canSubmit && !isLoading) {
-                  onSubmit(e as unknown as React.FormEvent);
+                  handleSubmit(e as unknown as React.FormEvent);
                 }
               }
             }}

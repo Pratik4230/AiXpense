@@ -6,12 +6,14 @@ import { client, db } from "@/lib/db";
 import { sendEmail } from "@/lib/email/index";
 import { otpEmail } from "@/lib/email/templates/otp";
 import { connectDB } from "@/lib/db";
+import mongoose from "mongoose";
 import {
   Expense,
   Budget,
   Conversation,
   Subscription,
   DeletedEmail,
+  Insight,
 } from "@/models";
 import { isDisposableEmail } from "@/lib/auth/blockedDomains";
 import { inngest } from "@/inngest/client";
@@ -78,8 +80,8 @@ export const auth = betterAuth({
         defaultValue: 7,
       },
       freeTrialResetAt: {
-        type: "string",
-        defaultValue: new Date().toISOString(),
+        type: "date",
+        defaultValue: new Date(),
       },
       onboardingCompleted: {
         type: "boolean",
@@ -91,16 +93,18 @@ export const auth = betterAuth({
       afterDelete: async (user) => {
         await connectDB();
         const u = user as { freeTrials?: number };
+        const userObjectId = new mongoose.Types.ObjectId(user.id);
         await Promise.all([
           DeletedEmail.findOneAndUpdate(
             { email: user.email.toLowerCase() },
             { trialsRemaining: u.freeTrials ?? 0, deletedAt: new Date() },
             { upsert: true },
           ),
-          Expense.deleteMany({ userId: user.id }),
-          Budget.deleteMany({ userId: user.id }),
-          Conversation.deleteMany({ userId: user.id }),
+          Expense.deleteMany({ userId: userObjectId }),
+          Budget.deleteMany({ userId: userObjectId }),
+          Conversation.deleteMany({ userId: userObjectId }),
           Subscription.deleteMany({ userId: user.id }),
+          Insight.deleteMany({ userId: userObjectId }),
         ]);
       },
     },
