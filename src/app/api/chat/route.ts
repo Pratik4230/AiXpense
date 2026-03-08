@@ -14,6 +14,7 @@ import {
 import { recordAiUsage } from "@/lib/ai/trackUsage";
 import { db } from "@/lib/db";
 import { ObjectId } from "mongodb";
+import { logger } from "@/lib/logger";
 
 export const maxDuration = 30;
 
@@ -23,6 +24,7 @@ export async function POST(req: Request) {
   });
 
   if (!session?.user?.id) {
+    logger.warn("chat_unauthorized", {});
     return new Response("Unauthorized", { status: 401 });
   }
 
@@ -80,6 +82,7 @@ export async function POST(req: Request) {
   );
 
   if (!dbUser) {
+    logger.warn("chat_quota_exceeded", { userId });
     return new Response(
       JSON.stringify({
         error: "No free trials remaining. Upgrade to premium.",
@@ -139,14 +142,24 @@ export async function POST(req: Request) {
     const usage = await result.usage;
     const metadata = await result.providerMetadata;
     const cachedTokens = (metadata?.openai?.cachedPromptTokens as number) ?? 0;
-    void recordAiUsage({
-      userId,
-      userEmail: session.user.email,
-      modelName: "gpt-5-nano",
-      promptTokens: usage.inputTokens ?? 0,
-      completionTokens: usage.outputTokens ?? 0,
-      cachedTokens,
-    });
+    const promptTokens = usage.inputTokens ?? 0;
+    const completionTokens = usage.outputTokens ?? 0;
+    try {
+      await recordAiUsage({
+        userId,
+        userEmail: session.user.email,
+        modelName: "gpt-5-nano",
+        promptTokens,
+        completionTokens,
+        cachedTokens,
+      });
+      logger.info("chat_complete", {
+        userId,
+        data: { promptTokens, completionTokens, cachedTokens },
+      });
+    } catch (e) {
+      logger.error("ai_usage_record_fail", { userId, error: e });
+    }
   });
 
   return response;

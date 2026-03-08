@@ -7,6 +7,7 @@ import { Expense, Insight, AiUsage } from "@/models";
 import { openai } from "@ai-sdk/openai";
 import { generateText } from "ai";
 import mongoose from "mongoose";
+import { logger } from "@/lib/logger";
 
 function getPeriodRange(type: "weekly" | "monthly") {
   const now = new Date();
@@ -112,26 +113,38 @@ async function runCoachForPeriod(type: "weekly" | "monthly") {
       .map(([cat, amt]) => `${cat}: ₹${amt.toFixed(0)}`)
       .join(", ");
 
-    const { text, usage } = await generateText({
-      model: openai("gpt-5-mini"),
-      providerOptions: {
-        openai: {
-          serviceTier: "flex",
-          store: false,
+    let text: string;
+    let usage: Awaited<ReturnType<typeof generateText>>["usage"];
+    try {
+      ({ text, usage } = await generateText({
+        model: openai("gpt-5-mini"),
+        providerOptions: {
+          openai: {
+            serviceTier: "flex",
+            store: false,
+          },
         },
-      },
-      messages: [
-        {
-          role: "system",
-          content:
-            "You are a warm, encouraging personal finance coach. Analyse the user's spending data and write a friendly, easy-to-read summary. Acknowledge their efforts, highlight any patterns worth noting, and close with one specific, practical tip they can act on this week. Be conversational and supportive — no bullet points, no harsh judgements.",
-        },
-        {
-          role: "user",
-          content: `My ${label} spending:\nTotal: ₹${stats.total.toFixed(0)}\nTop categories: ${topCategories}\nBiggest expense: ₹${stats.biggest.toFixed(0)}\nTotal transactions: ${stats.count}`,
-        },
-      ],
-    });
+        messages: [
+          {
+            role: "system",
+            content:
+              "You are a warm, encouraging personal finance coach. Analyse the user's spending data and write a friendly, easy-to-read summary. Acknowledge their efforts, highlight any patterns worth noting, and close with one specific, practical tip they can act on this week. Be conversational and supportive — no bullet points, no harsh judgements.",
+          },
+          {
+            role: "user",
+            content: `My ${label} spending:\nTotal: ₹${stats.total.toFixed(0)}\nTop categories: ${topCategories}\nBiggest expense: ₹${stats.biggest.toFixed(0)}\nTotal transactions: ${stats.count}`,
+          },
+        ],
+      }));
+    } catch (e) {
+      logger.error("inngest_coach_complete", {
+        userId,
+        error: e,
+        data: { type, periodKey, reason: "openai_error" },
+      });
+      results.skipped++;
+      continue;
+    }
 
     const tokensUsed = (usage.inputTokens ?? 0) + (usage.outputTokens ?? 0);
 
@@ -164,6 +177,9 @@ async function runCoachForPeriod(type: "weekly" | "monthly") {
     results.sent++;
   }
 
+  logger.info("inngest_coach_complete", {
+    data: { type, periodKey, ...results },
+  });
   return results;
 }
 

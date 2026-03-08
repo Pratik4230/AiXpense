@@ -1,5 +1,12 @@
+import { logger } from "@/lib/logger";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+
 export async function POST(req: Request) {
   try {
+    const session = await auth.api.getSession({ headers: await headers() });
+    const userId = session?.user?.id;
+
     const formData = await req.formData();
     const audio = formData.get("audio") as File;
 
@@ -25,14 +32,18 @@ export async function POST(req: Request) {
 
     if (!response.ok) {
       const errBody = await response.text();
-      console.error(`Sarvam error ${response.status}:`, errBody);
+      logger.error("voice_sarvam_fail", {
+        userId,
+        error: `Sarvam ${response.status}: ${errBody.slice(0, 300)}`,
+        data: { status: response.status },
+      });
       throw new Error(`Sarvam error: ${response.status}`);
     }
 
     const data = await response.json();
     return Response.json({ transcript: data.transcript });
   } catch (error) {
-    console.error("SARVAM tracript error : ", error);
+    logger.error("voice_sarvam_fail", { error });
     return Response.json({ error: "Transcription failed" }, { status: 500 });
   }
 }

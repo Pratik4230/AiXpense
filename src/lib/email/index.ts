@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { logger } from "@/lib/logger";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -24,7 +25,10 @@ export async function sendEmail({
   });
 
   if (error) {
-    console.error("Failed to send email:", error);
+    logger.error("email_fail", {
+      error,
+      data: { to, subject },
+    });
     throw new Error("Failed to send email");
   }
 

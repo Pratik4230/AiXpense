@@ -2,6 +2,7 @@ import { tool } from "ai";
 import { z } from "zod";
 import { connectDB } from "@/lib/db";
 import { Expense } from "@/models";
+import { logger } from "@/lib/logger";
 
 interface DeleteTransactionParams {
   userId: string;
@@ -28,31 +29,35 @@ export const createDeleteTransactionTool = ({
       type: z.enum(["expense", "income"]).describe("Type of transaction"),
     }),
     execute: async ({ transactionId, item, amount, type }) => {
-      await connectDB();
+      try {
+        await connectDB();
 
-      const transaction = await Expense.findOne({
-        _id: transactionId,
-        userId,
-      });
+        const transaction = await Expense.findOne({
+          _id: transactionId,
+          userId,
+        });
 
-      if (!transaction) {
+        if (!transaction) {
+          return {
+            success: false,
+            error:
+              "Transaction not found or you don't have permission to delete it",
+          };
+        }
+
+        await Expense.deleteOne({ _id: transactionId });
+
         return {
-          success: false,
-          error:
-            "Transaction not found or you don't have permission to delete it",
+          success: true,
+          deleted: { id: transactionId, item, amount, type },
         };
+      } catch (e) {
+        logger.error("tool_delete_fail", {
+          userId,
+          error: e,
+          data: { transactionId },
+        });
+        return { success: false, error: "Failed to delete transaction" };
       }
-
-      await Expense.deleteOne({ _id: transactionId });
-
-      return {
-        success: true,
-        deleted: {
-          id: transactionId,
-          item,
-          amount,
-          type,
-        },
-      };
     },
   });

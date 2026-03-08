@@ -1,6 +1,7 @@
 import { inngest } from "@/inngest/client";
 import { connectDB } from "@/lib/db";
 import { db } from "@/lib/db";
+import { logger } from "@/lib/logger";
 
 export const cleanupUnverified = inngest.createFunction(
   { id: "cleanup-unverified-users" },
@@ -15,6 +16,10 @@ export const cleanupUnverified = inngest.createFunction(
         createdAt: { $lt: thirtyDaysAgo },
       });
       return result.deletedCount;
+    });
+
+    logger.info("inngest_cleanup_complete", {
+      data: { deleted },
     });
 
     return { deleted };

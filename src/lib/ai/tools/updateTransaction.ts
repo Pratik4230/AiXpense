@@ -4,6 +4,7 @@ import { connectDB } from "@/lib/db";
 import { Expense, Budget } from "@/models";
 import { CATEGORIES } from "@/constants/expense";
 import mongoose from "mongoose";
+import { logger } from "@/lib/logger";
 
 interface UpdateTransactionParams {
   userId: string;
@@ -34,85 +35,94 @@ export const createUpdateTransactionTool = ({
         .describe("Fields to update"),
     }),
     execute: async ({ transactionId, userInstruction, updates }) => {
-      await connectDB();
+      try {
+        await connectDB();
 
-      const transaction = await Expense.findOne({
-        _id: transactionId,
-        userId,
-      });
+        const transaction = await Expense.findOne({
+          _id: transactionId,
+          userId,
+        });
 
-      if (!transaction) {
-        return {
-          success: false,
-          error:
-            "Transaction not found or you don't have permission to update it",
-        };
-      }
-
-      const updateData: Record<string, unknown> = {};
-      if (updates.item) updateData.item = updates.item;
-      if (updates.amount) updateData.amount = updates.amount;
-      if (updates.category) updateData.category = updates.category;
-      if (updates.subcategory !== undefined)
-        updateData.subcategory = updates.subcategory;
-
-      const now = new Date();
-      updateData.rawInput = `${transaction.rawInput} [UPDATED: ${now.toISOString()} - ${userInstruction}]`;
-
-      const updated = await Expense.findByIdAndUpdate(
-        transactionId,
-        { $set: updateData },
-        { returnDocument: "after" },
-      );
-
-      let budgetStatus = null;
-
-      if (updated?.type === "expense" && (updates.amount || updates.category)) {
-        const effectiveCategory = updated.category;
-        const userObjectId = new mongoose.Types.ObjectId(userId);
-        const start = new Date(now.getFullYear(), now.getMonth(), 1);
-        const end = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-
-        const budget = await Budget.findOne({
-          userId: userObjectId,
-          category: effectiveCategory,
-        }).lean();
-
-        if (budget) {
-          const [agg] = await Expense.aggregate([
-            {
-              $match: {
-                userId: userObjectId,
-                category: effectiveCategory,
-                type: "expense",
-                date: { $gte: start, $lt: end },
-              },
-            },
-            { $group: { _id: null, total: { $sum: "$amount" } } },
-          ]);
-          const spent = agg?.total ?? 0;
-          budgetStatus = {
-            category: effectiveCategory,
-            limit: budget.amount,
-            spent,
-            percent: Math.round((spent / budget.amount) * 100),
+        if (!transaction) {
+          return {
+            success: false,
+            error:
+              "Transaction not found or you don't have permission to update it",
           };
         }
-      }
 
-      return {
-        success: true,
-        previousAmount: transaction.amount,
-        transaction: {
-          id: transactionId,
-          item: updated?.item,
-          amount: updated?.amount,
-          category: updated?.category,
-          subcategory: updated?.subcategory,
-          type: updated?.type,
-          tags: updated?.tags || [],
-        },
-        budgetStatus,
-      };
+        const updateData: Record<string, unknown> = {};
+        if (updates.item) updateData.item = updates.item;
+        if (updates.amount) updateData.amount = updates.amount;
+        if (updates.category) updateData.category = updates.category;
+        if (updates.subcategory !== undefined)
+          updateData.subcategory = updates.subcategory;
+
+        const now = new Date();
+        updateData.rawInput = `${transaction.rawInput} [UPDATED: ${now.toISOString()} - ${userInstruction}]`;
+
+        const updated = await Expense.findByIdAndUpdate(
+          transactionId,
+          { $set: updateData },
+          { returnDocument: "after" },
+        );
+
+        let budgetStatus = null;
+
+        if (updated?.type === "expense" && (updates.amount || updates.category)) {
+          const effectiveCategory = updated.category;
+          const userObjectId = new mongoose.Types.ObjectId(userId);
+          const start = new Date(now.getFullYear(), now.getMonth(), 1);
+          const end = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+
+          const budget = await Budget.findOne({
+            userId: userObjectId,
+            category: effectiveCategory,
+          }).lean();
+
+          if (budget) {
+            const [agg] = await Expense.aggregate([
+              {
+                $match: {
+                  userId: userObjectId,
+                  category: effectiveCategory,
+                  type: "expense",
+                  date: { $gte: start, $lt: end },
+                },
+              },
+              { $group: { _id: null, total: { $sum: "$amount" } } },
+            ]);
+            const spent = agg?.total ?? 0;
+            budgetStatus = {
+              category: effectiveCategory,
+              limit: budget.amount,
+              spent,
+              percent: Math.round((spent / budget.amount) * 100),
+            };
+          }
+        }
+
+        return {
+          success: true,
+          previousAmount: transaction.amount,
+          transaction: {
+            id: transactionId,
+            item: updated?.item,
+            amount: updated?.amount,
+            category: updated?.category,
+            subcategory: updated?.subcategory,
+            type: updated?.type,
+            tags: updated?.tags || [],
+          },
+          budgetStatus,
+        };
+      } catch (e) {
+        logger.error("tool_update_fail", {
+          userId,
+          error: e,
+          data: { transactionId },
+        });
+        return { success: false, error: "Failed to update transaction" };
+      }
     },
   });

@@ -5,6 +5,7 @@ import { razorpay } from "@/lib/razorpay/client";
 import { connectDB } from "@/lib/db";
 import { Subscription } from "@/models";
 import { PlanType } from "@/lib/razorpay/plans";
+import { logger } from "@/lib/logger";
 
 const PLAN_IDS = {
   monthly: process.env.RAZORPAY_PLAN_ID_MONTHLY!,
@@ -90,12 +91,17 @@ export async function POST(req: NextRequest) {
       cancelAtPeriodEnd: false,
     });
 
+    logger.info("razorpay_sub_created", {
+      userId: session.user.id,
+      data: { plan: planType, subscriptionId: subscription.id },
+    });
+
     return NextResponse.json({
       subscriptionId: subscription.id,
       paymentUrl: subscription.short_url,
     });
   } catch (error) {
-    console.error("[Create Subscription]", error);
+    logger.error("razorpay_sub_create_fail", { error });
     return NextResponse.json(
       {
         error: "Failed to create subscription",

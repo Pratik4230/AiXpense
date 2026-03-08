@@ -1,5 +1,6 @@
 import { connectDB } from "@/lib/db";
 import { AiUsage } from "@/models";
+import { logger } from "@/lib/logger";
 
 const PRICING: Record<
   string,
@@ -64,6 +65,6 @@ export async function recordAiUsage({
       ),
     });
   } catch (e) {
-    console.error("[recordAiUsage]", e);
+    logger.error("ai_usage_record_fail", { userId, error: e });
   }
 }

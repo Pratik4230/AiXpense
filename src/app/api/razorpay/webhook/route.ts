@@ -7,6 +7,7 @@ import { paymentReceiptTemplate } from "@/lib/email/templates/paymentReceipt";
 import { db } from "@/lib/db";
 import { ObjectId } from "mongodb";
 import { RAZORPAY_PLANS } from "@/lib/razorpay/plans";
+import { logger } from "@/lib/logger";
 
 async function getUserEmail(
   userId: string,
@@ -45,6 +46,15 @@ export async function POST(req: NextRequest) {
 
     const event = JSON.parse(body);
     const { payload } = event;
+    const subscriptionId =
+      payload?.subscription?.entity?.id ?? "unknown";
+    const userId =
+      payload?.subscription?.entity?.notes?.userId ?? undefined;
+
+    logger.info("razorpay_webhook", {
+      userId,
+      data: { event: event.event, subscriptionId },
+    });
 
     switch (event.event) {
       case "subscription.activated": {
@@ -189,7 +199,7 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ received: true });
   } catch (error) {
-    console.error("[Webhook]", error);
+    logger.error("razorpay_webhook_fail", { error });
     return NextResponse.json(
       { error: "Webhook processing failed" },
       { status: 500 },

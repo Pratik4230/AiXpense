@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { razorpay } from "@/lib/razorpay/client";
 import { connectDB } from "@/lib/db";
 import { Subscription } from "@/models";
+import { logger } from "@/lib/logger";
 
 export async function POST() {
   try {
@@ -37,12 +38,17 @@ export async function POST() {
       { $set: { cancelAtPeriodEnd: true } },
     );
 
+    logger.info("razorpay_sub_cancelled", {
+      userId: session.user.id,
+      data: { subscriptionId: subscription.razorpaySubscriptionId },
+    });
+
     return NextResponse.json({
       success: true,
       currentPeriodEnd: subscription.currentPeriodEnd,
     });
   } catch (error) {
-    console.error("[Cancel Subscription] ERROR:", error);
+    logger.error("razorpay_sub_cancel_fail", { error });
     return NextResponse.json(
       { error: "Failed to cancel subscription" },
       { status: 500 },

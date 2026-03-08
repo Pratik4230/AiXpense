@@ -4,6 +4,7 @@ import { connectDB } from "@/lib/db";
 import { Expense, Budget } from "@/models";
 import { CATEGORIES } from "@/constants/expense";
 import mongoose from "mongoose";
+import { logger } from "@/lib/logger";
 
 interface SaveExpenseParams {
   userId: string;
@@ -38,62 +39,70 @@ export const createSaveExpenseTool = ({
         .describe("Optional tags for the expense"),
     }),
     execute: async ({ item, amount, category, subcategory, tags }) => {
-      await connectDB();
+      try {
+        await connectDB();
 
-      const userObjectId = new mongoose.Types.ObjectId(userId);
-      const { start, end } = getMonthRange();
+        const userObjectId = new mongoose.Types.ObjectId(userId);
+        const { start, end } = getMonthRange();
 
-      const [expense, budget] = await Promise.all([
-        Expense.create({
-          userId: userObjectId,
-          item,
-          amount,
-          category,
-          subcategory,
-          type: "expense",
-          date: new Date(),
-          rawInput,
-          tags: tags || [],
-        }),
-        Budget.findOne({ userId: userObjectId, category }).lean(),
-      ]);
-
-
-      let budgetStatus = null;
-
-      if (budget) {
-        const [agg] = await Expense.aggregate([
-          {
-            $match: {
-              userId: userObjectId,
-              category,
-              type: "expense",
-              date: { $gte: start, $lt: end },
-            },
-          },
-          { $group: { _id: null, total: { $sum: "$amount" } } },
+        const [expense, budget] = await Promise.all([
+          Expense.create({
+            userId: userObjectId,
+            item,
+            amount,
+            category,
+            subcategory,
+            type: "expense",
+            date: new Date(),
+            rawInput,
+            tags: tags || [],
+          }),
+          Budget.findOne({ userId: userObjectId, category }).lean(),
         ]);
-        const spent = agg?.total ?? 0;
-        budgetStatus = {
-          limit: budget.amount,
-          spent,
-          percent: Math.round((spent / budget.amount) * 100),
-        };
-      }
 
-      return {
-        success: true,
-        type: "expense",
-        expense: {
-          id: expense._id.toString(),
-          item: expense.item,
-          amount: expense.amount,
-          category: expense.category,
-          subcategory: expense.subcategory,
-          tags: expense.tags,
-          date: expense.date.toISOString(),
-        },
-        budgetStatus,
-      };
+        let budgetStatus = null;
+
+        if (budget) {
+          const [agg] = await Expense.aggregate([
+            {
+              $match: {
+                userId: userObjectId,
+                category,
+                type: "expense",
+                date: { $gte: start, $lt: end },
+              },
+            },
+            { $group: { _id: null, total: { $sum: "$amount" } } },
+          ]);
+          const spent = agg?.total ?? 0;
+          budgetStatus = {
+            limit: budget.amount,
+            spent,
+            percent: Math.round((spent / budget.amount) * 100),
+          };
+        }
+
+        return {
+          success: true,
+          type: "expense",
+          expense: {
+            id: expense._id.toString(),
+            item: expense.item,
+            amount: expense.amount,
+            category: expense.category,
+            subcategory: expense.subcategory,
+            tags: expense.tags,
+            date: expense.date.toISOString(),
+          },
+          budgetStatus,
+        };
+      } catch (e) {
+        logger.error("tool_save_expense_fail", {
+          userId,
+          error: e,
+          data: { item, amount, category },
+        });
+        return { success: false, error: "Failed to save expense" };
+      }
     },
   });

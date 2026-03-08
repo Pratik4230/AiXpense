@@ -4,6 +4,7 @@ import { connectDB } from "@/lib/db";
 import { Expense } from "@/models";
 import { CATEGORIES } from "@/constants/expense";
 import mongoose from "mongoose";
+import { logger } from "@/lib/logger";
 
 interface SaveIncomeParams {
   userId: string;
@@ -27,35 +28,43 @@ export const createSaveIncomeTool = ({ userId, rawInput }: SaveIncomeParams) =>
         .describe("Optional tags for the income"),
     }),
     execute: async ({ source, amount, category, subcategory, tags }) => {
-      await connectDB();
+      try {
+        await connectDB();
 
-      // Fix: cast to ObjectId for consistent querying (was raw string before)
-      const userObjectId = new mongoose.Types.ObjectId(userId);
+        const userObjectId = new mongoose.Types.ObjectId(userId);
 
-      const income = await Expense.create({
-        userId: userObjectId,
-        item: source,
-        amount,
-        category,
-        subcategory,
-        type: "income",
-        date: new Date(),
-        rawInput,
-        tags: tags || [],
-      });
+        const income = await Expense.create({
+          userId: userObjectId,
+          item: source,
+          amount,
+          category,
+          subcategory,
+          type: "income",
+          date: new Date(),
+          rawInput,
+          tags: tags || [],
+        });
 
-      return {
-        success: true,
-        type: "income",
-        income: {
-          id: income._id.toString(),
-          source: income.item,
-          amount: income.amount,
-          category: income.category,
-          subcategory: income.subcategory,
-          tags: income.tags,
-          date: income.date.toISOString(),
-        },
-      };
+        return {
+          success: true,
+          type: "income",
+          income: {
+            id: income._id.toString(),
+            source: income.item,
+            amount: income.amount,
+            category: income.category,
+            subcategory: income.subcategory,
+            tags: income.tags,
+            date: income.date.toISOString(),
+          },
+        };
+      } catch (e) {
+        logger.error("tool_save_income_fail", {
+          userId,
+          error: e,
+          data: { source, amount, category },
+        });
+        return { success: false, error: "Failed to save income" };
+      }
     },
   });
