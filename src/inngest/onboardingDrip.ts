@@ -20,6 +20,7 @@ export const onboardingDrip = inngest.createFunction(
     await step.sleep("wait-for-verification", "10m");
 
     const isVerified = await step.run("check-email-verified", async () => {
+      await connectDB();
       const user = await db
         .collection("user")
         .findOne({ _id: new mongoose.Types.ObjectId(userId) });

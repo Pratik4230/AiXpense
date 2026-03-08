@@ -30,7 +30,10 @@ function getPeriodRange(type: "weekly" | "monthly") {
     start: firstOfLastMonth,
     end: firstOfThisMonth,
     periodKey: `month-${firstOfLastMonth.toISOString().slice(0, 7)}`,
-    label: firstOfLastMonth.toLocaleDateString("en-IN", { month: "long", year: "numeric" }),
+    label: firstOfLastMonth.toLocaleDateString("en-IN", {
+      month: "long",
+      year: "numeric",
+    }),
   };
 }
 
@@ -49,8 +52,14 @@ async function runCoachForPeriod(type: "weekly" | "monthly") {
     const userId = user._id.toString();
     const userObjectId = new mongoose.Types.ObjectId(userId);
 
-    const existing = await Insight.findOne({ userId: userObjectId, periodKey }).lean();
-    if (existing) { results.skipped++; continue; }
+    const existing = await Insight.findOne({
+      userId: userObjectId,
+      periodKey,
+    }).lean();
+    if (existing) {
+      results.skipped++;
+      continue;
+    }
 
     const [stats] = await Expense.aggregate([
       {
@@ -71,7 +80,10 @@ async function runCoachForPeriod(type: "weekly" | "monthly") {
       },
     ]);
 
-    if (!stats || stats.count < 5) { results.skipped++; continue; }
+    if (!stats || stats.count < 5) {
+      results.skipped++;
+      continue;
+    }
 
     const now = new Date();
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
@@ -85,7 +97,10 @@ async function runCoachForPeriod(type: "weekly" | "monthly") {
       { $group: { _id: null, total: { $sum: "$costUsd" } } },
     ]);
     const costThisMonth = monthlyCost[0]?.total ?? 0;
-    if (costThisMonth > 0.1) { results.skipped++; continue; }
+    if (costThisMonth > 0.1) {
+      results.skipped++;
+      continue;
+    }
 
     const categoryMap: Record<string, number> = {};
     for (const e of stats.byCategory) {
@@ -130,7 +145,12 @@ async function runCoachForPeriod(type: "weekly" | "monthly") {
     });
 
     const { html, emailText } = (() => {
-      const r = coachInsightEmail({ name: user.name, insight: text, period: label, totalSpent: stats.total });
+      const r = coachInsightEmail({
+        name: user.name,
+        insight: text,
+        period: label,
+        totalSpent: stats.total,
+      });
       return { html: r.html, emailText: r.text };
     })();
 

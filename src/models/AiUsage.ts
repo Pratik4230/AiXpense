@@ -29,8 +29,5 @@ const AiUsageSchema = new Schema<IAiUsage>(
 AiUsageSchema.index({ createdAt: -1 });
 AiUsageSchema.index({ userId: 1, createdAt: -1 });
 
-delete mongoose.models.AiUsage;
-export const AiUsage: Model<IAiUsage> = mongoose.model<IAiUsage>(
-  "AiUsage",
-  AiUsageSchema,
-);
+export const AiUsage: Model<IAiUsage> =
+  mongoose.models.AiUsage || mongoose.model<IAiUsage>("AiUsage", AiUsageSchema);
