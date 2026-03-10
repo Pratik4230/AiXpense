@@ -8,6 +8,7 @@ export interface IssueItem {
   type: "bug" | "feature" | "other";
   status: "open" | "in_progress" | "resolved" | "closed";
   mediaUrls: string[];
+  adminNote: string;
   userEmail: string;
   createdAt: string;
 }
@@ -36,6 +37,7 @@ export async function getAdminIssues(
       type: i.type,
       status: i.status,
       mediaUrls: i.mediaUrls ?? [],
+      adminNote: i.adminNote ?? "",
       userEmail: i.userEmail ?? "unknown",
       createdAt: (i.createdAt as Date).toISOString(),
     })),

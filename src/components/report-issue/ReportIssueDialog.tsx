@@ -52,6 +52,7 @@ export function ReportIssueDialog({ children }: ReportIssueDialogProps) {
       description: "",
       type: "bug" as IssueType,
       mediaUrls: [] as string[],
+      mediaFileIds: [] as string[],
     },
     onSubmit: ({ value }) => {
       mutate(value, {
@@ -195,10 +196,17 @@ export function ReportIssueDialog({ children }: ReportIssueDialogProps) {
                     (optional, up to 5)
                   </span>
                 </Label>
-                <MediaUploader
-                  value={field.state.value}
-                  onChange={(urls) => field.handleChange(urls)}
-                />
+                <form.Field name="mediaFileIds">
+                  {(fileIdsField) => (
+                    <MediaUploader
+                      value={field.state.value}
+                      onChange={(urls, fileIds) => {
+                        field.handleChange(urls);
+                        fileIdsField.handleChange(fileIds);
+                      }}
+                    />
+                  )}
+                </form.Field>
               </div>
             )}
           </form.Field>

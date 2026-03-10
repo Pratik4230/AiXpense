@@ -11,6 +11,8 @@ export interface IIssue {
   type: IssueType;
   status: IssueStatus;
   mediaUrls: string[];
+  mediaFileIds: string[];
+  adminNote?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -57,6 +59,16 @@ const issueSchema = new Schema<IIssueDocument>(
     mediaUrls: {
       type: [String],
       default: [],
+    },
+    mediaFileIds: {
+      type: [String],
+      default: [],
+    },
+    adminNote: {
+      type: String,
+      trim: true,
+      maxlength: 2000,
+      default: "",
     },
   },
   { timestamps: true },

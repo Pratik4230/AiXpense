@@ -16,6 +16,8 @@ export type LogEvent =
   | "razorpay_sub_cancelled"
   | "razorpay_sub_cancel_fail"
   | "issue_created"
+  | "issue_notify_email_failed"
+  | "imagekit_delete_failed"
   | "email_fail"
   | "search_specialist_fail"
   | "search_query_fail"

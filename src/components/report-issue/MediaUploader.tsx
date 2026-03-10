@@ -12,12 +12,13 @@ const MAX_VIDEO_SIZE = 50 * 1024 * 1024;
 
 interface MediaUploaderProps {
   value: string[];
-  onChange: (urls: string[]) => void;
+  onChange: (urls: string[], fileIds: string[]) => void;
   maxFiles?: number;
 }
 
 interface UploadedMedia {
   url: string;
+  fileId: string;
   type: "image" | "video";
   name: string;
 }
@@ -72,8 +73,8 @@ export function MediaUploader({
         const uploadedMedia: UploadedMedia[] = [];
 
         for (const file of toUpload) {
-          const fileId = `${file.name}-${Date.now()}`;
-          setProgresses((p) => ({ ...p, [fileId]: 0 }));
+          const progressKey = `${file.name}-${Date.now()}`;
+          setProgresses((p) => ({ ...p, [progressKey]: 0 }));
 
           const res = await upload({
             file,
@@ -83,40 +84,50 @@ export function MediaUploader({
             onProgress: (e) => {
               setProgresses((p) => ({
                 ...p,
-                [fileId]: Math.round((e.loaded / e.total) * 100),
+                [progressKey]: Math.round((e.loaded / e.total) * 100),
               }));
             },
           });
 
           const url = res.url as string;
+          const fileId = res.fileId ?? "";
           uploadedUrls.push(url);
           uploadedMedia.push({
             url,
+            fileId,
             type: file.type.startsWith("video/") ? "video" : "image",
             name: file.name,
           });
 
           setProgresses((p) => {
             const next = { ...p };
-            delete next[fileId];
+            delete next[progressKey];
             return next;
           });
         }
 
         setMedia((prev) => [...prev, ...uploadedMedia]);
-        onChange([...value, ...uploadedUrls]);
+        const allMedia = [...media, ...uploadedMedia];
+        onChange(
+          allMedia.map((m) => m.url),
+          allMedia.map((m) => m.fileId),
+        );
       } catch {
         toast.error("Upload failed. Please try again.");
       } finally {
         setUploading(false);
       }
     },
-    [value, onChange, maxFiles],
+    [value, onChange, maxFiles, media],
   );
 
   const removeMedia = (url: string) => {
-    setMedia((prev) => prev.filter((m) => m.url !== url));
-    onChange(value.filter((u) => u !== url));
+    const next = media.filter((m) => m.url !== url);
+    setMedia(next);
+    onChange(
+      next.map((m) => m.url),
+      next.map((m) => m.fileId),
+    );
   };
 
   const isUploading = Object.keys(progresses).length > 0;

@@ -8,6 +8,7 @@ import {
   ChangePasswordCard,
   PlanUsageCard,
   DangerZoneCard,
+  MyReportsCard,
 } from "@/components/profile";
 import { getSubscription } from "@/actions/subscription";
 
@@ -36,6 +37,7 @@ export default async function ProfilePage() {
         freeTrials={user.freeTrials ?? 0}
         subscription={subscription}
       />
+      <MyReportsCard />
       <ChangePasswordCard />
       <DangerZoneCard />
     </div>

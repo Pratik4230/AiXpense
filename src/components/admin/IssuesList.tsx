@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -16,7 +17,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   Bug,
   Lightbulb,
@@ -26,7 +34,11 @@ import {
   User,
   ChevronLeft,
   ChevronRight,
+  Trash2,
+  MessageSquare,
+  Check,
 } from "lucide-react";
+import { toast } from "sonner";
 
 interface IssuesResponse {
   issues: IssueItem[];
@@ -123,6 +135,132 @@ function MediaPreview({ urls }: { urls: string[] }) {
   );
 }
 
+function AdminNoteEditor({
+  issueId,
+  initialNote,
+}: {
+  issueId: string;
+  initialNote: string;
+}) {
+  const qc = useQueryClient();
+  const [note, setNote] = useState(initialNote);
+  const [expanded, setExpanded] = useState(false);
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: (adminNote: string) =>
+      api.patch(`/admin/issues/${issueId}`, { adminNote }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin-issues"] });
+      toast.success("Note saved");
+      setExpanded(false);
+    },
+    onError: () => toast.error("Failed to save note"),
+  });
+
+  if (!expanded) {
+    return (
+      <button
+        type="button"
+        onClick={() => setExpanded(true)}
+        className="flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors mt-3"
+      >
+        <MessageSquare className="size-3" />
+        {note ? "Edit admin note" : "Add admin note"}
+        {note && (
+          <span className="text-xs text-foreground/70 truncate max-w-48">
+            — {note}
+          </span>
+        )}
+      </button>
+    );
+  }
+
+  return (
+    <div className="mt-3 space-y-2">
+      <Textarea
+        value={note}
+        onChange={(e) => setNote(e.target.value)}
+        placeholder="Internal note (not visible to user)..."
+        className="text-xs min-h-16 resize-none"
+        maxLength={2000}
+      />
+      <div className="flex gap-2">
+        <Button
+          size="sm"
+          className="h-7 text-xs gap-1"
+          onClick={() => mutate(note)}
+          disabled={isPending}
+        >
+          <Check className="size-3" />
+          {isPending ? "Saving..." : "Save"}
+        </Button>
+        <Button
+          size="sm"
+          variant="ghost"
+          className="h-7 text-xs"
+          onClick={() => {
+            setNote(initialNote);
+            setExpanded(false);
+          }}
+        >
+          Cancel
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+function DeleteIssueButton({ issueId }: { issueId: string }) {
+  const qc = useQueryClient();
+  const [confirm, setConfirm] = useState(false);
+
+  const { mutate, isPending } = useMutation({
+    mutationFn: () => api.delete(`/admin/issues/${issueId}`),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["admin-issues"] });
+      toast.success("Issue deleted");
+      setConfirm(false);
+    },
+    onError: () => toast.error("Failed to delete"),
+  });
+
+  return (
+    <>
+      <Button
+        variant="ghost"
+        size="icon"
+        className="size-7 text-muted-foreground hover:text-destructive"
+        onClick={() => setConfirm(true)}
+      >
+        <Trash2 className="size-4" />
+      </Button>
+
+      <Dialog open={confirm} onOpenChange={setConfirm}>
+        <DialogContent className="max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Delete issue?</DialogTitle>
+            <DialogDescription>
+              This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setConfirm(false)}>
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={() => mutate()}
+              disabled={isPending}
+            >
+              {isPending ? "Deleting..." : "Delete"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
+  );
+}
+
 function IssueCard({ issue }: { issue: IssueItem }) {
   const qc = useQueryClient();
   const { mutate, isPending } = useMutation({
@@ -166,6 +304,7 @@ function IssueCard({ issue }: { issue: IssueItem }) {
                 ))}
               </SelectContent>
             </Select>
+            <DeleteIssueButton issueId={issue.id} />
           </div>
         </div>
         <div className="flex items-center gap-3 text-xs text-muted-foreground mt-1">
@@ -191,6 +330,10 @@ function IssueCard({ issue }: { issue: IssueItem }) {
           {issue.description}
         </p>
         <MediaPreview urls={issue.mediaUrls} />
+        <AdminNoteEditor
+          issueId={issue.id}
+          initialNote={issue.adminNote ?? ""}
+        />
       </CardContent>
     </Card>
   );

@@ -19,7 +19,7 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
-import { DollarSign, Zap, Hash, TrendingUp, Bug } from "lucide-react";
+import { DollarSign, Zap, Hash, TrendingUp, Bug, ScrollText } from "lucide-react";
 import Link from "next/link";
 
 interface Props {
@@ -77,6 +77,17 @@ export function AdminDashboard({ stats }: Props) {
               <div className="flex items-center gap-2 mb-1">
                 <Bug className="size-4 text-rose-500" />
                 <span className="text-xs text-muted-foreground">Issues</span>
+              </div>
+              <p className="text-xl font-bold font-mono">View All</p>
+            </CardContent>
+          </Card>
+        </Link>
+        <Link href="/admin/logs" className="block">
+          <Card className="hover:bg-muted/50 transition-colors h-full cursor-pointer">
+            <CardContent className="pt-4 pb-4">
+              <div className="flex items-center gap-2 mb-1">
+                <ScrollText className="size-4 text-sky-500" />
+                <span className="text-xs text-muted-foreground">Logs</span>
               </div>
               <p className="text-xl font-bold font-mono">View All</p>
             </CardContent>
