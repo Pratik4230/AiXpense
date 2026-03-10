@@ -12,7 +12,7 @@ import { db } from "@/lib/db";
 import mongoose from "mongoose";
 
 export const onboardingDrip = inngest.createFunction(
-  { id: "onboarding-drip" },
+  { id: "onboarding-drip", retries: 0 },
   { event: "user/created" },
   async ({ event, step }) => {
     const { userId, email, name } = event.data;

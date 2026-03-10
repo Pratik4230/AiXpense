@@ -41,9 +41,11 @@ function getPeriodRange(type: "weekly" | "monthly") {
 async function runCoachForPeriod(type: "weekly" | "monthly") {
   const { start, end, periodKey, label } = getPeriodRange(type);
 
+  await connectDB();
+
   const users = await db
     .collection("user")
-    .find({ isPremium: true, emailVerified: true })
+    .find({ emailVerified: true })
     .project({ _id: 1, email: 1, name: 1 })
     .toArray();
 
@@ -81,7 +83,7 @@ async function runCoachForPeriod(type: "weekly" | "monthly") {
       },
     ]);
 
-    if (!stats || stats.count < 5) {
+    if (!stats || stats.count < 1) {
       results.skipped++;
       continue;
     }
@@ -185,7 +187,7 @@ async function runCoachForPeriod(type: "weekly" | "monthly") {
 
 export const aiCoachWeekly = inngest.createFunction(
   { id: "ai-coach-weekly" },
-  { cron: "30 3 * * 1" },
+  { cron: "30 13 * * 2" },
   async ({ step }) => {
     return step.run("run-weekly-coach", async () => {
       await connectDB();
