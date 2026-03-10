@@ -187,7 +187,7 @@ async function runCoachForPeriod(type: "weekly" | "monthly") {
 
 export const aiCoachWeekly = inngest.createFunction(
   { id: "ai-coach-weekly" },
-  { cron: "30 13 * * 2" },
+  { cron: "40 13 * * 2" },
   async ({ step }) => {
     return step.run("run-weekly-coach", async () => {
       await connectDB();
