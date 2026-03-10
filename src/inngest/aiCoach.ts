@@ -45,7 +45,7 @@ async function runCoachForPeriod(type: "weekly" | "monthly") {
 
   const users = await db
     .collection("user")
-    .find({ emailVerified: true })
+    .find({ isPremium: true, emailVerified: true })
     .project({ _id: 1, email: 1, name: 1 })
     .toArray();
 
@@ -83,7 +83,7 @@ async function runCoachForPeriod(type: "weekly" | "monthly") {
       },
     ]);
 
-    if (!stats || stats.count < 1) {
+    if (!stats || stats.count < 5) {
       results.skipped++;
       continue;
     }
@@ -130,7 +130,7 @@ async function runCoachForPeriod(type: "weekly" | "monthly") {
           {
             role: "system",
             content:
-              "You are a warm, encouraging personal finance coach. Analyse the user's spending data and write a friendly, easy-to-read summary. Acknowledge their efforts, highlight any patterns worth noting, and close with one specific, practical tip they can act on this week. Be conversational and supportive — no bullet points, no harsh judgements.",
+              "You are a warm, encouraging personal finance coach. Analyse the user's spending data and write a friendly, easy-to-read summary. Acknowledge their efforts, highlight any patterns worth noting, and close with one specific, practical tip they can act on this week. Be conversational and supportive. Do not use bullet points, dashes (-- or -), em-dashes, or harsh judgements. Write in plain flowing sentences only.",
           },
           {
             role: "user",
@@ -187,7 +187,7 @@ async function runCoachForPeriod(type: "weekly" | "monthly") {
 
 export const aiCoachWeekly = inngest.createFunction(
   { id: "ai-coach-weekly" },
-  { cron: "40 13 * * 2" },
+  { cron: "30 3 * * 1" },
   async ({ step }) => {
     return step.run("run-weekly-coach", async () => {
       await connectDB();

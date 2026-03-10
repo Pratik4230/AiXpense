@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { Download, Lock, Sparkles } from "lucide-react";
+import { Lock, Sparkles } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -30,28 +29,17 @@ function getPeriodLabel(periodKey: string) {
   return periodKey;
 }
 
+function cleanInsightText(text: string) {
+  return text
+    .replace(/\s*--\s*/g, " ")
+    .replace(/\s*—\s*/g, " ")
+    .trim();
+}
+
 export function CoachInsightCard() {
   const { data: insight, isLoading } = useLatestInsight();
   const { data: session } = useSession();
   const isPremium = (session?.user as { isPremium?: boolean })?.isPremium ?? false;
-  const [downloading, setDownloading] = useState(false);
-
-  async function handleDownload() {
-    if (!insight) return;
-    setDownloading(true);
-    try {
-      const res = await fetch(`/api/og/insight?id=${insight.id}`);
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `aixpense-insight-${insight.periodKey}.png`;
-      a.click();
-      URL.revokeObjectURL(url);
-    } finally {
-      setDownloading(false);
-    }
-  }
 
   if (isLoading) {
     return <Skeleton className="h-48 rounded-xl" />;
@@ -113,29 +101,17 @@ export function CoachInsightCard() {
   return (
     <Card className="border-amber-500/20 bg-linear-to-br from-amber-950/10 to-background overflow-hidden">
       <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-sm font-medium flex items-center gap-2">
-            <Sparkles className="size-4 text-amber-500" />
-            AI Coach Insight
-          </CardTitle>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={handleDownload}
-            disabled={downloading}
-            className="gap-1.5 text-xs text-muted-foreground hover:text-amber-500 h-7 px-2"
-          >
-            <Download className="size-3.5" />
-            {downloading ? "Saving..." : "Save for Instagram"}
-          </Button>
-        </div>
+        <CardTitle className="text-sm font-medium flex items-center gap-2">
+          <Sparkles className="size-4 text-amber-500" />
+          AI Coach Insight
+        </CardTitle>
         <div className="flex items-baseline gap-2 mt-1">
           <span className="text-2xl font-bold tracking-tight">{fmt(insight.totalSpent)}</span>
           <span className="text-xs text-muted-foreground">{period}</span>
         </div>
       </CardHeader>
       <CardContent>
-        <p className="text-sm leading-relaxed text-foreground/80">{insight.content}</p>
+        <p className="text-sm leading-relaxed text-foreground/80">{cleanInsightText(insight.content)}</p>
       </CardContent>
     </Card>
   );
