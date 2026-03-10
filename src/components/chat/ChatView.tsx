@@ -16,6 +16,7 @@ import {
 import {
   Conversation,
   ConversationContent,
+  ConversationScrollButton,
 } from "@/components/ai-elements/conversation";
 import {
   ExpenseCard,
@@ -596,6 +597,7 @@ export function ChatView({
               </Message>
             )}
         </ConversationContent>
+        <ConversationScrollButton />
       </Conversation>
 
       <ChatInput

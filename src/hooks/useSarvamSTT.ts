@@ -2,8 +2,8 @@ import { useRef, useState } from "react";
 
 type Status = "idle" | "recording" | "processing" | "error";
 
-const SILENCE_THRESHOLD = 20;
-const SILENCE_DURATION_MS = 800;
+const SILENCE_THRESHOLD = 15;
+const SILENCE_DURATION_MS = 2000;
 
 export function useSarvamSTT() {
   const [status, setStatus] = useState<Status>("idle");
@@ -85,14 +85,18 @@ export function useSarvamSTT() {
     }
   };
 
-  const startRecording = async () => {
+  const startRecording = async (deviceId?: string) => {
     try {
+      const audioConstraints: MediaTrackConstraints = {
+        echoCancellation: true,
+        autoGainControl: true,
+      };
+      if (deviceId) {
+        audioConstraints.deviceId = { exact: deviceId };
+      }
+
       const stream = await navigator.mediaDevices.getUserMedia({
-        audio: {
-          noiseSuppression: true,
-          echoCancellation: true,
-          autoGainControl: true,
-        },
+        audio: audioConstraints,
       });
       streamRef.current = stream;
       chunksRef.current = [];
