@@ -12,6 +12,7 @@ export function coachInsightEmail({
   totalSpent: number;
 }) {
   const firstName = name?.split(" ")[0] || "there";
+  const cleanInsight = insight.replace(/\s*--\s*/g, " ").replace(/\s*—\s*/g, " ").trim();
   const formattedAmount = new Intl.NumberFormat("en-IN", {
     style: "currency",
     currency: "INR",
@@ -29,7 +30,7 @@ export function coachInsightEmail({
 
     <div style="background: #f4f4f5; border-radius: 10px; padding: 16px 20px; margin: 0 0 24px;">
       <p style="margin: 0 0 8px; font-size: 12px; font-weight: 600; color: #71717a; text-transform: uppercase; letter-spacing: 0.5px;">AI Coach Insight</p>
-      <p style="margin: 0; font-size: 15px; color: #27272a; line-height: 1.7;">${insight}</p>
+      <p style="margin: 0; font-size: 15px; color: #27272a; line-height: 1.7;">${cleanInsight}</p>
     </div>
 
     ${actionButton("View Full Report", "https://aixpense.in/reports")}
@@ -37,6 +38,6 @@ export function coachInsightEmail({
 
   return {
     html: baseLayout(content),
-    text: `Your ${period} Summary, ${firstName}\n\nTotal Spent: ${formattedAmount}\n\nAI Coach: ${insight}\n\nView report: https://aixpense.in/reports`,
+    text: `Your ${period} Summary, ${firstName}\n\nTotal Spent: ${formattedAmount}\n\nAI Coach: ${cleanInsight}\n\nView report: https://aixpense.in/reports`,
   };
 }
