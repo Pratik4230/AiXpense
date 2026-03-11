@@ -2,24 +2,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { db } from "@/lib/db";
 import { ObjectId } from "mongodb";
-
-function getISTMidnight(): Date {
-  const now = new Date();
-  const istOffset = 5.5 * 60 * 60 * 1000;
-  const istNow = new Date(now.getTime() + istOffset);
-  const istMidnight = new Date(
-    Date.UTC(
-      istNow.getUTCFullYear(),
-      istNow.getUTCMonth(),
-      istNow.getUTCDate(),
-      0,
-      0,
-      0,
-      0,
-    ) - istOffset,
-  );
-  return istMidnight;
-}
+import { getISTMidnight } from "@/lib/ist";
 
 export async function GET() {
   const session = await auth.api.getSession({ headers: await headers() });

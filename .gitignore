@@ -39,3 +39,21 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+
+
+##############
+.agent
+.agents
+.claude
+AGENTS
+AGENTS.md
+INNGEST.md
+object.md
+OpenAI.md
+SEO.md
+TODO.md
+VOICE_INPUT.md
+scripts
+
+

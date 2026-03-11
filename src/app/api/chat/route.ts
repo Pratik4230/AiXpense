@@ -15,6 +15,7 @@ import { recordAiUsage } from "@/lib/ai/trackUsage";
 import { db } from "@/lib/db";
 import { ObjectId } from "mongodb";
 import { logger } from "@/lib/logger";
+import { getISTMidnight } from "@/lib/ist";
 
 export const maxDuration = 30;
 
@@ -31,19 +32,7 @@ export async function POST(req: Request) {
   const userId = session.user.id;
 
   const now = new Date();
-  const istOffset = 5.5 * 60 * 60 * 1000;
-  const istNow = new Date(now.getTime() + istOffset);
-  const todayISTMidnight = new Date(
-    Date.UTC(
-      istNow.getUTCFullYear(),
-      istNow.getUTCMonth(),
-      istNow.getUTCDate(),
-      0,
-      0,
-      0,
-      0,
-    ) - istOffset,
-  );
+  const todayISTMidnight = getISTMidnight();
 
   const dbUser = await db.collection("user").findOneAndUpdate(
     {
