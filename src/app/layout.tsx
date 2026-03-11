@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     template: "%s | AiXpense",
   },
   description:
-    "Track expenses effortlessly with AI. Just type 'Lunch 250' or 'Uber to office 400' and AiXpense handles categorization, tagging, and analytics automatically.",
+    "Track expenses by voice or text with AI. Say 'Lunch 250' in Hindi, Marathi, or English and AiXpense categorizes, tags, and logs it instantly. Free expense tracker for India.",
   keywords: [
     "AiXpense",
     "AI expense tracker",
@@ -50,6 +50,12 @@ export const metadata: Metadata = {
     "income and expense tracker",
     "free expense tracker India",
     "expense tracker for India",
+    "voice expense tracker",
+    "speak to track expenses",
+    "voice expense tracker India",
+    "Hindi expense tracker",
+    "track expenses by voice",
+    "expense tracker Hindi Marathi",
   ],
   authors: [
     {

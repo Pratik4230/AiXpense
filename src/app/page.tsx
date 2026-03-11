@@ -90,7 +90,7 @@ const jsonLd = {
   name: "AiXpense",
   url: "https://aixpense.in",
   description:
-    "AI-powered expense tracker. Track income and expenses using natural language. Just type 'Lunch 250' and AiXpense categorizes and logs it instantly.",
+    "AI-powered expense tracker with voice input. Track income and expenses by speaking or typing in Hindi, Marathi, English, or 22+ Indian languages. Just say 'Lunch 250' and AiXpense categorizes and logs it instantly.",
   applicationCategory: "FinanceApplication",
   operatingSystem: "Web",
   offers: [
