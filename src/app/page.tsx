@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 import {
   Card,
@@ -149,6 +150,21 @@ export default function LandingPage() {
               Start Tracking Free
               <ArrowRight className="ml-2 size-5" />
             </SmartLink>
+          </div>
+
+          <div className="animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-400 mt-8">
+            <a
+              href="https://www.producthunt.com/products/aixpense?embed=true&utm_source=badge-featured&utm_medium=badge&utm_campaign=badge-aixpense"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Image
+                alt="AiXpense - AI expense tracker that understands how India speaks | Product Hunt"
+                width={250}
+                height={54}
+                src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=1095101&theme=dark&t=1773215656333"
+              />
+            </a>
           </div>
 
           {/* Chat Demo UI */}
