@@ -18,6 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Crown, AlertTriangle } from "lucide-react";
 import { useConversation } from "@/services/conversations";
+import { useTrials } from "@/services/trials";
 import { MAX_MESSAGES_PER_CONVERSATION } from "@/constants/conversation";
 
 const FREE_DAILY_LIMIT = 7;
@@ -47,17 +48,12 @@ export default function AiXpensePage() {
 
   const user = session?.user as UserWithTrial | undefined;
   const isPremium = user?.isPremium ?? false;
-  const serverFreeTrials = user?.freeTrials ?? 0;
   const onboardingCompleted = user?.onboardingCompleted ?? true;
 
-  const [decrementOffset, setDecrementOffset] = useState(0);
-  const displayTrials = Math.max(0, serverFreeTrials - decrementOffset);
-
-  const decrementTrials = () => {
-    if (!isPremium && displayTrials > 0) {
-      setDecrementOffset((prev) => prev + 1);
-    }
-  };
+  const { data: trialsData, isFetching: isTrialsFetching } = useTrials(
+    !isSessionLoading && !!user && !isPremium,
+  );
+  const displayTrials = trialsData?.freeTrials ?? 0;
 
   const initialMessages = useMemo(() => {
     if (!conversationData?.messages) return [];
@@ -129,7 +125,7 @@ export default function AiXpensePage() {
             messageCount={conversationData?.messageCount || 0}
             isPremium={isPremium}
             freeTrials={displayTrials}
-            onDecrementTrials={decrementTrials}
+            isTrialsFetching={isTrialsFetching}
             onShowUpgradeDialog={() => setShowUpgradeDialog(true)}
             onShowLimitDialog={() => setShowLimitDialog(true)}
             onConversationCreated={handleConversationCreated}

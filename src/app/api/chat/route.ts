@@ -15,6 +15,7 @@ import { recordAiUsage } from "@/lib/ai/trackUsage";
 import { db } from "@/lib/db";
 import { ObjectId } from "mongodb";
 import { logger } from "@/lib/logger";
+import { getISTMidnight } from "@/lib/ist";
 
 export const maxDuration = 30;
 
@@ -31,7 +32,7 @@ export async function POST(req: Request) {
   const userId = session.user.id;
 
   const now = new Date();
-  const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+  const todayISTMidnight = getISTMidnight();
 
   const dbUser = await db.collection("user").findOneAndUpdate(
     {
@@ -39,7 +40,7 @@ export async function POST(req: Request) {
       $or: [
         { isPremium: true },
         { freeTrials: { $gt: 0 } },
-        { freeTrialResetAt: { $lt: oneDayAgo } },
+        { freeTrialResetAt: { $lt: todayISTMidnight } },
       ],
     },
     [
@@ -50,10 +51,10 @@ export async function POST(req: Request) {
               if: {
                 $and: [
                   { $ne: ["$isPremium", true] },
-                  { $lt: ["$freeTrialResetAt", oneDayAgo] },
+                  { $lt: ["$freeTrialResetAt", todayISTMidnight] },
                 ],
               },
-              then: now,
+              then: todayISTMidnight,
               else: "$freeTrialResetAt",
             },
           },
@@ -65,7 +66,7 @@ export async function POST(req: Request) {
                 $subtract: [
                   {
                     $cond: {
-                      if: { $lt: ["$freeTrialResetAt", oneDayAgo] },
+                      if: { $lt: ["$freeTrialResetAt", todayISTMidnight] },
                       then: 7,
                       else: "$freeTrials",
                     },

@@ -37,6 +37,7 @@ import {
   useCreateConversation,
   useUpdateConversation,
 } from "@/services/conversations";
+import { useTrialActions } from "@/services/trials";
 
 interface ChatMessage {
   id: string;
@@ -50,7 +51,7 @@ interface ChatViewProps {
   messageCount: number;
   isPremium: boolean;
   freeTrials: number;
-  onDecrementTrials: () => void;
+  isTrialsFetching: boolean;
   onShowUpgradeDialog: () => void;
   onShowLimitDialog: () => void;
   onConversationCreated: (id: string) => void;
@@ -62,7 +63,7 @@ export function ChatView({
   messageCount,
   isPremium,
   freeTrials,
-  onDecrementTrials,
+  isTrialsFetching,
   onShowUpgradeDialog,
   onShowLimitDialog,
   onConversationCreated,
@@ -71,6 +72,8 @@ export function ChatView({
   const [selectedTransaction, setSelectedTransaction] =
     useState<SelectedTransaction | null>(null);
   const [outdatedIds, setOutdatedIds] = useState<Set<string>>(new Set());
+
+  const { optimisticDecrement, invalidateTrials } = useTrialActions();
 
   const conversationIdRef = useRef(conversationId);
   const pendingSaveRef = useRef(false);
@@ -179,6 +182,7 @@ export function ChatView({
       chatMessages[chatMessages.length - 1]?.role === "assistant"
     ) {
       saveMessages(chatMessages);
+      if (!isPremium) invalidateTrials();
 
       const currentCount = chatMessages.length;
       for (const threshold of MESSAGE_WARNING_THRESHOLDS) {
@@ -222,7 +226,7 @@ export function ChatView({
           : `${prefix} ${input}`.trim();
 
       if (selectedTransaction.action === "delete" || input.trim()) {
-        onDecrementTrials();
+        optimisticDecrement();
         sendMessage({ text: messageText });
         setInput("");
         setSelectedTransaction(null);
@@ -230,8 +234,8 @@ export function ChatView({
       return;
     }
 
-    if (!input.trim() || isLoading) return;
-    onDecrementTrials();
+    if (!input.trim() || isLoading || isTrialsFetching) return;
+    optimisticDecrement();
     sendMessage({ text: input });
     setInput("");
   };
@@ -242,7 +246,7 @@ export function ChatView({
       onShowUpgradeDialog();
       return;
     }
-    onDecrementTrials();
+    optimisticDecrement();
     sendMessage({ text: suggestion });
   };
 

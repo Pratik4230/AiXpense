@@ -81,7 +81,7 @@ export const auth = betterAuth({
       },
       freeTrialResetAt: {
         type: "date",
-        defaultValue: new Date(),
+        defaultValue: () => new Date(),
       },
       onboardingCompleted: {
         type: "boolean",
