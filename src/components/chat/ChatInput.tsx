@@ -2,13 +2,14 @@
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { SendHorizonal, Loader2, Mic, Square } from "lucide-react";
+import { SendHorizonal, Loader2, Mic, Square, Camera, ScanLine } from "lucide-react";
 import { useRef, useEffect } from "react";
 import {
   TransactionAttachment,
   type SelectedTransaction,
 } from "./TransactionAttachment";
 import { useSarvamSTT } from "@/hooks/useSarvamSTT";
+import { useOCR } from "@/hooks/useOCR";
 import { Persona } from "@/components/ai-elements/persona";
 
 interface ChatInputProps {
@@ -33,9 +34,15 @@ export function ChatInput({
   onClearTransaction,
 }: ChatInputProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { status, transcript, startRecording, stopRecording, resetTranscript } =
     useSarvamSTT();
+
+  const { status: ocrStatus, scanBill } = useOCR();
+
+  const isScanning = ocrStatus === "scanning";
+  const isScanError = ocrStatus === "error";
 
   const handleSubmit = (e: React.FormEvent) => {
     if (isMobile()) textareaRef.current?.blur();
@@ -63,14 +70,29 @@ export function ChatInput({
     if (!isLoading && !isMobile()) textareaRef.current?.focus();
   }, [isLoading]);
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    e.target.value = "";
+
+    scanBill(file, (text) => {
+      shouldAutoSubmitRef.current = true;
+      onChange(text);
+    });
+  };
+
   const isRecording = status === "recording";
   const isProcessing = status === "processing";
+
+  const isBusy = isLoading || isRecording || isScanning;
 
   const canSubmit = selectedTransaction
     ? selectedTransaction.action === "delete" || value.trim()
     : value.trim();
 
   const getPlaceholder = () => {
+    if (isScanning) return "Reading bill...";
+    if (isScanError) return "Scan failed — try again or type manually";
     if (isRecording) return "Listening...";
     if (isProcessing) return "Transcribing...";
     if (!selectedTransaction) return "Coffee 50  or  Salary received 55000";
@@ -90,6 +112,13 @@ export function ChatInput({
             />
           </div>
         )}
+
+        {isScanning && (
+          <div className="flex justify-center pb-3">
+            <Persona state="thinking" variant="glint" className="size-14" />
+          </div>
+        )}
+
         <form
           onSubmit={handleSubmit}
           className="rounded-2xl border border-border bg-background shadow-sm overflow-hidden"
@@ -119,7 +148,7 @@ export function ChatInput({
               }
             }}
             placeholder={getPlaceholder()}
-            disabled={isLoading || isRecording}
+            disabled={isBusy}
             rows={1}
             className={cn(
               "w-full px-4 pt-3 pb-2 bg-transparent resize-none overflow-hidden",
@@ -131,7 +160,35 @@ export function ChatInput({
 
           <div className="flex items-center justify-between px-2 pb-2">
             <div className="flex items-center gap-2">
-              {(isRecording || isProcessing) && (
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/png,image/jpeg,image/jpg,application/pdf"
+                capture="environment"
+                className="hidden"
+                onChange={handleFileChange}
+              />
+              <Button
+                type="button"
+                size="icon"
+                variant="ghost"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isBusy}
+                className={cn(
+                  "h-9 w-9 rounded-xl",
+                  isScanning && "animate-pulse text-primary",
+                  isScanError && "text-destructive",
+                )}
+                title="Scan bill"
+              >
+                {isScanning ? (
+                  <ScanLine className="size-4 animate-pulse" />
+                ) : (
+                  <Camera className="size-4" />
+                )}
+              </Button>
+
+              {(isRecording || isProcessing || isScanning) && (
                 <span
                   className={cn(
                     "text-xs",
@@ -140,7 +197,11 @@ export function ChatInput({
                       : "text-muted-foreground",
                   )}
                 >
-                  {isRecording ? "Recording..." : "Transcribing..."}
+                  {isRecording
+                    ? "Recording..."
+                    : isScanning
+                      ? "Reading bill..."
+                      : "Transcribing..."}
                 </span>
               )}
             </div>
@@ -153,7 +214,7 @@ export function ChatInput({
                 onClick={() =>
                   isRecording ? stopRecording() : startRecording()
                 }
-                disabled={isLoading || isProcessing}
+                disabled={isLoading || isProcessing || isScanning}
                 className={cn(
                   "h-9 w-9 rounded-xl",
                   isRecording && "animate-pulse",

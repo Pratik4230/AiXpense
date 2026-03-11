@@ -3,7 +3,7 @@ import { useRef, useState } from "react";
 type Status = "idle" | "recording" | "processing" | "error";
 
 const SILENCE_THRESHOLD = 15;
-const SILENCE_DURATION_MS = 2000;
+const SILENCE_DURATION_MS = 1300;
 
 export function useSarvamSTT() {
   const [status, setStatus] = useState<Status>("idle");
@@ -28,7 +28,10 @@ export function useSarvamSTT() {
     speechDetectedRef.current = false;
   };
 
-  const startSilenceDetection = (stream: MediaStream, onSilence: () => void) => {
+  const startSilenceDetection = (
+    stream: MediaStream,
+    onSilence: () => void,
+  ) => {
     const audioContext = new AudioContext();
     audioContextRef.current = audioContext;
 

@@ -25,7 +25,9 @@ export type LogEvent =
   | "tool_save_income_fail"
   | "tool_delete_fail"
   | "tool_update_fail"
-  | "voice_sarvam_fail";
+  | "voice_sarvam_fail"
+  | "ocr_complete"
+  | "ocr_fail";
 
 export interface IAppLog extends Document {
   level: LogLevel;
