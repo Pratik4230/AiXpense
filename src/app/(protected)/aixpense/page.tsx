@@ -18,6 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Crown, AlertTriangle } from "lucide-react";
 import { useConversation } from "@/services/conversations";
+import { useTrials, useInvalidateTrials } from "@/services/trials";
 import { MAX_MESSAGES_PER_CONVERSATION } from "@/constants/conversation";
 
 const FREE_DAILY_LIMIT = 7;
@@ -47,16 +48,14 @@ export default function AiXpensePage() {
 
   const user = session?.user as UserWithTrial | undefined;
   const isPremium = user?.isPremium ?? false;
-  const serverFreeTrials = user?.freeTrials ?? 0;
   const onboardingCompleted = user?.onboardingCompleted ?? true;
 
-  const [decrementOffset, setDecrementOffset] = useState(0);
-  const displayTrials = Math.max(0, serverFreeTrials - decrementOffset);
+  const invalidateTrials = useInvalidateTrials();
+  const { data: trialsData } = useTrials(!isSessionLoading && !!user && !isPremium);
+  const displayTrials = trialsData?.freeTrials ?? 0;
 
   const decrementTrials = () => {
-    if (!isPremium && displayTrials > 0) {
-      setDecrementOffset((prev) => prev + 1);
-    }
+    invalidateTrials();
   };
 
   const initialMessages = useMemo(() => {

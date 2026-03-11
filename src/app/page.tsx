@@ -16,9 +16,18 @@ import {
   ArrowRight,
   CheckCircle2,
   Zap,
+  Mic2,
+  Camera,
+  ExternalLink,
 } from "lucide-react";
 import { SmartLink, SmartTextLink } from "@/components/auth/SmartLink";
 import { Button } from "@/components/ui/button";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const personJsonLd = {
   "@context": "https://schema.org",
@@ -36,6 +45,43 @@ const personJsonLd = {
     name: "AiXpense",
     url: "https://aixpense.in",
   },
+};
+
+const faqs = [
+  {
+    q: "Is AiXpense free to use?",
+    a: "Yes. The free plan gives you 7 AI messages per day with full expense tracking, categorization, and search. No credit card needed to start.",
+  },
+  {
+    q: "Does it work in Hindi, Marathi, or Hinglish?",
+    a: "Yes. AiXpense supports voice input in 22+ Indian languages via Sarvam AI, including Hindi, Marathi, Bengali, Tamil, Telugu, Kannada, Malayalam, Gujarati, Punjabi, Odia, and more, plus Hinglish codemix. You can also type in any of these languages.",
+  },
+  {
+    q: "How is my financial data kept safe?",
+    a: "We never share or sell your data. You can delete your account and all associated data at any time.",
+  },
+  {
+    q: "What exactly does the AI do?",
+    a: "When you type or say something like \"Uber to airport 650\", the AI extracts the item name, amount, date, category, and tags and saves them instantly. No forms to fill.",
+  },
+  {
+    q: "Can I use it on my phone?",
+    a: "Yes. AiXpense is a web app that works on any device. Open it in your mobile browser and it feels like a native app. No download required.",
+  },
+  {
+    q: "What is the difference between the free and premium plans?",
+    a: "The free plan has a limit of 7 AI messages per day. Premium removes all limits and adds an AI spending coach that sends you weekly and monthly insights by email.",
+  },
+];
+
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map(({ q, a }) => ({
+    "@type": "Question",
+    name: q,
+    acceptedAnswer: { "@type": "Answer", text: a },
+  })),
 };
 
 const jsonLd = {
@@ -87,9 +133,13 @@ export default function LandingPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
+      />
       {/* Background Gradients */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-125 bg-primary/20 blur-[120px] rounded-full opacity-50 pointer-events-none" />
-      <div className="absolute bottom-0 right-0 w-125 h-125 bg-purple-500/10 blur-[100px] rounded-full pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-125 h-125 bg-orange-500/10 blur-[100px] rounded-full pointer-events-none" />
 
       <header className="container mx-auto px-4 py-6 flex items-center justify-between relative z-10">
         <Link href="/" className="flex items-center gap-2 group">
@@ -125,7 +175,7 @@ export default function LandingPage() {
 
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight mb-6 sm:mb-8 leading-[1.15] animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-100">
             Track expenses with <br className="hidden sm:block" />
-            <span className="bg-linear-to-r from-primary via-purple-500 to-pink-500 bg-clip-text text-transparent">
+            <span className="bg-linear-to-r from-primary via-orange-400 to-amber-300 bg-clip-text text-transparent">
               Natural Language
             </span>
           </h1>
@@ -192,7 +242,7 @@ export default function LandingPage() {
 
                 {/* AI Response */}
                 <div className="flex items-start gap-3 sm:gap-4 max-w-[95%] sm:max-w-[90%]">
-                  <div className="size-7 sm:size-8 rounded-full bg-linear-to-br from-purple-500 to-pink-500 flex items-center justify-center shrink-0 shadow-lg">
+                  <div className="size-7 sm:size-8 rounded-full bg-linear-to-br from-primary to-amber-400 flex items-center justify-center shrink-0 shadow-lg">
                     <Sparkles className="size-3.5 sm:size-4 text-white" />
                   </div>
                   <div className="space-y-2 min-w-0 flex-1">
@@ -208,7 +258,7 @@ export default function LandingPage() {
                         <div className="font-medium">₹1,200.00</div>
 
                         <div className="text-muted-foreground">Category</div>
-                        <div className="font-medium text-purple-400">
+                        <div className="font-medium text-amber-400">
                           Food &amp; Dining
                         </div>
 
@@ -252,10 +302,10 @@ export default function LandingPage() {
               color="bg-blue-500/10"
             />
             <FeatureCard
-              icon={<PieChart className="size-6 text-purple-500" />}
+              icon={<PieChart className="size-6 text-amber-500" />}
               title="Smart Analytics"
               description="Visualize your spending habits with beautiful, auto-generated charts and insights."
-              color="bg-purple-500/10"
+              color="bg-amber-500/10"
             />
             <FeatureCard
               icon={<Shield className="size-6 text-green-500" />}
@@ -263,6 +313,76 @@ export default function LandingPage() {
               description="Your financial data is encrypted and stored securely. We prioritize your privacy above all."
               color="bg-green-500/10"
             />
+          </div>
+        </section>
+
+        {/* Demo Section */}
+        <section className="py-16 sm:py-24 lg:py-32 relative">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-2xl sm:text-4xl font-bold mb-4">
+              See it in action
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base px-2">
+              Real demos of AiXpense features, built and shipped fast.
+            </p>
+          </div>
+
+          <div className="grid gap-6 sm:grid-cols-2 max-w-4xl mx-auto">
+            <div className="group relative rounded-2xl border border-border/50 bg-card/30 backdrop-blur-sm overflow-hidden hover:border-primary/30 hover:shadow-xl hover:shadow-primary/10 transition-all duration-300">
+              <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-orange-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="p-6 sm:p-8 relative">
+                <div className="flex items-start justify-between mb-5">
+                  <div className="size-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+                    <Mic2 className="size-6 text-primary" />
+                  </div>
+                  <span className="text-xs font-medium bg-green-500/10 text-green-500 border border-green-500/20 px-2.5 py-1 rounded-full">
+                    Live
+                  </span>
+                </div>
+                <h3 className="text-lg sm:text-xl font-semibold mb-2">
+                  Voice Input in Hindi, Marathi &amp; Hinglish
+                </h3>
+                <p className="text-sm text-muted-foreground leading-relaxed mb-6">
+                  Powered by Sarvam AI&apos;s{" "}
+                  <span className="text-foreground font-medium">saaras:v3</span>{" "}
+                  model. Speak naturally in codemix and AiXpense understands and
+                  logs your expense instantly.
+                </p>
+                <a
+                  href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7437362498141593600/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
+                >
+                  Watch demo on LinkedIn
+                  <ExternalLink className="size-3.5" />
+                </a>
+              </div>
+            </div>
+
+            <div className="group relative rounded-2xl border border-border/50 bg-card/30 backdrop-blur-sm overflow-hidden hover:border-amber-500/30 hover:shadow-xl hover:shadow-amber-500/10 transition-all duration-300">
+              <div className="absolute inset-0 bg-linear-to-br from-amber-500/5 via-transparent to-orange-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="p-6 sm:p-8 relative">
+                <div className="flex items-start justify-between mb-5">
+                  <div className="size-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
+                    <Camera className="size-6 text-amber-500" />
+                  </div>
+                  <span className="text-xs font-medium bg-amber-500/10 text-amber-500 border border-amber-500/20 px-2.5 py-1 rounded-full">
+                    Coming Soon
+                  </span>
+                </div>
+                <h3 className="text-lg sm:text-xl font-semibold mb-2">
+                  Bill Scan: Point &amp; Log
+                </h3>
+                <p className="text-sm text-muted-foreground leading-relaxed mb-6">
+                  Snap a photo of any receipt or bill. AiXpense extracts the
+                  merchant, amount, and items automatically. No typing needed.
+                </p>
+                <span className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground cursor-default">
+                  Demo dropping soon
+                </span>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -287,7 +407,7 @@ export default function LandingPage() {
                 Type your expense naturally
               </h3>
               <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
-                Just write what you spent — in plain English or Hindi. Try{" "}
+                Just write what you spent in plain English or Hindi. Try{" "}
                 <span className="text-foreground font-medium">
                   &quot;Zomato dinner 450&quot;
                 </span>{" "}
@@ -300,7 +420,7 @@ export default function LandingPage() {
             </div>
 
             <div className="relative flex flex-col items-start p-6 sm:p-8 rounded-2xl border border-border/50 bg-card/30 backdrop-blur-sm">
-              <div className="size-12 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mb-5 sm:mb-6 text-purple-400 font-bold text-xl">
+              <div className="size-12 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center mb-5 sm:mb-6 text-orange-400 font-bold text-xl">
                 2
               </div>
               <h3 className="text-lg sm:text-xl font-semibold mb-3">
@@ -308,7 +428,7 @@ export default function LandingPage() {
               </h3>
               <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
                 Our AI automatically detects the amount, merchant, category,
-                tags, and date. Income vs expense is handled too — just say{" "}
+                tags, and date. Income vs expense is handled too. Just say{" "}
                 <span className="text-foreground font-medium">
                   &quot;received salary 50000&quot;
                 </span>
@@ -326,7 +446,7 @@ export default function LandingPage() {
               <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
                 View spending reports by category, set monthly budgets with
                 alerts, and get AI-powered insights on where your money actually
-                goes — all in real time.
+                goes, all in real time.
               </p>
             </div>
           </div>
@@ -457,6 +577,35 @@ export default function LandingPage() {
               </Button>
             </div>
           </div>
+        </section>
+
+        {/* FAQ Section */}
+        <section className="py-16 sm:py-24 lg:py-32 relative">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-2xl sm:text-4xl font-bold mb-4">
+              Frequently asked questions
+            </h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base px-2">
+              Everything you need to know before getting started.
+            </p>
+          </div>
+
+          <Accordion
+            type="single"
+            collapsible
+            className="max-w-2xl mx-auto divide-y divide-border/50"
+          >
+            {faqs.map(({ q, a }, i) => (
+              <AccordionItem key={i} value={`faq-${i}`} className="border-0 py-1">
+                <AccordionTrigger className="text-left text-sm sm:text-base font-medium hover:no-underline py-4">
+                  {q}
+                </AccordionTrigger>
+                <AccordionContent className="text-sm text-muted-foreground leading-relaxed pb-4">
+                  {a}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
         </section>
 
         {/* CTA Section */}
