@@ -11,6 +11,7 @@ import {
 import { useSarvamSTT } from "@/hooks/useSarvamSTT";
 import { useOCR } from "@/hooks/useOCR";
 import { Persona } from "@/components/ai-elements/persona";
+import { toast } from "sonner";
 
 interface ChatInputProps {
   value: string;
@@ -75,10 +76,14 @@ export function ChatInput({
     if (!file) return;
     e.target.value = "";
 
-    scanBill(file, (text) => {
-      shouldAutoSubmitRef.current = true;
-      onChange(text);
-    });
+    scanBill(
+      file,
+      (text) => {
+        shouldAutoSubmitRef.current = true;
+        onChange(text);
+      },
+      (message) => toast.error(message),
+    );
   };
 
   const isRecording = status === "recording";

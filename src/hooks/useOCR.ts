@@ -8,6 +8,7 @@ export function useOCR() {
   const scanBill = async (
     file: File,
     onSuccess: (text: string) => void,
+    onError?: (message: string) => void,
   ) => {
     setStatus("scanning");
 
@@ -26,8 +27,9 @@ export function useOCR() {
 
       onSuccess(data.text as string);
       setStatus("idle");
-    } catch {
+    } catch (err) {
       setStatus("error");
+      onError?.(err instanceof Error ? err.message : "Bill scan failed");
       setTimeout(() => setStatus("idle"), 2000);
     }
   };
