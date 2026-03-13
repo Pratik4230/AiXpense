@@ -26,8 +26,12 @@ export const createSaveIncomeTool = ({ userId, rawInput }: SaveIncomeParams) =>
         .array(z.string())
         .optional()
         .describe("Optional tags for the income"),
+      date: z
+        .string()
+        .optional()
+        .describe("ISO date string if the user mentions a specific date, otherwise omit"),
     }),
-    execute: async ({ source, amount, category, subcategory, tags }) => {
+    execute: async ({ source, amount, category, subcategory, tags, date }) => {
       try {
         await connectDB();
 
@@ -40,7 +44,7 @@ export const createSaveIncomeTool = ({ userId, rawInput }: SaveIncomeParams) =>
           category,
           subcategory,
           type: "income",
-          date: new Date(),
+          date: date ? new Date(date) : new Date(),
           rawInput,
           tags: tags || [],
         });

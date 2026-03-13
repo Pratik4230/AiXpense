@@ -2,8 +2,17 @@
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { SendHorizonal, Loader2, Mic, Square, Camera, ScanLine } from "lucide-react";
+import {
+  SendHorizonal,
+  Loader2,
+  Mic,
+  Square,
+  Camera,
+  ScanLine,
+  Lock,
+} from "lucide-react";
 import { useRef, useEffect } from "react";
+import Link from "next/link";
 import {
   TransactionAttachment,
   type SelectedTransaction,
@@ -12,12 +21,18 @@ import { useSarvamSTT } from "@/hooks/useSarvamSTT";
 import { useOCR } from "@/hooks/useOCR";
 import { Persona } from "@/components/ai-elements/persona";
 import { toast } from "sonner";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface ChatInputProps {
   value: string;
   onChange: (value: string) => void;
   onSubmit: (e: React.FormEvent) => void;
   isLoading: boolean;
+  isPremium: boolean;
   selectedTransaction?: SelectedTransaction | null;
   onClearTransaction?: () => void;
 }
@@ -31,6 +46,7 @@ export function ChatInput({
   onChange,
   onSubmit,
   isLoading,
+  isPremium,
   selectedTransaction,
   onClearTransaction,
 }: ChatInputProps) {
@@ -165,33 +181,56 @@ export function ChatInput({
 
           <div className="flex items-center justify-between px-2 pb-2">
             <div className="flex items-center gap-2">
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/png,image/jpeg,image/jpg,application/pdf"
-                capture="environment"
-                className="hidden"
-                onChange={handleFileChange}
-              />
-              <Button
-                type="button"
-                size="icon"
-                variant="ghost"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={isBusy}
-                className={cn(
-                  "h-9 w-9 rounded-xl",
-                  isScanning && "animate-pulse text-primary",
-                  isScanError && "text-destructive",
-                )}
-                title="Scan bill"
-              >
-                {isScanning ? (
-                  <ScanLine className="size-4 animate-pulse" />
-                ) : (
-                  <Camera className="size-4" />
-                )}
-              </Button>
+              {isPremium ? (
+                <>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/png,image/jpeg,image/jpg,application/pdf"
+                    capture="environment"
+                    className="hidden"
+                    onChange={handleFileChange}
+                  />
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="ghost"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={isBusy}
+                    className={cn(
+                      "h-9 w-9 rounded-xl",
+                      isScanning && "animate-pulse text-primary",
+                      isScanError && "text-destructive",
+                    )}
+                    title="Scan bill"
+                  >
+                    {isScanning ? (
+                      <ScanLine className="size-4 animate-pulse" />
+                    ) : (
+                      <Camera className="size-4" />
+                    )}
+                  </Button>
+                </>
+              ) : (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Link href="/premium">
+                      <Button
+                        type="button"
+                        size="icon"
+                        variant="ghost"
+                        className="h-9 w-9 rounded-xl relative text-muted-foreground"
+                      >
+                        <Camera className="size-4" />
+                        <Lock className="absolute -bottom-0.5 -right-0.5 size-2.5 text-amber-500" />
+                      </Button>
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="text-xs">
+                    Bill scan is a Premium feature
+                  </TooltipContent>
+                </Tooltip>
+              )}
 
               {(isRecording || isProcessing || isScanning) && (
                 <span

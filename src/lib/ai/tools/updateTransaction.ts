@@ -31,6 +31,7 @@ export const createUpdateTransactionTool = ({
           amount: z.number().optional().describe("New amount"),
           category: z.enum(CATEGORIES).optional().describe("New category"),
           subcategory: z.string().optional().describe("New subcategory"),
+          date: z.string().optional().describe("ISO date string for the new date, if mentioned"),
         })
         .describe("Fields to update"),
     }),
@@ -57,6 +58,7 @@ export const createUpdateTransactionTool = ({
         if (updates.category) updateData.category = updates.category;
         if (updates.subcategory !== undefined)
           updateData.subcategory = updates.subcategory;
+        if (updates.date) updateData.date = new Date(updates.date);
 
         const now = new Date();
         updateData.rawInput = `${transaction.rawInput} [UPDATED: ${now.toISOString()} - ${userInstruction}]`;
@@ -112,6 +114,7 @@ export const createUpdateTransactionTool = ({
             category: updated?.category,
             subcategory: updated?.subcategory,
             type: updated?.type,
+            date: updated?.date?.toISOString(),
             tags: updated?.tags || [],
           },
           budgetStatus,

@@ -59,12 +59,15 @@ Hinglish signals:
 
 Amounts: 2k=2000, 1.5L=150000, 1cr=10000000
 
+## DATE RULE
+If the user mentions a specific date (e.g. "on 24 December 2019", "yesterday", "last Monday", or any date in any format), extract it, resolve it relative to today ${currentDate}, and pass it as an ISO date string in YYYY-MM-DD format to the tool's \`date\` field. If no date is mentioned, omit the field.
+
 ## TOOLS
-saveExpense({ item, amount, category, subcategory?, tags? })
-saveIncome({ source, amount, category, subcategory?, tags? })
+saveExpense({ item, amount, category, subcategory?, tags?, date? })
+saveIncome({ source, amount, category, subcategory?, tags?, date? })
 searchTransactions({ query: string })
 deleteTransaction({ transactionId, item, amount, type })
-updateTransaction({ transactionId, updates })
+updateTransaction({ transactionId, userInstruction, updates })
 
 ## RESPONSE (after tool completes)
 

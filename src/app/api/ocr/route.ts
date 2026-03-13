@@ -3,6 +3,8 @@ import { headers } from "next/headers";
 import { logger } from "@/lib/logger";
 import { google, type GoogleLanguageModelOptions } from "@ai-sdk/google";
 import { generateText } from "ai";
+import { db } from "@/lib/db";
+import { ObjectId } from "mongodb";
 
 export const maxDuration = 30;
 
@@ -24,10 +26,10 @@ Look at this bill/receipt image and extract ONE expense summary as a short natur
 Rules:
 - Identify the merchant/store name (e.g. DMart, Raju Kirana Store, Haryana Roadways)
 - Find the TOTAL/Grand Total/कुल देय राशि amount in INR
-- Find the date if visible (format: DD Month)
+- Find the date if visible. The date on the bill can be in any format (DD/MM/YY, MM/DD/YYYY, YYYY-MM-DD, DD-MON-YY, or any other). Interpret it correctly and always output it as: DD Month YYYY (e.g. 26 January 2018). If year is not on the bill, omit it.
 - Output ONLY one sentence, examples:
-  "DMart groceries ₹843 on 10 March"
-  "Raju Kirana Store ₹402 on 12 October"
+  "DMart groceries ₹843 on 10 March 2024"
+  "Raju Kirana Store ₹402 on 12 October 2023"
   "Haryana Roadways bus ticket ₹160 on 12 October"
   "Swiggy order ₹320"
 - For bills in Hindi/Marathi/any Indian language, still output in English
@@ -41,6 +43,18 @@ export async function POST(req: Request) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
   const userId = session.user.id;
+
+  const dbUser = await db
+    .collection("user")
+    .findOne({ _id: new ObjectId(userId) }, { projection: { isPremium: 1 } });
+
+  if (!dbUser?.isPremium) {
+    logger.warn("ocr_premium_required", { userId });
+    return Response.json(
+      { error: "Bill scan is a Premium feature" },
+      { status: 403 },
+    );
+  }
 
   try {
     const formData = await req.formData();

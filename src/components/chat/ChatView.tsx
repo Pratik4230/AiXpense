@@ -609,6 +609,7 @@ export function ChatView({
         onChange={setInput}
         onSubmit={handleSubmit}
         isLoading={isLoading}
+        isPremium={isPremium}
         selectedTransaction={selectedTransaction}
         onClearTransaction={() => setSelectedTransaction(null)}
       />
