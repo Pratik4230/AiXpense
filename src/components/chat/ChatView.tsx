@@ -412,6 +412,7 @@ export function ChatView({
                             alt="Uploaded receipt"
                             width={400}
                             height={400}
+                            priority
                             className="w-full h-auto object-cover"
                           />
                         </div>

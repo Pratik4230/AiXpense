@@ -1,12 +1,11 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useSyncExternalStore } from "react";
 import { useSession } from "@/lib/authClient";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ConversationSidebar, SidebarTrigger } from "@/components/chat";
 import { TrialStatus } from "@/components/chat/TrialStatus";
 import { ChatView } from "@/components/chat/ChatView";
-import { OnboardingModal } from "@/components/onboarding/OnboardingModal";
 import {
   Dialog,
   DialogContent,
@@ -26,7 +25,6 @@ const FREE_DAILY_LIMIT = 7;
 interface UserWithTrial {
   isPremium?: boolean;
   freeTrials?: number;
-  onboardingCompleted?: boolean;
 }
 
 export default function AiXpensePage() {
@@ -48,7 +46,6 @@ export default function AiXpensePage() {
 
   const user = session?.user as UserWithTrial | undefined;
   const isPremium = user?.isPremium ?? false;
-  const onboardingCompleted = user?.onboardingCompleted ?? true;
 
   const { data: trialsData, isFetching: isTrialsFetching } = useTrials(
     !isSessionLoading && !!user && !isPremium,
@@ -100,9 +97,11 @@ export default function AiXpensePage() {
       : `new-${newChatId}`;
 
 
+  const emptySubscribe = () => () => {};
+  const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
+
   return (
     <div className="flex h-full overflow-hidden">
-      {!isSessionLoading && <OnboardingModal open={!onboardingCompleted} />}
       <ConversationSidebar
         currentConversationId={conversationId}
         onSelectConversation={handleSelectConversation}
@@ -137,7 +136,7 @@ export default function AiXpensePage() {
         </div>
 
         <div className="absolute top-4 right-4 z-10">
-          {!isSessionLoading && user && (
+          {mounted && !isSessionLoading && user && (
             <TrialStatus
               isPremium={isPremium}
               freeTrials={displayTrials}
