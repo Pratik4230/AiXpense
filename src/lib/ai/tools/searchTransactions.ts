@@ -4,12 +4,10 @@ import { z } from "zod";
 import mongoose from "mongoose";
 import { connectDB } from "@/lib/db";
 import { Expense } from "@/models";
-import { recordAiUsage } from "@/lib/ai/trackUsage";
 import { logger } from "@/lib/logger";
 
 interface ToolParams {
   userId: string;
-  userEmail: string;
   currentDate: Date;
 }
 
@@ -161,7 +159,6 @@ function getTodayBoundsIST(date: Date): { start: Date; end: Date } {
 
 export const createSearchTransactionsTool = ({
   userId,
-  userEmail,
   currentDate,
 }: ToolParams) => {
   const istOffset = 5.5 * 60 * 60 * 1000;
@@ -214,7 +211,7 @@ export const createSearchTransactionsTool = ({
 
       if (query && !filter && !aggregation) {
         try {
-          const { output, usage } = await generateText({
+          const { output } = await generateText({
             model: openai("gpt-5-nano"),
             output: Output.json(),
             system: SPECIALIST_SYSTEM_PROMPT,
@@ -232,14 +229,6 @@ IMPORTANT: When user refers to "today", use the exact UTC range above. All date 
                 store: false,
               },
             },
-          });
-
-          void recordAiUsage({
-            userId,
-            userEmail,
-            modelName: "gpt-5-nano",
-            promptTokens: usage.inputTokens ?? 0,
-            completionTokens: usage.outputTokens ?? 0,
           });
 
           const parsed = output as {

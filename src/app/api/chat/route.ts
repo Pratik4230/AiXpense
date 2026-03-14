@@ -12,7 +12,6 @@ import {
   createUpdateTransactionTool,
   createScanBillTool,
 } from "@/lib/ai/tools";
-import { recordAiUsage } from "@/lib/ai/trackUsage";
 import { db } from "@/lib/db";
 import { ObjectId } from "mongodb";
 import { logger } from "@/lib/logger";
@@ -156,7 +155,6 @@ export async function POST(req: Request) {
       saveIncome: createSaveIncomeTool(toolParams),
       searchTransactions: createSearchTransactionsTool({
         userId,
-        userEmail: session.user.email,
         currentDate: now,
       }),
       deleteTransaction: createDeleteTransactionTool({ userId }),
@@ -174,22 +172,11 @@ export async function POST(req: Request) {
     const cachedTokens = (metadata?.openai?.cachedPromptTokens as number) ?? 0;
     const promptTokens = usage.inputTokens ?? 0;
     const completionTokens = usage.outputTokens ?? 0;
-    try {
-      await recordAiUsage({
-        userId,
-        userEmail: session.user.email,
-        modelName: "gpt-5-nano",
-        promptTokens,
-        completionTokens,
-        cachedTokens,
-      });
-      logger.info("chat_complete", {
+    
+    logger.info("chat_complete", {
         userId,
         data: { promptTokens, completionTokens, cachedTokens },
-      });
-    } catch (e) {
-      logger.error("ai_usage_record_fail", { userId, error: e });
-    }
+    });
   });
 
   return response;

@@ -3,7 +3,7 @@ import { connectDB } from "@/lib/db";
 import { db } from "@/lib/db";
 import { sendEmail } from "@/lib/email";
 import { coachInsightEmail } from "@/lib/email/templates";
-import { Expense, Insight, AiUsage } from "@/models";
+import { Expense, Insight } from "@/models";
 import { openai } from "@ai-sdk/openai";
 import { generateText } from "ai";
 import mongoose from "mongoose";
@@ -88,22 +88,7 @@ async function runCoachForPeriod(type: "weekly" | "monthly") {
       continue;
     }
 
-    const now = new Date();
-    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-    const monthlyCost = await AiUsage.aggregate([
-      {
-        $match: {
-          userId,
-          createdAt: { $gte: monthStart },
-        },
-      },
-      { $group: { _id: null, total: { $sum: "$costUsd" } } },
-    ]);
-    const costThisMonth = monthlyCost[0]?.total ?? 0;
-    if (costThisMonth > 0.1) {
-      results.skipped++;
-      continue;
-    }
+
 
     const categoryMap: Record<string, number> = {};
     for (const e of stats.byCategory) {

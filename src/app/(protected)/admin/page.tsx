@@ -2,7 +2,6 @@ import { Metadata } from "next";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { getAdminStats } from "@/lib/admin/stats";
 import { AdminDashboard } from "@/components/admin/AdminDashboard";
 
 export const metadata: Metadata = {
@@ -18,7 +17,5 @@ export default async function AdminPage() {
     redirect("/aixpense");
   }
 
-  const stats = await getAdminStats();
-
-  return <AdminDashboard stats={stats} />;
+  return <AdminDashboard />;
 }
