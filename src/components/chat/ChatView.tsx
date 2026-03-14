@@ -386,6 +386,7 @@ export function ChatView({
                               category: string;
                               subcategory?: string;
                               tags?: string[];
+                              notes?: string;
                             };
                           }
                         ).expense;
@@ -425,6 +426,7 @@ export function ChatView({
                               category: string;
                               subcategory?: string;
                               tags?: string[];
+                              notes?: string;
                             };
                           }
                         ).income;
@@ -536,6 +538,7 @@ export function ChatView({
                             category: string;
                             subcategory?: string;
                             type: string;
+                            notes?: string;
                           };
                         };
                         if (output.success && output.transaction) {
@@ -564,6 +567,7 @@ export function ChatView({
                               amount={output.transaction.amount}
                               category={output.transaction.category}
                               subcategory={output.transaction.subcategory}
+                              notes={output.transaction.notes}
                               onEdit={editHandler}
                               onDelete={deleteHandler}
                             />

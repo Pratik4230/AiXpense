@@ -41,8 +41,12 @@ export const createSaveExpenseTool = ({
         .string()
         .optional()
         .describe("ISO date string if the user mentions a specific date, otherwise omit"),
+      notes: z
+        .string()
+        .optional()
+        .describe("Additional details or itemized breakdown of the expense (e.g. from receipt scans)"),
     }),
-    execute: async ({ item, amount, category, subcategory, tags, date }) => {
+    execute: async ({ item, amount, category, subcategory, tags, date, notes }) => {
       try {
         await connectDB();
 
@@ -60,6 +64,7 @@ export const createSaveExpenseTool = ({
             date: date ? new Date(date) : new Date(),
             rawInput,
             tags: tags || [],
+            notes,
           }),
           Budget.findOne({ userId: userObjectId, category }).lean(),
         ]);
@@ -97,6 +102,7 @@ export const createSaveExpenseTool = ({
             subcategory: expense.subcategory,
             tags: expense.tags,
             date: expense.date.toISOString(),
+            notes: expense.notes,
           },
           budgetStatus,
         };

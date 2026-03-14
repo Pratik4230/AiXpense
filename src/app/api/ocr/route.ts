@@ -21,20 +21,19 @@ const SAFE_MIME_TYPES = new Set([
 ]);
 
 const EXTRACTION_PROMPT = `You are a bill parser for an Indian expense tracker.
-Look at this bill/receipt image and extract ONE expense summary as a short natural language sentence.
+Look at this bill/receipt image and extract ONE expense summary as a short natural language sentence, optionally followed by a line item breakdown in parentheses.
 
 Rules:
 - Identify the merchant/store name (e.g. DMart, Raju Kirana Store, Haryana Roadways)
 - Find the TOTAL/Grand Total/कुल देय राशि amount in INR
-- Find the date if visible. The date on the bill can be in any format (DD/MM/YY, MM/DD/YYYY, YYYY-MM-DD, DD-MON-YY, or any other). Interpret it correctly and always output it as: DD Month YYYY (e.g. 26 January 2018). If year is not on the bill, omit it.
-- Output ONLY one sentence, examples:
-  "DMart groceries ₹843 on 10 March 2024"
-  "Raju Kirana Store ₹402 on 12 October 2023"
-  "Haryana Roadways bus ticket ₹160 on 12 October"
-  "Swiggy order ₹320"
+- Extract the date if visible, output as DD Month YYYY (e.g. 26 January 2018). If year is not on the bill, omit it.
+- Output ONLY one sentence. If line items and taxes (like dishes, products, CGST, SGST, IGST, VAT, service charges, delivery fees) are clearly readable, append them in parentheses to serve as notes. Format as a comma-separated list.
+- **CRITICAL**: For EVERY single item in the parentheses, you MUST include its price/amount right next to it with the ₹ symbol. Never list an item or a tax without its price.
+- Example 1 (with items and taxes): "Anandha Bhavan meal ₹404 on 26 January 2018 (1 Ghee Pongal ₹50, 3 Vadai ₹60, 3 Roast ₹150, 2 Poori Masal ₹100, 1 Tea ₹25, 2.5% CGST ₹9.63, 2.5% SGST ₹9.63, Rounding -₹0.26)"
+- Example 2 (no clear items): "Swiggy order ₹320"
 - For bills in Hindi/Marathi/any Indian language, still output in English
-- Use the TOTAL amount, not individual line items
-- Use ₹ symbol
+- Use the TOTAL amount, not individual line items for the main amount
+- Use ₹ symbol for all amounts
 - If you genuinely cannot read any amount, output exactly: "Bill scan — please enter amount manually"`;
 
 export async function POST(req: Request) {

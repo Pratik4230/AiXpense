@@ -30,8 +30,12 @@ export const createSaveIncomeTool = ({ userId, rawInput }: SaveIncomeParams) =>
         .string()
         .optional()
         .describe("ISO date string if the user mentions a specific date, otherwise omit"),
+      notes: z
+        .string()
+        .optional()
+        .describe("Additional details or breakdown of the income"),
     }),
-    execute: async ({ source, amount, category, subcategory, tags, date }) => {
+    execute: async ({ source, amount, category, subcategory, tags, date, notes }) => {
       try {
         await connectDB();
 
@@ -47,6 +51,7 @@ export const createSaveIncomeTool = ({ userId, rawInput }: SaveIncomeParams) =>
           date: date ? new Date(date) : new Date(),
           rawInput,
           tags: tags || [],
+          notes,
         });
 
         return {
@@ -60,6 +65,7 @@ export const createSaveIncomeTool = ({ userId, rawInput }: SaveIncomeParams) =>
             subcategory: income.subcategory,
             tags: income.tags,
             date: income.date.toISOString(),
+            notes: income.notes,
           },
         };
       } catch (e) {

@@ -12,6 +12,7 @@ interface IncomeCardProps {
   category: string;
   subcategory?: string;
   tags?: string[];
+  notes?: string;
   isOutdated?: boolean;
   onEdit?: (data: {
     id: string;
@@ -34,6 +35,7 @@ export function IncomeCard({
   category,
   subcategory,
   tags,
+  notes,
   isOutdated,
   onEdit,
   onDelete,
@@ -130,6 +132,14 @@ export function IncomeCard({
                   </Badge>
                 ))}
               </div>
+            </div>
+          )}
+          {notes && (
+            <div className="flex flex-col gap-1 mt-2 p-2 bg-background/50 rounded-md border border-border/50">
+              <span className="text-muted-foreground text-xs">Notes / Breakdown</span>
+              <span className="text-xs text-foreground/90 leading-relaxed italic">
+                {notes}
+              </span>
             </div>
           )}
         </div>
