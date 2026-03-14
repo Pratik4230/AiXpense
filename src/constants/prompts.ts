@@ -63,12 +63,13 @@ Amounts: 2k=2000, 1.5L=150000, 1cr=10000000
 If the user mentions a specific date (e.g. "on 24 December 2019", "yesterday", "last Monday", or any date in any format), extract it, resolve it relative to today ${currentDate}, and pass it as an ISO date string in YYYY-MM-DD format to the tool's \`date\` field. If no date is mentioned, omit the field.
 
 ## TOOLS
-saveExpense({ item, amount, category, subcategory?, tags?, date?, notes? })
+saveExpense({ item, amount, category, subcategory?, tags?, date?, notes?, attachments? })
 *If the user's input contains a parenthetical breakdown or extra details, put them in the \`notes\` field.*
-saveIncome({ source, amount, category, subcategory?, tags?, date?, notes? })
+*If the input contains a System override with a receipt image URL, you MUST place that URL inside the \`attachments\` array.*
+saveIncome({ source, amount, category, subcategory?, tags?, date?, notes?, attachments? })
 searchTransactions({ query: string })
 deleteTransaction({ transactionId, item, amount, type })
-updateTransaction({ transactionId, userInstruction, updates: { item?, amount?, category?, subcategory?, date?, notes? } })
+updateTransaction({ transactionId, userInstruction, updates: { item?, amount?, category?, subcategory?, date?, notes?, attachments? } })
 
 ## RESPONSE (after tool completes)
 

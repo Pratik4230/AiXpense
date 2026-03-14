@@ -33,6 +33,7 @@ export const createUpdateTransactionTool = ({
           subcategory: z.string().optional().describe("New subcategory"),
           date: z.string().optional().describe("ISO date string for the new date, if mentioned"),
           notes: z.string().optional().describe("New notes or breakdown"),
+          attachments: z.array(z.string()).optional().describe("New attachments URLs to add"),
         })
         .describe("Fields to update"),
     }),
@@ -61,6 +62,12 @@ export const createUpdateTransactionTool = ({
           updateData.subcategory = updates.subcategory;
         if (updates.date) updateData.date = new Date(updates.date);
         if (updates.notes !== undefined) updateData.notes = updates.notes;
+        if (updates.attachments && updates.attachments.length > 0) {
+          updateData.attachments = [
+            ...(transaction.attachments || []),
+            ...updates.attachments,
+          ];
+        }
 
         const now = new Date();
         updateData.rawInput = `${transaction.rawInput} [UPDATED: ${now.toISOString()} - ${userInstruction}]`;
@@ -119,6 +126,7 @@ export const createUpdateTransactionTool = ({
             date: updated?.date?.toISOString(),
             tags: updated?.tags || [],
             notes: updated?.notes,
+            attachments: updated?.attachments || [],
           },
           budgetStatus,
         };

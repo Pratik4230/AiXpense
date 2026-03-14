@@ -11,14 +11,13 @@ import {
   ScanLine,
   Lock,
 } from "lucide-react";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import Link from "next/link";
 import {
   TransactionAttachment,
   type SelectedTransaction,
 } from "./TransactionAttachment";
 import { useSarvamSTT } from "@/hooks/useSarvamSTT";
-import { useOCR } from "@/hooks/useOCR";
 import { Persona } from "@/components/ai-elements/persona";
 import { toast } from "sonner";
 import {
@@ -30,7 +29,10 @@ import {
 interface ChatInputProps {
   value: string;
   onChange: (value: string) => void;
-  onSubmit: (e: React.FormEvent) => void;
+  onSubmit: (
+    e: React.FormEvent,
+    attachedFiles?: { url: string; mediaType: string }[],
+  ) => void;
   isLoading: boolean;
   isPremium: boolean;
   selectedTransaction?: SelectedTransaction | null;
@@ -56,10 +58,8 @@ export function ChatInput({
   const { status, transcript, startRecording, stopRecording, resetTranscript } =
     useSarvamSTT();
 
-  const { status: ocrStatus, scanBill } = useOCR();
-
-  const isScanning = ocrStatus === "scanning";
-  const isScanError = ocrStatus === "error";
+  const [isUploadingFile, setIsUploadingFile] = useState(false);
+  const [uploadError, setUploadError] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
     if (isMobile()) textareaRef.current?.blur();
@@ -87,33 +87,57 @@ export function ChatInput({
     if (!isLoading && !isMobile()) textareaRef.current?.focus();
   }, [isLoading]);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     e.target.value = "";
 
-    scanBill(
-      file,
-      (text) => {
-        shouldAutoSubmitRef.current = true;
-        onChange(text);
-      },
-      (message) => toast.error(message),
-    );
+    const oversized = file.size > 10 * 1024 * 1024;
+    if (oversized) {
+      toast.error(`"${file.name}" exceeds the 10 MB limit`);
+      return;
+    }
+
+    setIsUploadingFile(true);
+    setUploadError(false);
+
+    try {
+      const res = await fetch("/api/imagekit-auth");
+      if (!res.ok) throw new Error("Failed to get auth");
+      const authParams = await res.json();
+
+      const { upload } = await import("@imagekit/next");
+      const uploadRes = await upload({
+        file,
+        fileName: file.name,
+        folder: "/receipts",
+        ...authParams,
+      });
+
+      // Instantly submit the newly uploaded file URL to the chat
+      onSubmit({ preventDefault: () => {} } as React.FormEvent, [
+        { url: uploadRes.url as string, mediaType: file.type },
+      ]);
+    } catch {
+      setUploadError(true);
+      toast.error("File upload failed. Please try again.");
+    } finally {
+      setIsUploadingFile(false);
+    }
   };
 
   const isRecording = status === "recording";
   const isProcessing = status === "processing";
 
-  const isBusy = isLoading || isRecording || isScanning;
+  const isBusy = isLoading || isRecording || isUploadingFile;
 
   const canSubmit = selectedTransaction
     ? selectedTransaction.action === "delete" || value.trim()
     : value.trim();
 
   const getPlaceholder = () => {
-    if (isScanning) return "Reading bill...";
-    if (isScanError) return "Scan failed — try again or type manually";
+    if (isUploadingFile) return "Uploading bill...";
+    if (uploadError) return "Upload failed — try again or type manually";
     if (isRecording) return "Listening...";
     if (isProcessing) return "Transcribing...";
     if (!selectedTransaction) return "Coffee 50  or  Salary received 55000";
@@ -134,7 +158,7 @@ export function ChatInput({
           </div>
         )}
 
-        {isScanning && (
+        {isUploadingFile && (
           <div className="flex justify-center pb-3">
             <Persona state="thinking" variant="glint" className="size-14" />
           </div>
@@ -199,12 +223,12 @@ export function ChatInput({
                     disabled={isBusy}
                     className={cn(
                       "h-9 w-9 rounded-xl",
-                      isScanning && "animate-pulse text-primary",
-                      isScanError && "text-destructive",
+                      isUploadingFile && "animate-pulse text-primary",
+                      uploadError && "text-destructive",
                     )}
                     title="Scan bill"
                   >
-                    {isScanning ? (
+                    {isUploadingFile ? (
                       <ScanLine className="size-4 animate-pulse" />
                     ) : (
                       <Camera className="size-4" />
@@ -232,7 +256,7 @@ export function ChatInput({
                 </Tooltip>
               )}
 
-              {(isRecording || isProcessing || isScanning) && (
+              {(isRecording || isProcessing || isUploadingFile) && (
                 <span
                   className={cn(
                     "text-xs",
@@ -243,8 +267,8 @@ export function ChatInput({
                 >
                   {isRecording
                     ? "Recording..."
-                    : isScanning
-                      ? "Reading bill..."
+                    : isUploadingFile
+                      ? "Uploading..."
                       : "Transcribing..."}
                 </span>
               )}
@@ -258,7 +282,7 @@ export function ChatInput({
                 onClick={() =>
                   isRecording ? stopRecording() : startRecording()
                 }
-                disabled={isLoading || isProcessing || isScanning}
+                disabled={isLoading || isProcessing || isUploadingFile}
                 className={cn(
                   "h-9 w-9 rounded-xl",
                   isRecording && "animate-pulse",

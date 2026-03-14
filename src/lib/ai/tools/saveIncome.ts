@@ -34,8 +34,12 @@ export const createSaveIncomeTool = ({ userId, rawInput }: SaveIncomeParams) =>
         .string()
         .optional()
         .describe("Additional details or breakdown of the income"),
+      attachments: z
+        .array(z.string())
+        .optional()
+        .describe("Array of image or document URLs associated with this transaction"),
     }),
-    execute: async ({ source, amount, category, subcategory, tags, date, notes }) => {
+    execute: async ({ source, amount, category, subcategory, tags, date, notes, attachments }) => {
       try {
         await connectDB();
 
@@ -52,6 +56,7 @@ export const createSaveIncomeTool = ({ userId, rawInput }: SaveIncomeParams) =>
           rawInput,
           tags: tags || [],
           notes,
+          attachments: attachments || [],
         });
 
         return {
@@ -66,6 +71,7 @@ export const createSaveIncomeTool = ({ userId, rawInput }: SaveIncomeParams) =>
             tags: income.tags,
             date: income.date.toISOString(),
             notes: income.notes,
+            attachments: income.attachments,
           },
         };
       } catch (e) {

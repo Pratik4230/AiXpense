@@ -10,6 +10,7 @@ import {
   createSearchTransactionsTool,
   createDeleteTransactionTool,
   createUpdateTransactionTool,
+  createScanBillTool,
 } from "@/lib/ai/tools";
 import { recordAiUsage } from "@/lib/ai/trackUsage";
 import { db } from "@/lib/db";
@@ -108,10 +109,37 @@ export async function POST(req: Request) {
     day: "numeric",
   });
 
+  const interceptedMessages = messages.map((msg) => {
+    if (msg.role === "user" && msg.parts) {
+      const newParts = msg.parts.map((part) => {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        if (part.type === "file" && (part as any).url) {
+          if (!dbUser.isPremium) {
+            logger.warn("ocr_premium_required", { userId });
+            return {
+              type: "text" as const,
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              text: `[System override: The user tried to upload a receipt image at ${(part as any).url}, but they do NOT have a Premium subscription. Inform the user that OCR bill scanning is a premium-only feature and they must upgrade.]`,
+            };
+          }
+
+          return {
+            type: "text" as const,
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            text: `[System override: The user provided a receipt image at ${(part as any).url}. You MUST call the scanBill tool with this URL to extract its contents.]`,
+          };
+        }
+        return part;
+      });
+      return { ...msg, parts: newParts };
+    }
+    return msg;
+  });
+
   const result = streamText({
     model: openai("gpt-5-nano"),
     system: SYSTEM_PROMPT(currentDateStr),
-    messages: await convertToModelMessages(messages),
+    messages: await convertToModelMessages(interceptedMessages),
     providerOptions: {
       openai: {
         reasoningEffort: "low",
@@ -133,6 +161,7 @@ export async function POST(req: Request) {
       }),
       deleteTransaction: createDeleteTransactionTool({ userId }),
       updateTransaction: createUpdateTransactionTool({ userId }),
+      scanBill: createScanBillTool({ isPremium: dbUser.isPremium }),
     },
     stopWhen: stepCountIs(5),
   });

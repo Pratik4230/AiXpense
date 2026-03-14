@@ -45,8 +45,12 @@ export const createSaveExpenseTool = ({
         .string()
         .optional()
         .describe("Additional details or itemized breakdown of the expense (e.g. from receipt scans)"),
+      attachments: z
+        .array(z.string())
+        .optional()
+        .describe("Array of image or document URLs associated with this transaction"),
     }),
-    execute: async ({ item, amount, category, subcategory, tags, date, notes }) => {
+    execute: async ({ item, amount, category, subcategory, tags, date, notes, attachments }) => {
       try {
         await connectDB();
 
@@ -65,6 +69,7 @@ export const createSaveExpenseTool = ({
             rawInput,
             tags: tags || [],
             notes,
+            attachments: attachments || [],
           }),
           Budget.findOne({ userId: userObjectId, category }).lean(),
         ]);
@@ -103,6 +108,7 @@ export const createSaveExpenseTool = ({
             tags: expense.tags,
             date: expense.date.toISOString(),
             notes: expense.notes,
+            attachments: expense.attachments,
           },
           budgetStatus,
         };

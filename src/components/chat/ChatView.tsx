@@ -38,6 +38,7 @@ import {
   useUpdateConversation,
 } from "@/services/conversations";
 import { useTrialActions } from "@/services/trials";
+import Image from "next/image";
 
 interface ChatMessage {
   id: string;
@@ -206,7 +207,10 @@ export function ChatView({
   }
   prevStatusRef.current = status;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = (
+    e: React.FormEvent,
+    attachedFiles?: { url: string; mediaType: string }[],
+  ) => {
     e.preventDefault();
     if (!isPremium && freeTrials <= 0) {
       onShowUpgradeDialog();
@@ -215,6 +219,23 @@ export function ChatView({
 
     if (conversationId && messageCount >= MAX_MESSAGES_PER_CONVERSATION - 2) {
       onShowLimitDialog();
+      return;
+    }
+
+    if (attachedFiles && attachedFiles.length > 0) {
+      optimisticDecrement();
+      sendMessage({
+        role: "user",
+        parts: [
+          { type: "text", text: input || "Scan this bill" },
+          ...attachedFiles.map((file) => ({
+            type: "file" as const,
+            mediaType: file.mediaType,
+            url: file.url,
+          })),
+        ],
+      });
+      setInput("");
       return;
     }
 
@@ -372,6 +393,28 @@ export function ChatView({
                         <MessageResponse key={`${message.id}-${index}`}>
                           {displayText}
                         </MessageResponse>
+                      );
+                    }
+
+                    if (
+                      part.type === "file" &&
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      (part as any).mediaType?.startsWith("image/")
+                    ) {
+                      return (
+                        <div
+                          key={`${message.id}-${index}`}
+                          className="mt-2 overflow-hidden rounded-xl border max-w-sm"
+                        >
+                          <Image
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            src={(part as any).url}
+                            alt="Uploaded receipt"
+                            width={400}
+                            height={400}
+                            className="w-full h-auto object-cover"
+                          />
+                        </div>
                       );
                     }
 
