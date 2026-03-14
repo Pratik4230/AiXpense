@@ -62,7 +62,7 @@ const faqs = [
   },
   {
     q: "What exactly does the AI do?",
-    a: "When you type or say something like \"Uber to airport 650\", the AI extracts the item name, amount, date, category, and tags and saves them instantly. No forms to fill.",
+    a: 'When you type or say something like "Uber to airport 650", the AI extracts the item name, amount, date, category, and tags and saves them instantly. No forms to fill.',
   },
   {
     q: "Can I use it on my phone?",
@@ -70,7 +70,7 @@ const faqs = [
   },
   {
     q: "What is the difference between the free and premium plans?",
-    a: "The free plan has a limit of 7 AI messages per day. Premium removes all limits and adds an AI spending coach that sends you weekly and monthly insights by email.",
+    a: "The free plan has a limit of 7 AI messages per day. Premium removes all limits and adds an AI spending coach that sends you weekly and monthly insights by email, plus advanced features like receipt scanning.",
   },
 ];
 
@@ -184,12 +184,9 @@ export default function LandingPage() {
             Stop filling out boring forms. Just type{" "}
             <span className="text-foreground font-medium">
               &quot;Lunch 250&quot;
-            </span>{" "}
-            or{" "}
-            <span className="text-foreground font-medium">
-              &quot;Uber to office 400&quot;
             </span>
-            . Our AI handles the categorization, tagging, and dates instantly.
+            , speak in 22+ Indian languages, or just scan your bill images. Our
+            AI handles the categorization, tagging, and dates instantly.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300">
@@ -297,8 +294,8 @@ export default function LandingPage() {
           <div className="grid gap-4 sm:gap-8 sm:grid-cols-3 max-w-6xl mx-auto">
             <FeatureCard
               icon={<MessageSquare className="size-6 text-blue-500" />}
-              title="Natural Language"
-              description="Type like you talk. Our advanced AI parses your text to extract every detail accurately."
+              title="Voice & Text Input"
+              description="Type like you talk or speak in 22+ Indian languages. Our advanced AI extracts every detail accurately."
               color="bg-blue-500/10"
             />
             <FeatureCard
@@ -367,8 +364,8 @@ export default function LandingPage() {
                   <div className="size-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
                     <Camera className="size-6 text-amber-500" />
                   </div>
-                  <span className="text-xs font-medium bg-amber-500/10 text-amber-500 border border-amber-500/20 px-2.5 py-1 rounded-full">
-                    Coming Soon
+                  <span className="text-xs font-medium bg-green-500/10 text-green-500 border border-green-500/20 px-2.5 py-1 rounded-full">
+                    Live
                   </span>
                 </div>
                 <h3 className="text-lg sm:text-xl font-semibold mb-2">
@@ -378,8 +375,9 @@ export default function LandingPage() {
                   Snap a photo of any receipt or bill. AiXpense extracts the
                   merchant, amount, and items automatically. No typing needed.
                 </p>
-                <span className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground cursor-default">
-                  Demo dropping soon
+                <span className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors cursor-pointer">
+                  Try it out now
+                  <ArrowRight className="size-3.5" />
                 </span>
               </div>
             </div>
@@ -477,10 +475,10 @@ export default function LandingPage() {
               <ul className="space-y-3 text-sm">
                 {[
                   "7 AI messages per day",
+                  "Voice input in 22+ Indian languages",
                   "Expense & income tracking",
-                  "AI categorization",
                   "Search & filter transactions",
-                  "Mobile app access",
+                  "Mobile app (coming soon)",
                 ].map((f) => (
                   <li
                     key={f}
@@ -511,12 +509,11 @@ export default function LandingPage() {
                   <p className="text-muted-foreground mb-1">/month</p>
                 </div>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Unlimited everything
+                  Advanced features
                 </p>
               </div>
               <ul className="space-y-3 text-sm">
                 {[
-                  "Unlimited AI messages",
                   "Everything in Free",
                   "AI spending coach (weekly/monthly)",
                   "Shareable report cards",
@@ -560,7 +557,7 @@ export default function LandingPage() {
                   "Everything in Premium",
                   "2 months free",
                   "Locked-in pricing",
-                  "Receipt scanning (coming soon)",
+                  "Receipt scanning",
                   "Bank statement import (coming soon)",
                 ].map((f) => (
                   <li key={f} className="flex items-center gap-2">
@@ -596,7 +593,11 @@ export default function LandingPage() {
             className="max-w-2xl mx-auto divide-y divide-border/50"
           >
             {faqs.map(({ q, a }, i) => (
-              <AccordionItem key={i} value={`faq-${i}`} className="border-0 py-1">
+              <AccordionItem
+                key={i}
+                value={`faq-${i}`}
+                className="border-0 py-1"
+              >
                 <AccordionTrigger className="text-left text-sm sm:text-base font-medium hover:no-underline py-4">
                   {q}
                 </AccordionTrigger>
