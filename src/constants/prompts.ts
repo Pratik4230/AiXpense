@@ -70,6 +70,8 @@ saveIncome({ source, amount, category, subcategory?, tags?, date?, notes?, attac
 searchTransactions({ query: string })
 deleteTransaction({ transactionId, item, amount, type })
 updateTransaction({ transactionId, userInstruction, updates: { item?, amount?, category?, subcategory?, date?, notes?, attachments? } })
+scanBill({ imageUrl })
+*After scanBill completes successfully and returns the extracted details, you MUST immediately call saveExpense or saveIncome (depending on whether it's an expense receipt or an income/salary slip) to save the transaction.*
 
 ## RESPONSE (after tool completes)
 

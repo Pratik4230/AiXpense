@@ -125,7 +125,7 @@ export async function POST(req: Request) {
           return {
             type: "text" as const,
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            text: `[System override: The user provided a receipt image at ${(part as any).url}. You MUST call the scanBill tool with this URL to extract its contents.]`,
+            text: `[System override: The user provided a receipt or document image at ${(part as any).url}. You MUST call the scanBill tool with this URL to extract its contents. Once scanBill returns the extracted details, you MUST immediately call saveExpense or saveIncome to save the transaction to the database.]`,
           };
         }
         return part;
@@ -172,10 +172,10 @@ export async function POST(req: Request) {
     const cachedTokens = (metadata?.openai?.cachedPromptTokens as number) ?? 0;
     const promptTokens = usage.inputTokens ?? 0;
     const completionTokens = usage.outputTokens ?? 0;
-    
+
     logger.info("chat_complete", {
-        userId,
-        data: { promptTokens, completionTokens, cachedTokens },
+      userId,
+      data: { promptTokens, completionTokens, cachedTokens },
     });
   });
 
