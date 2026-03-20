@@ -3,6 +3,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Bug, ScrollText } from "lucide-react";
 import Link from "next/link";
+import { BroadcastEmail } from "./BroadcastEmail";
 
 export function AdminDashboard() {
   return (
@@ -35,6 +36,8 @@ export function AdminDashboard() {
           </Card>
         </Link>
       </div>
+
+      <BroadcastEmail />
     </div>
   );
 }
