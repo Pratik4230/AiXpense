@@ -212,7 +212,7 @@ export const createSearchTransactionsTool = ({
       if (query && !filter && !aggregation) {
         try {
           const { output } = await generateText({
-            model: openai("gpt-5-nano"),
+            model: openai("gpt-5.4-nano"),
             output: Output.json(),
             system: SPECIALIST_SYSTEM_PROMPT,
             prompt: `User timezone: IST (UTC+5:30). DB stores all dates in UTC.

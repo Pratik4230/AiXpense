@@ -88,8 +88,6 @@ async function runCoachForPeriod(type: "weekly" | "monthly") {
       continue;
     }
 
-
-
     const categoryMap: Record<string, number> = {};
     for (const e of stats.byCategory) {
       categoryMap[e.category] = (categoryMap[e.category] ?? 0) + e.amount;
@@ -104,7 +102,7 @@ async function runCoachForPeriod(type: "weekly" | "monthly") {
     let usage: Awaited<ReturnType<typeof generateText>>["usage"];
     try {
       ({ text, usage } = await generateText({
-        model: openai("gpt-5-mini"),
+        model: openai("gpt-5.4-nano"),
         providerOptions: {
           openai: {
             serviceTier: "flex",

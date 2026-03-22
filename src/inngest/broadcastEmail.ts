@@ -4,7 +4,12 @@ import { sendEmail } from "@/lib/email";
 import { broadcastEmail } from "@/lib/email/templates/broadcast";
 import { db } from "@/lib/db";
 
-const BATCH_SIZE = 50;
+const BATCH_SIZE = 4;
+const DELAY_MS = 250;
+
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
 
 export const broadcastEmailFunction = inngest.createFunction(
   { id: "admin-broadcast-email", retries: 2 },
@@ -39,13 +44,14 @@ export const broadcastEmailFunction = inngest.createFunction(
     for (let batchIdx = 0; batchIdx < batches.length; batchIdx++) {
       await step.run(`send-batch-${batchIdx}`, async () => {
         const batch = batches[batchIdx];
-        await Promise.all(
-          batch.map(({ email, name }) => {
-            const { html, text } = broadcastEmail({ name, subject, body });
-            return sendEmail({ to: email, subject, html, text });
-          })
-        );
+        for (const { email, name } of batch) {
+          const { html, text } = broadcastEmail({ name, subject, body });
+          await sendEmail({ to: email, subject, html, text });
+          await sleep(DELAY_MS);
+        }
       });
+
+      await step.sleep(`throttle-${batchIdx}`, "1s");
     }
 
     return {

@@ -136,12 +136,12 @@ export async function POST(req: Request) {
   });
 
   const result = streamText({
-    model: openai("gpt-5-nano"),
+    model: openai("gpt-5.4-nano"),
     system: SYSTEM_PROMPT(currentDateStr),
     messages: await convertToModelMessages(interceptedMessages),
     providerOptions: {
       openai: {
-        reasoningEffort: "low",
+        reasoningEffort: "medium",
         textVerbosity: "low",
         user: userId,
         safetyIdentifier: userId,
