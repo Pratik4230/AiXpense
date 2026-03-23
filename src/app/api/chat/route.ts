@@ -11,6 +11,9 @@ import {
   createDeleteTransactionTool,
   createUpdateTransactionTool,
   createScanBillTool,
+  createCreateUpdateBudgetTool,
+  createDeleteBudgetTool,
+  createReadBudgetsTool,
 } from "@/lib/ai/tools";
 import { db } from "@/lib/db";
 import { ObjectId } from "mongodb";
@@ -160,6 +163,9 @@ export async function POST(req: Request) {
       deleteTransaction: createDeleteTransactionTool({ userId }),
       updateTransaction: createUpdateTransactionTool({ userId }),
       scanBill: createScanBillTool({ isPremium: dbUser.isPremium }),
+      createUpdateBudget: createCreateUpdateBudgetTool({ userId }),
+      deleteBudget: createDeleteBudgetTool({ userId }),
+      readBudgets: createReadBudgetsTool({ userId }),
     },
     stopWhen: stepCountIs(5),
   });

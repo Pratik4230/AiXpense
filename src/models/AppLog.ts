@@ -28,7 +28,10 @@ export type LogEvent =
   | "voice_sarvam_fail"
   | "ocr_complete"
   | "ocr_fail"
-  | "ocr_premium_required";
+  | "ocr_premium_required"
+  | "tool_budget_upsert_fail"
+  | "tool_budget_delete_fail"
+  | "tool_budget_read_fail";
 
 export interface IAppLog extends Document {
   level: LogLevel;
