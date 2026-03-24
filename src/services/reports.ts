@@ -39,42 +39,21 @@ export interface TopExpense {
   date: string;
 }
 
-function reportsQuery<T>(type: string, range: ReportRange, mode: ReportMode) {
-  return {
-    queryKey: ["reports", type, range, mode],
+export interface ReportsData {
+  overview: OverviewData;
+  trend: TrendPoint[];
+  categories: CategoryPoint[];
+  budgetVsActual: BudgetVsActualPoint[] | null;
+  topExpenses: TopExpense[];
+}
+
+export function useReports(range: ReportRange, mode: ReportMode) {
+  return useQuery<ReportsData>({
+    queryKey: ["reports", range, mode],
     queryFn: () =>
       api
-        .get<T>(`/reports?type=${type}&range=${range}&mode=${mode}`)
-        .then((r) => r.data),
-    staleTime: 1000 * 60 * 5,
-  };
-}
-
-export function useReportOverview(range: ReportRange, mode: ReportMode) {
-  return useQuery<OverviewData>(reportsQuery("overview", range, mode));
-}
-
-export function useReportTrend(range: ReportRange, mode: ReportMode) {
-  return useQuery<TrendPoint[]>(reportsQuery("trend", range, mode));
-}
-
-export function useReportCategories(range: ReportRange, mode: ReportMode) {
-  return useQuery<CategoryPoint[]>(reportsQuery("categories", range, mode));
-}
-
-export function useReportBudgetVsActual(range: ReportRange) {
-  return useQuery<BudgetVsActualPoint[]>({
-    queryKey: ["reports", "budget-vs-actual", range],
-    queryFn: () =>
-      api
-        .get<
-          BudgetVsActualPoint[]
-        >(`/reports?type=budget-vs-actual&range=${range}&mode=expense`)
+        .get<ReportsData>(`/reports?range=${range}&mode=${mode}`)
         .then((r) => r.data),
     staleTime: 1000 * 60 * 5,
   });
-}
-
-export function useReportTopExpenses(range: ReportRange, mode: ReportMode) {
-  return useQuery<TopExpense[]>(reportsQuery("top-expenses", range, mode));
 }

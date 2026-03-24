@@ -25,7 +25,9 @@ export async function GET(_req: Request, { params }: RouteParams) {
     _id: id,
     userId: session.user.id,
     isDeleted: false,
-  }).lean();
+  })
+    .select("_id title messages messageCount updatedAt")
+    .lean();
 
   if (!conversation) {
     return NextResponse.json(
@@ -48,29 +50,39 @@ export async function PATCH(req: Request, { params }: RouteParams) {
 
   const { id } = await params;
   const body = await req.json();
-  const { title, messages } = body;
+  const { title, messages, appendMessages } = body;
 
   await connectDB();
 
-  const conversation = await Conversation.findOne({
-    _id: id,
-    userId: session.user.id,
-    isDeleted: false,
-  });
-
-  if (!conversation) {
-    return NextResponse.json(
-      { error: "Conversation not found" },
-      { status: 404 },
+  if (appendMessages && appendMessages.length > 0) {
+    const result = await Conversation.findOneAndUpdate(
+      {
+        _id: id,
+        userId: session.user.id,
+        isDeleted: false,
+        messageCount: { $lt: MAX_MESSAGES_PER_CONVERSATION },
+      },
+      {
+        $push: { messages: { $each: appendMessages } },
+        $inc: { messageCount: appendMessages.length },
+      },
+      { new: true, projection: { _id: 1, title: 1, messageCount: 1, updatedAt: 1 } },
     );
-  }
 
-  if (title) {
-    conversation.title = title;
-  }
+    if (!result) {
+      const exists = await Conversation.exists({
+        _id: id,
+        userId: session.user.id,
+        isDeleted: false,
+      });
 
-  if (messages) {
-    if (messages.length > MAX_MESSAGES_PER_CONVERSATION) {
+      if (!exists) {
+        return NextResponse.json(
+          { error: "Conversation not found" },
+          { status: 404 },
+        );
+      }
+
       return NextResponse.json(
         {
           error: "Message limit reached",
@@ -79,20 +91,62 @@ export async function PATCH(req: Request, { params }: RouteParams) {
         { status: 400 },
       );
     }
-    conversation.messages = messages;
-    conversation.messageCount = messages.length;
+
+    return NextResponse.json({
+      conversation: {
+        _id: result._id,
+        title: result.title,
+        messageCount: result.messageCount,
+        updatedAt: result.updatedAt,
+      },
+    });
   }
 
-  await conversation.save();
+  if (title || messages) {
+    const conversation = await Conversation.findOne({
+      _id: id,
+      userId: session.user.id,
+      isDeleted: false,
+    });
 
-  return NextResponse.json({
-    conversation: {
-      _id: conversation._id,
-      title: conversation.title,
-      messageCount: conversation.messageCount,
-      updatedAt: conversation.updatedAt,
-    },
-  });
+    if (!conversation) {
+      return NextResponse.json(
+        { error: "Conversation not found" },
+        { status: 404 },
+      );
+    }
+
+    if (title) {
+      conversation.title = title;
+    }
+
+    if (messages) {
+      if (messages.length > MAX_MESSAGES_PER_CONVERSATION) {
+        return NextResponse.json(
+          {
+            error: "Message limit reached",
+            maxMessages: MAX_MESSAGES_PER_CONVERSATION,
+          },
+          { status: 400 },
+        );
+      }
+      conversation.messages = messages;
+      conversation.messageCount = messages.length;
+    }
+
+    await conversation.save();
+
+    return NextResponse.json({
+      conversation: {
+        _id: conversation._id,
+        title: conversation.title,
+        messageCount: conversation.messageCount,
+        updatedAt: conversation.updatedAt,
+      },
+    });
+  }
+
+  return NextResponse.json({ error: "No update data" }, { status: 400 });
 }
 
 export async function DELETE(_req: Request, { params }: RouteParams) {

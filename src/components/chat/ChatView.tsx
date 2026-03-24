@@ -35,7 +35,7 @@ import {
 } from "@/constants/conversation";
 import {
   useCreateConversation,
-  useUpdateConversation,
+  useAppendMessages,
 } from "@/services/conversations";
 import { useTrialActions } from "@/services/trials";
 import Image from "next/image";
@@ -78,9 +78,10 @@ export function ChatView({
 
   const conversationIdRef = useRef(conversationId);
   const pendingSaveRef = useRef(false);
+  const lastSavedCountRef = useRef(initialMessages.length);
 
   const createConversation = useCreateConversation();
-  const updateConversation = useUpdateConversation();
+  const appendMessages = useAppendMessages();
 
   const saveMessages = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -89,22 +90,34 @@ export function ChatView({
       pendingSaveRef.current = true;
 
       try {
-        const messagesToSave = currentMessages.map((msg) => ({
-          id: msg.id,
-          role: msg.role as "user" | "assistant",
-          parts: msg.parts,
-          createdAt: new Date(),
-        }));
-
         const currentConvId = conversationIdRef.current;
 
         if (currentConvId) {
-          await updateConversation.mutateAsync({
-            id: currentConvId,
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            messages: messagesToSave as any,
-          });
+          const newMessages = currentMessages
+            .slice(lastSavedCountRef.current)
+            .map((msg) => ({
+              id: msg.id,
+              role: msg.role as "user" | "assistant",
+              parts: msg.parts,
+              createdAt: new Date(),
+            }));
+
+          if (newMessages.length > 0) {
+            await appendMessages.mutateAsync({
+              id: currentConvId,
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              appendMessages: newMessages as any,
+            });
+            lastSavedCountRef.current = currentMessages.length;
+          }
         } else {
+          const messagesToSave = currentMessages.map((msg) => ({
+            id: msg.id,
+            role: msg.role as "user" | "assistant",
+            parts: msg.parts,
+            createdAt: new Date(),
+          }));
+
           const firstUserMessage = currentMessages.find(
             (m) => m.role === "user",
           );
@@ -127,11 +140,12 @@ export function ChatView({
           const newConv = await createConversation.mutateAsync(title);
           conversationIdRef.current = newConv._id;
           onConversationCreated(newConv._id);
-          await updateConversation.mutateAsync({
+          await appendMessages.mutateAsync({
             id: newConv._id,
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            messages: messagesToSave as any,
+            appendMessages: messagesToSave as any,
           });
+          lastSavedCountRef.current = currentMessages.length;
         }
       } catch (error) {
         if (
@@ -146,7 +160,7 @@ export function ChatView({
     },
     [
       createConversation,
-      updateConversation,
+      appendMessages,
       onShowLimitDialog,
       onConversationCreated,
     ],
@@ -271,57 +285,40 @@ export function ChatView({
     sendMessage({ text: suggestion });
   };
 
-  const handleTransactionEdit = (data: {
-    id: string;
-    item: string;
-    amount: number;
-    category: string;
-  }) => {
-    setSelectedTransaction({
-      ...data,
-      type: "expense",
-      action: "edit",
-    });
-  };
+  const handleTransactionAction = useCallback(
+    (
+      data: { id: string; item: string; amount: number; category: string },
+      type: "expense" | "income",
+      action: "edit" | "delete",
+    ) => {
+      setSelectedTransaction({ ...data, type, action });
+    },
+    [],
+  );
 
-  const handleTransactionDelete = (data: {
-    id: string;
-    item: string;
-    amount: number;
-    category: string;
-  }) => {
-    setSelectedTransaction({
-      ...data,
-      type: "expense",
-      action: "delete",
-    });
-  };
+  const handleTransactionEdit = useCallback(
+    (data: { id: string; item: string; amount: number; category: string }) =>
+      handleTransactionAction(data, "expense", "edit"),
+    [handleTransactionAction],
+  );
 
-  const handleIncomeEdit = (data: {
-    id: string;
-    item: string;
-    amount: number;
-    category: string;
-  }) => {
-    setSelectedTransaction({
-      ...data,
-      type: "income",
-      action: "edit",
-    });
-  };
+  const handleTransactionDelete = useCallback(
+    (data: { id: string; item: string; amount: number; category: string }) =>
+      handleTransactionAction(data, "expense", "delete"),
+    [handleTransactionAction],
+  );
 
-  const handleIncomeDelete = (data: {
-    id: string;
-    item: string;
-    amount: number;
-    category: string;
-  }) => {
-    setSelectedTransaction({
-      ...data,
-      type: "income",
-      action: "delete",
-    });
-  };
+  const handleIncomeEdit = useCallback(
+    (data: { id: string; item: string; amount: number; category: string }) =>
+      handleTransactionAction(data, "income", "edit"),
+    [handleTransactionAction],
+  );
+
+  const handleIncomeDelete = useCallback(
+    (data: { id: string; item: string; amount: number; category: string }) =>
+      handleTransactionAction(data, "income", "delete"),
+    [handleTransactionAction],
+  );
 
   return (
     <>

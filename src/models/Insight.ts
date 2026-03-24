@@ -44,6 +44,7 @@ const insightSchema = new Schema<IInsightDocument>(
 );
 
 insightSchema.index({ userId: 1, periodKey: 1 }, { unique: true });
+insightSchema.index({ userId: 1, generatedAt: -1 });
 
 export const Insight: Model<IInsightDocument> =
   mongoose.models.insight ||

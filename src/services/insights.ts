@@ -9,11 +9,12 @@ export interface InsightData {
   generatedAt: string;
 }
 
-export function useLatestInsight() {
+export function useLatestInsight(enabled = true) {
   return useQuery<InsightData | null>({
     queryKey: ["insights", "latest"],
     queryFn: () =>
       api.get<InsightData | null>("/insights/latest").then((r) => r.data),
+    enabled,
     staleTime: 1000 * 60 * 30,
   });
 }

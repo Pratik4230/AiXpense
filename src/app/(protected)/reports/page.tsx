@@ -13,15 +13,8 @@ import {
   TopExpenses,
   CoachInsightCard,
 } from "@/components/reports";
-import {
-  useReportOverview,
-  useReportTrend,
-  useReportCategories,
-  useReportBudgetVsActual,
-  useReportTopExpenses,
-  type ReportRange,
-  type ReportMode,
-} from "@/services/reports";
+import { useReports, type ReportRange, type ReportMode } from "@/services/reports";
+import { useSession } from "@/lib/authClient";
 
 const RANGES: { label: string; value: ReportRange }[] = [
   { label: "This Month", value: "1m" },
@@ -43,6 +36,10 @@ export default function ReportsPage() {
   const range = (searchParams.get("range") as ReportRange) ?? "1m";
   const mode = (searchParams.get("mode") as ReportMode) ?? "expense";
 
+  const { data: session } = useSession();
+  const isPremium =
+    (session?.user as { isPremium?: boolean })?.isPremium ?? false;
+
   function updateParam(key: string, value: string) {
     startTransition(() => {
       const params = new URLSearchParams(searchParams.toString());
@@ -51,21 +48,7 @@ export default function ReportsPage() {
     });
   }
 
-  const { data: overview, isLoading: overviewLoading } = useReportOverview(
-    range,
-    mode,
-  );
-  const { data: trend, isLoading: trendLoading } = useReportTrend(range, mode);
-  const { data: categories, isLoading: catLoading } = useReportCategories(
-    range,
-    mode,
-  );
-  const { data: budgetVsActual, isLoading: bvaLoading } =
-    useReportBudgetVsActual(range);
-  const { data: topExpenses, isLoading: topLoading } = useReportTopExpenses(
-    range,
-    mode,
-  );
+  const { data, isLoading } = useReports(range, mode);
 
   return (
     <div className="container mx-auto max-w-5xl px-4 py-5 sm:py-8 space-y-6">
@@ -122,27 +105,27 @@ export default function ReportsPage() {
 
       <div className="space-y-6">
         <OverviewCards
-          data={overview}
-          isLoading={overviewLoading}
+          data={data?.overview}
+          isLoading={isLoading}
           mode={mode}
         />
 
-        <CoachInsightCard />
+        <CoachInsightCard isPremium={isPremium} />
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <TrendChart
-            data={trend}
-            isLoading={trendLoading}
+            data={data?.trend}
+            isLoading={isLoading}
             range={range}
             mode={mode}
           />
-          <CategoryChart data={categories} isLoading={catLoading} />
+          <CategoryChart data={data?.categories} isLoading={isLoading} />
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <TopExpenses data={topExpenses} isLoading={topLoading} mode={mode} />
+          <TopExpenses data={data?.topExpenses} isLoading={isLoading} mode={mode} />
           {mode === "expense" && (
-            <BudgetVsActual data={budgetVsActual} isLoading={bvaLoading} />
+            <BudgetVsActual data={data?.budgetVsActual ?? undefined} isLoading={isLoading} />
           )}
         </div>
       </div>

@@ -60,10 +60,11 @@ async function deleteConversation(id: string): Promise<void> {
   if (!res.ok) throw new Error("Failed to delete conversation");
 }
 
-export function useConversations() {
+export function useConversations(enabled = true) {
   return useQuery({
     queryKey: ["conversations"],
     queryFn: fetchConversations,
+    enabled,
     staleTime: 5 * 60 * 1000,
     refetchOnWindowFocus: false,
   });
@@ -90,9 +91,32 @@ export function useCreateConversation() {
   });
 }
 
+async function appendConversationMessages(params: {
+  id: string;
+  appendMessages: IMessage[];
+}): Promise<ConversationSummary> {
+  const res = await fetch(`/api/conversations/${params.id}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ appendMessages: params.appendMessages }),
+  });
+  if (!res.ok) {
+    const error = await res.json();
+    throw new Error(error.error || "Failed to append messages");
+  }
+  const data = await res.json();
+  return data.conversation;
+}
+
 export function useUpdateConversation() {
   return useMutation({
     mutationFn: updateConversation,
+  });
+}
+
+export function useAppendMessages() {
+  return useMutation({
+    mutationFn: appendConversationMessages,
   });
 }
 

@@ -22,6 +22,8 @@ import { MAX_MESSAGES_PER_CONVERSATION } from "@/constants/conversation";
 
 const FREE_DAILY_LIMIT = 7;
 
+const emptySubscribe = () => () => {};
+
 interface UserWithTrial {
   isPremium?: boolean;
   freeTrials?: number;
@@ -97,7 +99,6 @@ export default function AiXpensePage() {
       : `new-${newChatId}`;
 
 
-  const emptySubscribe = () => () => {};
   const mounted = useSyncExternalStore(emptySubscribe, () => true, () => false);
 
   return (

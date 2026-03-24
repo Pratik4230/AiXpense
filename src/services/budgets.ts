@@ -15,6 +15,8 @@ export function useBudgets() {
   return useQuery<BudgetSummary[]>({
     queryKey: BUDGETS_KEY,
     queryFn: () => api.get("/budgets").then((r) => r.data),
+    staleTime: 1000 * 60 * 2,
+    refetchOnWindowFocus: false,
   });
 }
 

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 
 import {
@@ -27,6 +28,14 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+
+export const metadata: Metadata = {
+  title:
+    "Expense Tracker - AI Expense Manager App | Track Expenses by Voice | AiXpense",
+  description:
+    "Best free AI expense tracker app for India. Track daily expenses and income by voice in Hindi, Marathi & 22+ languages, text, or bill scan. Smart expense manager with auto-categorization, budget alerts, spending reports & analytics. No forms needed - just say 'Lunch 250'.",
+  alternates: { canonical: "https://aixpense.in" },
+};
 
 const personJsonLd = {
   "@context": "https://schema.org",
@@ -85,19 +94,33 @@ const faqJsonLd = {
 
 const jsonLd = {
   "@context": "https://schema.org",
-  "@type": "WebApplication",
-  name: "AiXpense",
+  "@type": "SoftwareApplication",
+  name: "AiXpense - AI Expense Tracker",
+  alternateName: ["AiXpense", "AI Xpense", "AI Expense Tracker"],
   url: "https://aixpense.in",
   description:
-    "AI-powered expense tracker with voice input. Track income and expenses by speaking or typing in Hindi, Marathi, English, or 22+ Indian languages. Just say 'Lunch 250' and AiXpense categorizes and logs it instantly.",
+    "Best AI expense tracker app for India. Track daily expenses and income by voice, text, or bill scan in Hindi, Marathi, English & 22+ Indian languages. Free expense manager with budget tracking, spending analytics & AI auto-categorization.",
   applicationCategory: "FinanceApplication",
+  applicationSubCategory: "Expense Tracker",
   operatingSystem: "Web",
+  inLanguage: ["en", "hi", "mr", "ta", "te", "bn", "gu", "kn", "ml", "pa"],
+  featureList: [
+    "Voice expense tracking in 22+ Indian languages",
+    "AI auto-categorization of expenses",
+    "Bill and receipt scanning",
+    "Monthly budget tracking with alerts",
+    "Spending analytics and reports",
+    "Income and expense management",
+    "Natural language input",
+  ],
+  screenshot: "https://aixpense.in/og-image.png",
   offers: [
     {
       "@type": "Offer",
       price: "0",
       priceCurrency: "INR",
       name: "Free Plan",
+      description: "7 AI messages per day with full expense tracking",
     },
     {
       "@type": "Offer",
@@ -173,9 +196,9 @@ export default function LandingPage() {
           </div>
 
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight mb-6 sm:mb-8 leading-[1.15] animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-100">
-            Track expenses with <br className="hidden sm:block" />
+            AI Expense Tracker with <br className="hidden sm:block" />
             <span className="bg-linear-to-r from-primary via-orange-400 to-amber-300 bg-clip-text text-transparent">
-              Natural Language
+              Voice & Natural Language
             </span>
           </h1>
 
@@ -184,8 +207,9 @@ export default function LandingPage() {
             <span className="text-foreground font-medium">
               &quot;Lunch 250&quot;
             </span>
-            , speak in 22+ Indian languages, or just scan your bill images. Our
-            AI handles the categorization, tagging, and dates instantly.
+            , speak in Hindi, Marathi, or 22+ Indian languages, or scan your
+            bill images. The best free expense tracker app that handles
+            categorization, budgets, and analytics instantly.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300">
@@ -267,7 +291,7 @@ export default function LandingPage() {
         <section className="py-16 sm:py-24 lg:py-32 relative">
           <div className="text-center mb-12 sm:mb-16">
             <h2 className="text-2xl sm:text-4xl font-bold mb-4">
-              Why use AiXpense?
+              Why AiXpense is the Best Expense Tracker
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base px-2">
               Built for speed and simplicity. We stripped away the complex forms
@@ -301,10 +325,10 @@ export default function LandingPage() {
         <section className="py-16 sm:py-24 lg:py-32 relative">
           <div className="text-center mb-12 sm:mb-16">
             <h2 className="text-2xl sm:text-4xl font-bold mb-4">
-              See it in action
+              See the AI Expense Tracker in Action
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base px-2">
-              Real demos of AiXpense features, built and shipped fast.
+              Real demos of voice expense tracking and bill scanning features.
             </p>
           </div>
 
@@ -372,7 +396,7 @@ export default function LandingPage() {
         <section className="py-16 sm:py-24 lg:py-32 relative">
           <div className="text-center mb-12 sm:mb-16">
             <h2 className="text-2xl sm:text-4xl font-bold mb-4">
-              How AiXpense works
+              How to Track Expenses with AI
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base px-2">
               Start tracking your income and expenses in under 30 seconds. No
@@ -462,7 +486,6 @@ export default function LandingPage() {
                   "Voice input in 22+ Indian languages",
                   "Expense & income tracking",
                   "Search & filter transactions",
-                  "Mobile app (coming soon)",
                 ].map((f) => (
                   <li
                     key={f}
@@ -542,7 +565,6 @@ export default function LandingPage() {
                   "2 months free",
                   "Locked-in pricing",
                   "Receipt scanning",
-                  "Bank statement import (coming soon)",
                 ].map((f) => (
                   <li key={f} className="flex items-center gap-2">
                     <CheckCircle2 className="size-4 text-amber-500 shrink-0" />

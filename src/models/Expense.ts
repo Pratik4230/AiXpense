@@ -91,6 +91,7 @@ const expenseSchema = new Schema<IExpenseDocument>(
 
 expenseSchema.index({ userId: 1, date: -1 });
 expenseSchema.index({ userId: 1, category: 1 });
+expenseSchema.index({ userId: 1, type: 1, date: -1 });
 
 export const Expense: Model<IExpenseDocument> =
   mongoose.models.expense ||

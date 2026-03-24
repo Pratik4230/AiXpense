@@ -45,7 +45,7 @@ export function ConversationSidebar({
   open,
   onOpenChange,
 }: ConversationSidebarProps) {
-  const { data: conversations, isLoading } = useConversations();
+  const { data: conversations, isLoading } = useConversations(open);
   const deleteMutation = useDeleteConversation();
   const [deleteId, setDeleteId] = useState<string | null>(null);
 

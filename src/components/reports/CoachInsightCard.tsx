@@ -5,7 +5,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLatestInsight } from "@/services/insights";
-import { useSession } from "@/lib/authClient";
 import Link from "next/link";
 
 function fmt(n: number) {
@@ -36,14 +35,12 @@ function cleanInsightText(text: string) {
     .trim();
 }
 
-export function CoachInsightCard() {
-  const { data: insight, isLoading } = useLatestInsight();
-  const { data: session } = useSession();
-  const isPremium = (session?.user as { isPremium?: boolean })?.isPremium ?? false;
+interface CoachInsightCardProps {
+  isPremium: boolean;
+}
 
-  if (isLoading) {
-    return <Skeleton className="h-48 rounded-xl" />;
-  }
+export function CoachInsightCard({ isPremium }: CoachInsightCardProps) {
+  const { data: insight, isLoading } = useLatestInsight(isPremium);
 
   if (!isPremium) {
     return (
@@ -76,6 +73,10 @@ export function CoachInsightCard() {
         </CardContent>
       </Card>
     );
+  }
+
+  if (isLoading) {
+    return <Skeleton className="h-48 rounded-xl" />;
   }
 
   if (!insight) {
