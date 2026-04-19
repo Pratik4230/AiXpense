@@ -12,3 +12,10 @@ export { DeletedEmail } from "./DeletedEmail";
 export { Issue, type IIssue, type IIssueDocument } from "./Issue";
 export { Insight, type IInsight, type IInsightDocument } from "./Insight";
 export { AppLog, type IAppLog, type LogLevel, type LogEvent } from "./AppLog";
+export {
+  RecurringPayment,
+  type IRecurringPayment,
+  type IRecurringPaymentDocument,
+  type Frequency,
+  FREQUENCIES,
+} from "./RecurringPayment";

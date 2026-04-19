@@ -31,6 +31,7 @@ const navLinks = [
   { href: "/budgets", label: "Budgets" },
   { href: "/reports", label: "Reports" },
   { href: "/transactions", label: "Transactions" },
+  { href: "/recurring", label: "Recurring" },
 ];
 
 export function Navbar() {

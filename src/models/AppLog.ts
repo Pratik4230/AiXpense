@@ -31,7 +31,9 @@ export type LogEvent =
   | "ocr_premium_required"
   | "tool_budget_upsert_fail"
   | "tool_budget_delete_fail"
-  | "tool_budget_read_fail";
+  | "tool_budget_read_fail"
+  | "inngest_recurring_error"
+  | "inngest_recurring_complete";
 
 export interface IAppLog extends Document {
   level: LogLevel;
