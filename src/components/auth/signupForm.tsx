@@ -157,7 +157,7 @@ export function SignupForm() {
             <Input
               id="name"
               type="text"
-              placeholder="John Doe"
+              placeholder="Enter your name"
               value={name}
               onChange={(e) => setName(e.target.value)}
               required
@@ -169,7 +169,7 @@ export function SignupForm() {
             <Input
               id="email"
               type="email"
-              placeholder="you@example.com"
+              placeholder="Enter your email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
