@@ -106,7 +106,7 @@ export default function PremiumPage() {
         {/* Pricing Cards Grid */}
         <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto items-stretch">
           {/* Monthly Plan */}
-          <Card className="relative flex flex-col overflow-hidden border-border/50 shadow-lg bg-background/50 backdrop-blur-xl hover:border-primary/20 transition-all duration-300">
+          <Card className="relative flex flex-col overflow-hidden border-border/50 shadow-lg bg-background hover:border-primary/20 transition-all duration-300">
             <CardHeader className="text-center pb-2 pt-8">
               <CardTitle className="text-xl font-medium text-muted-foreground">
                 Monthly
@@ -168,7 +168,7 @@ export default function PremiumPage() {
           </Card>
 
           {/* Yearly Plan (Premium Highlight) */}
-          <Card className="relative flex flex-col overflow-hidden border-amber-500/30 shadow-2xl bg-linear-to-b from-background to-amber-500/5 backdrop-blur-xl z-10 hover:shadow-amber-500/10 transition-all duration-300 ring-1 ring-amber-500/20">
+          <Card className="relative flex flex-col overflow-hidden border-amber-500/30 shadow-2xl bg-linear-to-b from-background to-amber-500/5 z-10 hover:shadow-amber-500/10 transition-all duration-300 ring-1 ring-amber-500/20">
             <div className="absolute top-0 inset-x-0 h-1 bg-linear-to-r from-amber-500 via-yellow-500 to-amber-500" />
             <div className="absolute top-4 right-4">
               <Badge className="bg-linear-to-r from-amber-500 to-yellow-600 text-white border-none shadow-lg shadow-amber-500/20">
