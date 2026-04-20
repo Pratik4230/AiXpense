@@ -29,6 +29,8 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion";
 
+export const dynamic = "force-static";
+
 export const metadata: Metadata = {
   title:
     "Expense Tracker - AI Expense Manager App | Track Expenses by Voice | AiXpense",
@@ -160,8 +162,7 @@ export default function LandingPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd) }}
       />
       {/* Background Gradients */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-125 bg-primary/20 blur-[120px] rounded-full opacity-50 pointer-events-none" />
-      <div className="absolute bottom-0 right-0 w-125 h-125 bg-orange-500/10 blur-[100px] rounded-full pointer-events-none" />
+
 
       <header className="container mx-auto px-4 py-6 flex items-center justify-between relative z-10">
         <Link href="/" className="flex items-center gap-2 group">
@@ -176,7 +177,7 @@ export default function LandingPage() {
           <SmartTextLink className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors hidden sm:block">
             Login
           </SmartTextLink>
-          <SmartLink className="rounded-full px-6 shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all">
+          <SmartLink className="rounded-full px-6">
             Get Started
           </SmartLink>
         </div>
@@ -185,24 +186,22 @@ export default function LandingPage() {
       <main className="container mx-auto px-4 relative z-10">
         {/* Hero Section */}
         <section className="py-14 sm:py-24 lg:py-32 text-center max-w-5xl mx-auto flex flex-col items-center">
-          <div className="animate-in fade-in slide-in-from-bottom-4 duration-1000">
-            <Badge
-              variant="outline"
-              className="mb-6 px-4 py-1.5 rounded-full border-primary/20 bg-primary/5 text-primary hover:bg-primary/10 transition-colors cursor-default"
-            >
-              <Zap className="size-3.5 mr-2 fill-primary" />
-              <span>AI-Powered Expense Tracking</span>
-            </Badge>
-          </div>
+          <Badge
+            variant="outline"
+            className="mb-6 px-4 py-1.5 rounded-full border-primary/20 bg-primary/5 text-primary cursor-default"
+          >
+            <Zap className="size-3.5 mr-2 fill-primary" />
+            <span>AI-Powered Expense Tracking</span>
+          </Badge>
 
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight mb-6 sm:mb-8 leading-[1.15] animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-100">
+          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight mb-6 sm:mb-8 leading-[1.15]">
             AI Expense Tracker with <br className="hidden sm:block" />
             <span className="bg-linear-to-r from-primary via-orange-400 to-amber-300 bg-clip-text text-transparent">
               Voice & Natural Language
             </span>
           </h1>
 
-          <p className="text-base sm:text-xl text-muted-foreground mb-8 sm:mb-10 max-w-2xl mx-auto leading-relaxed animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-200">
+          <p className="text-base sm:text-xl text-muted-foreground mb-8 sm:mb-10 max-w-2xl mx-auto leading-relaxed">
             Stop filling out boring forms. Just type{" "}
             <span className="text-foreground font-medium">
               &quot;Lunch 250&quot;
@@ -212,10 +211,10 @@ export default function LandingPage() {
             categorization, budgets, and analytics instantly.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300">
+          <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto">
             <SmartLink
               size="lg"
-              className="h-12 px-8 rounded-full text-base sm:text-lg shadow-xl shadow-primary/20 hover:shadow-primary/30 hover:scale-105 transition-all"
+              className="h-12 px-8 rounded-full text-base sm:text-lg"
             >
               Start Tracking Free
               <ArrowRight className="ml-2 size-5" />
@@ -223,8 +222,8 @@ export default function LandingPage() {
           </div>
 
           {/* Chat Demo UI */}
-          <div className="mt-14 sm:mt-20 w-full sm:max-w-3xl mx-auto animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-500">
-            <div className="rounded-2xl border border-border/50 bg-background/50 backdrop-blur-xl shadow-2xl overflow-hidden">
+          <div className="mt-14 sm:mt-20 w-full sm:max-w-3xl mx-auto">
+            <div className="rounded-2xl border border-border/50 bg-card shadow-lg overflow-hidden">
               <div className="border-b border-border/50 px-4 py-3 flex items-center gap-2 bg-muted/30">
                 <div className="flex gap-1.5">
                   <div className="size-3 rounded-full bg-red-500/80" />
@@ -251,7 +250,7 @@ export default function LandingPage() {
                     <Sparkles className="size-3.5 sm:size-4 text-white" />
                   </div>
                   <div className="space-y-2 min-w-0 flex-1">
-                    <div className="bg-muted/50 border border-border/50 px-3 py-3 sm:px-4 sm:py-4 rounded-2xl rounded-tl-sm shadow-sm backdrop-blur-sm">
+                    <div className="bg-muted border border-border/50 px-3 py-3 sm:px-4 sm:py-4 rounded-2xl rounded-tl-sm">
                       <p className="text-sm font-medium text-muted-foreground mb-2">
                         Expense added successfully!
                       </p>
@@ -282,8 +281,7 @@ export default function LandingPage() {
                 </div>
               </div>
             </div>
-            {/* Glow under the card */}
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] h-[50%] bg-primary/20 blur-[80px] -z-10 rounded-full" />
+
           </div>
         </section>
 
@@ -333,8 +331,7 @@ export default function LandingPage() {
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2 max-w-4xl mx-auto">
-            <div className="group relative rounded-2xl border border-border/50 bg-card/30 backdrop-blur-sm overflow-hidden hover:border-primary/30 hover:shadow-xl hover:shadow-primary/10 transition-all duration-300">
-              <div className="absolute inset-0 bg-linear-to-br from-primary/5 via-transparent to-orange-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="relative rounded-2xl border border-border/50 bg-card overflow-hidden">
               <div className="p-6 sm:p-8 relative">
                 <div className="flex items-start justify-between mb-5">
                   <div className="size-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
@@ -365,8 +362,7 @@ export default function LandingPage() {
               </div>
             </div>
 
-            <div className="group relative rounded-2xl border border-border/50 bg-card/30 backdrop-blur-sm overflow-hidden hover:border-amber-500/30 hover:shadow-xl hover:shadow-amber-500/10 transition-all duration-300">
-              <div className="absolute inset-0 bg-linear-to-br from-amber-500/5 via-transparent to-orange-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+            <div className="relative rounded-2xl border border-border/50 bg-card overflow-hidden">
               <div className="p-6 sm:p-8 relative">
                 <div className="flex items-start justify-between mb-5">
                   <div className="size-12 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
@@ -405,7 +401,7 @@ export default function LandingPage() {
           </div>
 
           <div className="grid gap-4 sm:gap-8 sm:grid-cols-3 max-w-6xl mx-auto">
-            <div className="relative flex flex-col items-start p-6 sm:p-8 rounded-2xl border border-border/50 bg-card/30 backdrop-blur-sm">
+            <div className="relative flex flex-col items-start p-6 sm:p-8 rounded-2xl border border-border/50 bg-card">
               <div className="size-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-5 sm:mb-6 text-primary font-bold text-xl">
                 1
               </div>
@@ -470,7 +466,7 @@ export default function LandingPage() {
           </div>
 
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto items-start">
-            <div className="rounded-2xl border border-border/50 bg-card/30 backdrop-blur-sm p-6 sm:p-8 space-y-6">
+            <div className="rounded-2xl border border-border/50 bg-card p-6 sm:p-8 space-y-6">
               <div>
                 <p className="text-sm font-medium text-muted-foreground mb-1">
                   Free
@@ -501,7 +497,7 @@ export default function LandingPage() {
               </SmartLink>
             </div>
 
-            <div className="rounded-2xl border border-primary/40 bg-primary/5 backdrop-blur-sm p-6 sm:p-8 space-y-6 relative shadow-lg shadow-primary/10">
+            <div className="rounded-2xl border border-primary/40 bg-primary/5 p-6 sm:p-8 space-y-6 relative">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                 <span className="bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full">
                   Monthly
@@ -540,7 +536,7 @@ export default function LandingPage() {
               </Button>
             </div>
 
-            <div className="rounded-2xl border border-amber-500/30 bg-amber-500/5 backdrop-blur-sm p-6 sm:p-8 space-y-6 relative">
+            <div className="rounded-2xl border border-amber-500/30 bg-amber-500/5 p-6 sm:p-8 space-y-6 relative">
               <div className="absolute -top-3 left-1/2 -translate-x-1/2">
                 <span className="bg-amber-500 text-white text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1">
                   <Sparkles className="size-3" />
@@ -737,10 +733,10 @@ function FeatureCard({
   color: string;
 }) {
   return (
-    <Card className="group hover:border-primary/20 hover:shadow-lg transition-all duration-300 bg-card/50 backdrop-blur-sm">
+    <Card className="bg-card">
       <CardHeader>
         <div
-          className={`size-12 rounded-xl ${color} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}
+          className={`size-12 rounded-xl ${color} flex items-center justify-center mb-4`}
         >
           {icon}
         </div>
