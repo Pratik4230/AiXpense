@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ModeToggle } from "@/components/ui/modeToggle";
-import { signOut, useSession } from "@/lib/authClient";
+import { signOut } from "@/lib/authClient";
 import { ReportIssueDialog } from "@/components/report-issue/ReportIssueDialog";
 import {
   DropdownMenu,
@@ -23,6 +23,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
+interface NavbarUser {
+  name?: string | null;
+  email: string;
+}
 
 const emptySubscribe = () => () => {};
 
@@ -34,9 +39,8 @@ const navLinks = [
   { href: "/recurring", label: "Recurring" },
 ];
 
-export function Navbar() {
+export function Navbar({ user }: { user: NavbarUser | null }) {
   const pathname = usePathname();
-  const { data: session } = useSession();
   const [mobileOpen, setMobileOpen] = useState(false);
   const mounted = useSyncExternalStore(
     emptySubscribe,
@@ -50,13 +54,13 @@ export function Navbar() {
   };
 
   const userInitial =
-    session?.user?.name?.[0]?.toUpperCase() ??
-    session?.user?.email?.[0]?.toUpperCase() ??
+    user?.name?.[0]?.toUpperCase() ??
+    user?.email?.[0]?.toUpperCase() ??
     "U";
 
   return (
     <header className="sticky top-0 z-50 w-full">
-      <div className="absolute inset-0 bg-background/70 backdrop-blur-2xl border-b border-border/50" />
+      <div className="absolute inset-0 bg-background border-b border-border/50" />
       <div className="absolute inset-x-0 bottom-0 h-px bg-linear-to-r from-transparent via-primary/40 to-transparent" />
 
       <div className="relative container mx-auto px-4">
@@ -107,7 +111,7 @@ export function Navbar() {
               <ModeToggle />
             </div>
 
-            {mounted && session?.user && (
+            {mounted && user && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button className="hidden sm:flex items-center gap-2 pl-1 pr-2.5 py-1 rounded-full border border-border/60 bg-muted/40 hover:bg-muted/80 hover:border-border transition-all duration-200 group">
@@ -115,7 +119,7 @@ export function Navbar() {
                       {userInitial}
                     </div>
                     <span className="text-sm text-muted-foreground group-hover:text-foreground max-w-32 truncate transition-colors">
-                      {session.user.name ?? session.user.email}
+                      {user.name ?? user.email}
                     </span>
                     <ChevronDown className="size-3.5 text-muted-foreground group-hover:text-foreground transition-colors" />
                   </button>
@@ -123,7 +127,7 @@ export function Navbar() {
                 <DropdownMenuContent align="end" className="w-48">
                   <div className="px-2 py-1.5">
                     <p className="text-xs text-muted-foreground truncate">
-                      {session.user.email}
+                      {user.email}
                     </p>
                   </div>
                   <DropdownMenuSeparator />
@@ -193,7 +197,7 @@ export function Navbar() {
                 <span className="text-xs text-muted-foreground">Theme</span>
                 <ModeToggle />
               </div>
-              {mounted && session?.user && (
+              {mounted && user && (
                 <div className="grid grid-cols-2 gap-1">
                   <Link href="/profile" onClick={() => setMobileOpen(false)}>
                     <Button

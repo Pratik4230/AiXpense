@@ -13,9 +13,14 @@ export default async function ProtectedLayout({
     redirect("/login");
   }
 
+  const user = {
+    name: session.user.name ?? null,
+    email: session.user.email,
+  };
+
   return (
     <div className="h-full flex flex-col">
-      <Navbar />
+      <Navbar user={user} />
       <main className="flex-1 overflow-y-auto">{children}</main>
     </div>
   );
