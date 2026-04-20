@@ -19,8 +19,8 @@ export function useTrials(enabled = true) {
     queryKey: TRIALS_QUERY_KEY,
     queryFn: fetchTrials,
     enabled,
-    staleTime: 30 * 1000,
-    refetchOnWindowFocus: true,
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
   });
 }
 

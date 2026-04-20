@@ -15,8 +15,8 @@ import {
   createDeleteBudgetTool,
   createReadBudgetsTool,
 } from "@/lib/ai/tools";
-import { db } from "@/lib/db";
-import { ObjectId } from "mongodb";
+import { connectDB } from "@/lib/db";
+import mongoose from "mongoose";
 import { logger } from "@/lib/logger";
 import { getISTMidnight } from "@/lib/ist";
 
@@ -37,53 +37,57 @@ export async function POST(req: Request) {
   const now = new Date();
   const todayISTMidnight = getISTMidnight();
 
-  const dbUser = await db.collection("user").findOneAndUpdate(
-    {
-      _id: new ObjectId(userId),
-      $or: [
-        { isPremium: true },
-        { freeTrials: { $gt: 0 } },
-        { freeTrialResetAt: { $lt: todayISTMidnight } },
-      ],
-    },
-    [
+  await connectDB();
+
+  const dbUser = await mongoose.connection.db!
+    .collection("user")
+    .findOneAndUpdate(
       {
-        $set: {
-          freeTrialResetAt: {
-            $cond: {
-              if: {
-                $and: [
-                  { $ne: ["$isPremium", true] },
-                  { $lt: ["$freeTrialResetAt", todayISTMidnight] },
-                ],
+        _id: new mongoose.Types.ObjectId(userId),
+        $or: [
+          { isPremium: true },
+          { freeTrials: { $gt: 0 } },
+          { freeTrialResetAt: { $lt: todayISTMidnight } },
+        ],
+      },
+      [
+        {
+          $set: {
+            freeTrialResetAt: {
+              $cond: {
+                if: {
+                  $and: [
+                    { $ne: ["$isPremium", true] },
+                    { $lt: ["$freeTrialResetAt", todayISTMidnight] },
+                  ],
+                },
+                then: todayISTMidnight,
+                else: "$freeTrialResetAt",
               },
-              then: todayISTMidnight,
-              else: "$freeTrialResetAt",
             },
-          },
-          freeTrials: {
-            $cond: {
-              if: { $eq: ["$isPremium", true] },
-              then: "$freeTrials",
-              else: {
-                $subtract: [
-                  {
-                    $cond: {
-                      if: { $lt: ["$freeTrialResetAt", todayISTMidnight] },
-                      then: 7,
-                      else: "$freeTrials",
+            freeTrials: {
+              $cond: {
+                if: { $eq: ["$isPremium", true] },
+                then: "$freeTrials",
+                else: {
+                  $subtract: [
+                    {
+                      $cond: {
+                        if: { $lt: ["$freeTrialResetAt", todayISTMidnight] },
+                        then: 7,
+                        else: "$freeTrials",
+                      },
                     },
-                  },
-                  1,
-                ],
+                    1,
+                  ],
+                },
               },
             },
           },
         },
-      },
-    ],
-    { returnDocument: "before" },
-  );
+      ],
+      { returnDocument: "before" },
+    );
 
   if (!dbUser) {
     logger.warn("chat_quota_exceeded", { userId });

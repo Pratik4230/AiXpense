@@ -146,7 +146,7 @@ export function ChatInput({
   };
 
   return (
-    <div className="border-t border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60 px-3 pt-2 pb-3 sm:px-4 sm:pb-4">
+    <div className="border-t border-border bg-background px-3 pt-2 pb-3 sm:px-4 sm:pb-4">
       <div className="sm:max-w-3xl sm:mx-auto">
         {(isRecording || isProcessing) && (
           <div className="flex justify-center pb-3">

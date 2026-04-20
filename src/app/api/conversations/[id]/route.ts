@@ -66,7 +66,7 @@ export async function PATCH(req: Request, { params }: RouteParams) {
         $push: { messages: { $each: appendMessages } },
         $inc: { messageCount: appendMessages.length },
       },
-      { new: true, projection: { _id: 1, title: 1, messageCount: 1, updatedAt: 1 } },
+      { projection: { _id: 1, title: 1, messageCount: 1, updatedAt: 1 }, returnDocument: "after" },
     );
 
     if (!result) {
