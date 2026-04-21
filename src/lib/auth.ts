@@ -28,6 +28,7 @@ export const auth = betterAuth({
     "exp://localhost:8081",
     "aixpensemobile://",
     "exp://**",
+    "exp://*",
   ],
   plugins: [
     expo(),
