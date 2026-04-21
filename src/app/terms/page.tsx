@@ -4,18 +4,19 @@ import LegalPageLayout from "@/components/legal/LegalPageLayout";
 export const metadata: Metadata = {
   title: "Terms & Conditions",
   description:
-    "Terms and conditions for using AiXpense AI-powered expense tracking service.",
+    "Terms and conditions for using AiXpense AI-powered expense tracking service on web and mobile (Android).",
   alternates: { canonical: "https://aixpense.in/terms" },
 };
 
 export default function TermsPage() {
   return (
-    <LegalPageLayout title="Terms & Conditions" lastUpdated="February 19, 2026">
+    <LegalPageLayout title="Terms & Conditions" lastUpdated="April 21, 2026">
       <section>
         <h2 className="text-xl font-semibold mb-3">1. Introduction</h2>
         <p>
-          Welcome to AiXpense. These Terms & Conditions (&quot;Terms&quot;)
-          govern your use of the AiXpense web application and services
+          Welcome to AiXpense. These Terms &amp; Conditions (&quot;Terms&quot;)
+          govern your use of the AiXpense web application, website at
+          aixpense.in, and mobile application on the Google Play Store
           (collectively, the &quot;Service&quot;) operated by Pratik Jadhav
           (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;). By accessing or
           using the Service, you agree to be bound by these Terms. If you do not
@@ -29,9 +30,32 @@ export default function TermsPage() {
         </h2>
         <p>
           AiXpense is an AI-powered expense and income tracking application that
-          allows users to record financial transactions through natural language
-          input. The Service uses artificial intelligence (powered by OpenAI) to
-          parse, categorize, and organize your financial data.
+          allows users to record financial transactions through multiple input
+          methods including:
+        </p>
+        <ul className="list-disc pl-6 mt-2 space-y-1">
+          <li>
+            <strong>Natural language text</strong> — type in plain English,
+            Hindi, or 22+ Indian languages
+          </li>
+          <li>
+            <strong>Voice input</strong> — speak in Hindi, Marathi, Hinglish,
+            and 22+ Indian languages via Sarvam AI&apos;s speech recognition
+          </li>
+          <li>
+            <strong>Camera / bill scanning</strong> — photograph receipts and
+            bills; our AI extracts amounts and merchant details automatically
+          </li>
+          <li>
+            <strong>Image upload</strong> — upload existing photos of bills from
+            your device gallery
+          </li>
+        </ul>
+        <p className="mt-2">
+          The Service uses artificial intelligence (powered by OpenAI) to parse,
+          categorize, and organize your financial data, and provides features
+          including budget management, spending analytics, recurring payment
+          scheduling, and an AI spending coach.
         </p>
       </section>
 
@@ -57,14 +81,41 @@ export default function TermsPage() {
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold mb-3">5. Free & Premium Plans</h2>
+        <h2 className="text-xl font-semibold mb-3">
+          5. Device Permissions &amp; Feature Usage
+        </h2>
+        <p>
+          Certain features of the Service require device permissions. By using
+          these features you agree to the following:
+        </p>
+        <ul className="list-disc pl-6 mt-2 space-y-2">
+          <li>
+            <strong>Microphone:</strong> Voice input requires microphone access.
+            Audio is processed by Sarvam AI for transcription. You may revoke
+            this permission at any time. Audio is not stored on our servers.
+          </li>
+          <li>
+            <strong>Camera &amp; Photo Library:</strong> Bill scanning requires
+            camera or gallery access. Images are sent to our AI service for
+            data extraction and are not stored permanently.
+          </li>
+          <li>
+            You grant us and our third-party AI providers a limited,
+            non-exclusive, transient license to process voice and image data
+            solely for the purpose of delivering the requested feature.
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 className="text-xl font-semibold mb-3">6. Free &amp; Premium Plans</h2>
         <p>
           AiXpense offers a free tier with limited AI interactions and a Premium
           subscription with unlimited access. Premium plans are available at:
         </p>
         <ul className="list-disc pl-6 mt-2 space-y-1">
           <li>Monthly: ₹499/month</li>
-          <li>Yearly: ₹3,999/year</li>
+          <li>Yearly: ₹4,000/year</li>
         </ul>
         <p className="mt-2">
           Prices are inclusive of applicable taxes unless stated otherwise. We
@@ -74,7 +125,7 @@ export default function TermsPage() {
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold mb-3">6. Payment Terms</h2>
+        <h2 className="text-xl font-semibold mb-3">7. Payment Terms</h2>
         <p>
           Payments are processed securely via Razorpay. By purchasing a Premium
           subscription, you authorize us to charge the applicable fee to your
@@ -82,14 +133,36 @@ export default function TermsPage() {
           billing cycle unless cancelled before the renewal date. All payments
           are non-refundable. Refer to our{" "}
           <a href="/refund" className="text-primary hover:underline">
-            Refund & Cancellation Policy
+            Refund &amp; Cancellation Policy
           </a>{" "}
           for full details.
         </p>
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold mb-3">7. User Obligations</h2>
+        <h2 className="text-xl font-semibold mb-3">
+          8. Recurring Payments Feature
+        </h2>
+        <p>
+          AiXpense allows you to configure recurring payment rules (e.g., monthly
+          subscriptions, EMIs) that automatically log transactions on a scheduled
+          basis. By setting up a recurring rule you acknowledge that:
+        </p>
+        <ul className="list-disc pl-6 mt-2 space-y-1">
+          <li>
+            AiXpense&apos;s recurring feature logs entries in the app — it does
+            not initiate actual bank debits on your behalf
+          </li>
+          <li>You are responsible for verifying the accuracy of recurring entries</li>
+          <li>
+            You can modify or delete recurring rules at any time from your
+            account settings
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2 className="text-xl font-semibold mb-3">9. User Obligations</h2>
         <ul className="list-disc pl-6 space-y-1">
           <li>Use the Service only for lawful purposes</li>
           <li>Not attempt to reverse-engineer, hack, or exploit the Service</li>
@@ -100,6 +173,10 @@ export default function TermsPage() {
           <li>
             Not use automated tools to access the Service without permission
           </li>
+          <li>
+            Not misuse voice or camera features to capture third-party private
+            information without consent
+          </li>
         </ul>
         <p className="mt-2">
           Violation of these obligations may result in immediate account
@@ -108,41 +185,44 @@ export default function TermsPage() {
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold mb-3">8. Intellectual Property</h2>
+        <h2 className="text-xl font-semibold mb-3">10. Intellectual Property</h2>
         <p>
           All rights, title, and interest in the Service, including its source
           code, design, logos, and content, are owned by us. You retain
           ownership of the financial data you input into the Service. You grant
-          us a limited, non-exclusive license to process your data solely for
-          the purpose of providing the Service.
+          us a limited, non-exclusive license to process your data — including
+          voice transcripts and extracted bill data — solely for the purpose of
+          providing the Service.
         </p>
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold mb-3">9. AI Disclaimer</h2>
+        <h2 className="text-xl font-semibold mb-3">11. AI Disclaimer</h2>
         <p>
-          The AI-powered features of AiXpense are provided for convenience and
-          may not always be 100% accurate. AI-generated categorizations,
-          insights, and suggestions should not be considered financial advice.
-          You are responsible for verifying the accuracy of your financial
-          records. We are not liable for any decisions made based on
-          AI-generated outputs.
+          The AI-powered features of AiXpense — including natural language
+          parsing, voice transcription, bill scanning, and AI spending coach
+          insights — are provided for convenience and may not always be 100%
+          accurate. AI-generated categorizations, insights, and suggestions
+          should not be considered financial advice. You are responsible for
+          verifying the accuracy of your financial records. We are not liable
+          for any decisions made based on AI-generated outputs.
         </p>
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold mb-3">10. Data & Privacy</h2>
+        <h2 className="text-xl font-semibold mb-3">12. Data &amp; Privacy</h2>
         <p>
           Your use of the Service is also governed by our{" "}
           <a href="/privacy" className="text-primary hover:underline">
             Privacy Policy
           </a>
-          , which describes how we collect, use, and protect your personal data.
+          , which describes how we collect, use, and protect your personal data
+          including voice, camera, and mobile device data.
         </p>
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold mb-3">11. Service Availability</h2>
+        <h2 className="text-xl font-semibold mb-3">13. Service Availability</h2>
         <p>
           We strive to maintain high availability but do not guarantee
           uninterrupted access. The Service may be temporarily unavailable due
@@ -153,7 +233,7 @@ export default function TermsPage() {
 
       <section>
         <h2 className="text-xl font-semibold mb-3">
-          12. Limitation of Liability
+          14. Limitation of Liability
         </h2>
         <p>
           To the maximum extent permitted by law, AiXpense and its owner shall
@@ -165,19 +245,19 @@ export default function TermsPage() {
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold mb-3">13. Termination</h2>
+        <h2 className="text-xl font-semibold mb-3">15. Termination</h2>
         <p>
           We may suspend or terminate your account at any time for violation of
           these Terms. You may delete your account at any time from your account
           settings. Upon deletion, your access ceases immediately and all your
-          personal data — including expenses, budgets, AI conversations, and
-          subscription records — is permanently and irreversibly deleted. This
-          action cannot be undone.
+          personal data — including expenses, budgets, AI conversations,
+          recurring rules, and subscription records — is permanently and
+          irreversibly deleted. This action cannot be undone.
         </p>
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold mb-3">14. Modifications</h2>
+        <h2 className="text-xl font-semibold mb-3">16. Modifications</h2>
         <p>
           We reserve the right to modify these Terms at any time. Material
           changes will be communicated via email or in-app notification.
@@ -188,7 +268,7 @@ export default function TermsPage() {
 
       <section>
         <h2 className="text-xl font-semibold mb-3">
-          15. Governing Law & Dispute Resolution
+          17. Governing Law &amp; Dispute Resolution
         </h2>
         <p>
           These Terms shall be governed by and construed in accordance with the
@@ -200,7 +280,7 @@ export default function TermsPage() {
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold mb-3">16. Contact</h2>
+        <h2 className="text-xl font-semibold mb-3">18. Contact</h2>
         <p>
           For questions regarding these Terms, contact us at:{" "}
           <a

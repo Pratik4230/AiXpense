@@ -4,21 +4,22 @@ import LegalPageLayout from "@/components/legal/LegalPageLayout";
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description:
-    "AiXpense privacy policy - how we collect, use, and protect your personal and financial data. Compliant with the DPDP Act 2023.",
+    "AiXpense privacy policy - how we collect, use, and protect your personal and financial data including voice, camera, and mobile data. Compliant with the DPDP Act 2023.",
   alternates: { canonical: "https://aixpense.in/privacy" },
 };
 
 export default function PrivacyPage() {
   return (
-    <LegalPageLayout title="Privacy Policy" lastUpdated="February 19, 2026">
+    <LegalPageLayout title="Privacy Policy" lastUpdated="April 21, 2026">
       <section>
         <h2 className="text-xl font-semibold mb-3">1. Introduction</h2>
         <p>
           This Privacy Policy explains how AiXpense, operated by Pratik Jadhav
           (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;), collects, uses,
           stores, and protects your personal data when you use our AI-powered
-          expense tracking application. This policy complies with the
-          Information Technology Act, 2000, the IT (Reasonable Security
+          expense tracking application — available on the web at aixpense.in and
+          as a mobile application on the Google Play Store. This policy complies
+          with the Information Technology Act, 2000, the IT (Reasonable Security
           Practices and Procedures and Sensitive Personal Data or Information)
           Rules, 2011, and the Digital Personal Data Protection Act, 2023 (DPDP
           Act).
@@ -28,6 +29,7 @@ export default function PrivacyPage() {
       <section>
         <h2 className="text-xl font-semibold mb-3">2. Data We Collect</h2>
         <p>We collect the following categories of data:</p>
+
         <h3 className="text-lg font-medium mt-4 mb-2">
           2.1 Account Information
         </h3>
@@ -45,20 +47,48 @@ export default function PrivacyPage() {
           <li>Expense and income descriptions and amounts</li>
           <li>Categories and tags assigned to transactions</li>
           <li>Budget configurations</li>
+          <li>Recurring payment rules and schedules</li>
           <li>Chat conversations with the AI assistant</li>
         </ul>
 
         <h3 className="text-lg font-medium mt-4 mb-2">
-          2.3 Technical Data (Automatically Collected)
+          2.3 Voice &amp; Audio Data
+        </h3>
+        <p>
+          When you use the voice input feature, your device microphone is
+          accessed to capture your spoken input. Audio is streamed to Sarvam
+          AI&apos;s speech-to-text API for transcription. We do not store raw
+          audio recordings on our servers. Only the resulting text transcript is
+          retained as part of your chat history. Microphone access requires your
+          explicit permission and can be revoked at any time through your device
+          or browser settings.
+        </p>
+
+        <h3 className="text-lg font-medium mt-4 mb-2">
+          2.4 Camera &amp; Image Data
+        </h3>
+        <p>
+          When you use the bill or receipt scanning feature, your device camera
+          or photo gallery is accessed to capture or select images. These images
+          are sent to our AI service (powered by OpenAI) for optical character
+          recognition and data extraction. Images are processed transiently and
+          are not stored permanently on our servers once extraction is complete.
+          Camera and photo library access requires your explicit permission and
+          can be revoked at any time.
+        </p>
+
+        <h3 className="text-lg font-medium mt-4 mb-2">
+          2.5 Technical Data (Automatically Collected)
         </h3>
         <ul className="list-disc pl-6 space-y-1">
           <li>IP address</li>
-          <li>Browser type and version</li>
-          <li>Device information</li>
+          <li>Browser or app version and type</li>
+          <li>Device model and operating system (for mobile app)</li>
           <li>Usage patterns and session data</li>
+          <li>Push notification token (mobile app, if notifications are enabled)</li>
         </ul>
 
-        <h3 className="text-lg font-medium mt-4 mb-2">2.4 Payment Data</h3>
+        <h3 className="text-lg font-medium mt-4 mb-2">2.6 Payment Data</h3>
         <p>
           We do not directly store your credit/debit card numbers or UPI
           details. All payment processing is handled by Razorpay, our
@@ -69,17 +99,68 @@ export default function PrivacyPage() {
 
       <section>
         <h2 className="text-xl font-semibold mb-3">
-          3. Purpose of Data Collection
+          3. Device Permissions (Mobile App)
+        </h2>
+        <p>
+          The AiXpense mobile application (available on the Google Play Store)
+          may request the following device permissions:
+        </p>
+        <div className="mt-3 space-y-3">
+          <div className="rounded-lg border border-border/50 p-4">
+            <p className="font-medium">Microphone</p>
+            <p className="text-sm mt-1">
+              Required for voice input. Used only when you actively initiate a
+              voice recording. Not accessed in the background.
+            </p>
+          </div>
+          <div className="rounded-lg border border-border/50 p-4">
+            <p className="font-medium">Camera / Photo Library</p>
+            <p className="text-sm mt-1">
+              Required for bill and receipt scanning. Used only when you
+              initiate a scan. Images are processed for data extraction and not
+              stored permanently.
+            </p>
+          </div>
+          <div className="rounded-lg border border-border/50 p-4">
+            <p className="font-medium">Internet Access</p>
+            <p className="text-sm mt-1">
+              Required for all core functionality including syncing transactions,
+              AI processing, and account management.
+            </p>
+          </div>
+        </div>
+        <p className="mt-3">
+          All permissions are optional where technically feasible. Denying a
+          permission disables the corresponding feature but does not affect
+          other app functionality.
+        </p>
+      </section>
+
+      <section>
+        <h2 className="text-xl font-semibold mb-3">
+          4. Purpose of Data Collection
         </h2>
         <ul className="list-disc pl-6 space-y-1">
           <li>To provide and maintain the expense tracking Service</li>
           <li>
-            To process your natural language inputs through AI for
+            To process your voice inputs via Sarvam AI for speech-to-text
+            transcription
+          </li>
+          <li>
+            To process your natural language and voice inputs through AI for
             categorization
           </li>
+          <li>
+            To extract financial data from bill and receipt images via camera
+            scanning
+          </li>
           <li>To generate financial insights and analytics</li>
+          <li>To manage recurring payment schedules on your behalf</li>
           <li>To process payments and manage subscriptions</li>
-          <li>To send transactional emails (password resets, receipts)</li>
+          <li>
+            To send transactional emails (password resets, receipts, AI
+            spending coach reports)
+          </li>
           <li>To improve the Service and fix issues</li>
           <li>To comply with legal obligations</li>
         </ul>
@@ -87,7 +168,7 @@ export default function PrivacyPage() {
 
       <section>
         <h2 className="text-xl font-semibold mb-3">
-          4. Third-Party Data Sharing
+          5. Third-Party Data Sharing
         </h2>
         <p>
           We share your data with the following third-party service providers,
@@ -97,10 +178,20 @@ export default function PrivacyPage() {
           <div className="rounded-lg border border-border/50 p-4">
             <p className="font-medium">OpenAI</p>
             <p className="text-sm mt-1">
-              Your chat messages and transaction descriptions are sent to
-              OpenAI&apos;s API for AI-powered parsing and categorization.
-              OpenAI processes this data per their data usage policies. We do
-              not send your email, name, or payment details to OpenAI.
+              Your chat messages, transaction descriptions, and bill images are
+              sent to OpenAI&apos;s API for AI-powered parsing, categorization,
+              and image text extraction. OpenAI processes this data per their
+              data usage policies. We do not send your email, name, or payment
+              details to OpenAI.
+            </p>
+          </div>
+          <div className="rounded-lg border border-border/50 p-4">
+            <p className="font-medium">Sarvam AI</p>
+            <p className="text-sm mt-1">
+              Your audio recordings (captured when you use voice input) are sent
+              to Sarvam AI&apos;s speech recognition API for transcription into
+              text. Only audio data is shared — no personal account information
+              is transmitted. Sarvam AI supports 22+ Indian languages.
             </p>
           </div>
           <div className="rounded-lg border border-border/50 p-4">
@@ -116,7 +207,8 @@ export default function PrivacyPage() {
             <p className="font-medium">Resend</p>
             <p className="text-sm mt-1">
               Your email address is shared with Resend for sending transactional
-              emails such as password reset links and payment receipts.
+              emails such as password reset links, payment receipts, and
+              AI-generated spending coach reports.
             </p>
           </div>
         </div>
@@ -128,7 +220,7 @@ export default function PrivacyPage() {
 
       <section>
         <h2 className="text-xl font-semibold mb-3">
-          5. Data Storage & Security
+          6. Data Storage &amp; Security
         </h2>
         <p>
           Your data is stored in encrypted MongoDB databases hosted on secure
@@ -140,26 +232,28 @@ export default function PrivacyPage() {
           <li>Hashed passwords (never stored in plaintext)</li>
           <li>Secure authentication tokens</li>
           <li>Regular security reviews</li>
+          <li>No persistent storage of raw voice audio or bill images</li>
         </ul>
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold mb-3">6. Data Retention</h2>
+        <h2 className="text-xl font-semibold mb-3">7. Data Retention</h2>
         <p>
           We retain your personal data for as long as your account remains
           active. When you delete your account, all your personal data —
-          including expenses, budgets, AI conversations, and subscription
-          records — is permanently and immediately deleted from our systems.
-          This action is irreversible. Anonymized or aggregated statistical data
-          that cannot be linked back to you may be retained for analytics
-          purposes. We may also retain data where required by applicable law
-          (e.g., for fraud prevention or legal claims).
+          including expenses, budgets, AI conversations, recurring payment
+          rules, and subscription records — is permanently and immediately
+          deleted from our systems. This action is irreversible. Anonymized or
+          aggregated statistical data that cannot be linked back to you may be
+          retained for analytics purposes. We may also retain data where
+          required by applicable law (e.g., for fraud prevention or legal
+          claims).
         </p>
       </section>
 
       <section>
         <h2 className="text-xl font-semibold mb-3">
-          7. Your Rights (Under DPDP Act, 2023)
+          8. Your Rights (Under DPDP Act, 2023)
         </h2>
         <p>As a data principal, you have the right to:</p>
         <ul className="list-disc pl-6 mt-2 space-y-1">
@@ -180,6 +274,10 @@ export default function PrivacyPage() {
             processing at any time (this may affect Service availability)
           </li>
           <li>
+            <strong>Revoke Device Permissions</strong> - Revoke microphone or
+            camera access at any time via your device or browser settings
+          </li>
+          <li>
             <strong>Grievance Redressal</strong> - File a complaint with our
             Grievance Officer
           </li>
@@ -191,7 +289,7 @@ export default function PrivacyPage() {
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold mb-3">8. Cookies & Tracking</h2>
+        <h2 className="text-xl font-semibold mb-3">9. Cookies &amp; Tracking</h2>
         <p>
           We use essential cookies for authentication and session management. We
           do not use third-party tracking cookies or advertising trackers. No
@@ -200,7 +298,7 @@ export default function PrivacyPage() {
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold mb-3">9. Children&apos;s Data</h2>
+        <h2 className="text-xl font-semibold mb-3">10. Children&apos;s Data</h2>
         <p>
           AiXpense is not intended for individuals under 18 years of age. We do
           not knowingly collect personal data from children. If you believe a
@@ -211,7 +309,7 @@ export default function PrivacyPage() {
 
       <section>
         <h2 className="text-xl font-semibold mb-3">
-          10. Changes to This Policy
+          11. Changes to This Policy
         </h2>
         <p>
           We may update this Privacy Policy from time to time. Material changes
@@ -222,7 +320,7 @@ export default function PrivacyPage() {
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold mb-3">11. Grievance Officer</h2>
+        <h2 className="text-xl font-semibold mb-3">12. Grievance Officer</h2>
         <p>
           In accordance with the IT Act, 2000 and DPDP Act, 2023, the details of
           the Grievance Officer are:

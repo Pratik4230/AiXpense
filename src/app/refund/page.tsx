@@ -4,7 +4,7 @@ import LegalPageLayout from "@/components/legal/LegalPageLayout";
 export const metadata: Metadata = {
   title: "Refund & Cancellation Policy",
   description:
-    "Refund and cancellation policy for AiXpense premium subscriptions.",
+    "Refund and cancellation policy for AiXpense premium subscriptions on web and Android mobile app.",
   alternates: { canonical: "https://aixpense.in/refund" },
 };
 
@@ -12,13 +12,15 @@ export default function RefundPage() {
   return (
     <LegalPageLayout
       title="Refund & Cancellation Policy"
-      lastUpdated="February 12, 2026"
+      lastUpdated="April 21, 2026"
     >
       <section>
         <h2 className="text-xl font-semibold mb-3">1. Overview</h2>
         <p>
-          This Refund & Cancellation Policy applies to all Premium subscription
-          purchases made on AiXpense. Please read this policy carefully before
+          This Refund &amp; Cancellation Policy applies to all Premium
+          subscription purchases made on AiXpense, whether through the web
+          application at aixpense.in or the Android mobile application on the
+          Google Play Store. Please read this policy carefully before
           subscribing.
         </p>
       </section>
@@ -55,10 +57,12 @@ export default function RefundPage() {
       <section>
         <h2 className="text-xl font-semibold mb-3">3. Free Tier</h2>
         <p>
-          AiXpense offers a free tier with limited AI interactions. The free
-          tier does not require any payment and can be used indefinitely. We
-          recommend trying the free tier first to ensure the Service meets your
-          needs before upgrading.
+          AiXpense offers a free tier with limited AI interactions per day. The
+          free tier is available on both web and the Android mobile app, does
+          not require any payment, and can be used indefinitely. We recommend
+          trying the free tier first — including voice input, bill scanning, and
+          basic expense tracking — to ensure the Service meets your needs before
+          upgrading.
         </p>
       </section>
 
@@ -71,12 +75,14 @@ export default function RefundPage() {
             <strong>Monthly Plan:</strong> ₹499/month, billed monthly
           </li>
           <li>
-            <strong>Yearly Plan:</strong> ₹3,999/year, billed annually
+            <strong>Yearly Plan:</strong> ₹4,000/year, billed annually
           </li>
         </ul>
         <p className="mt-2">
           All subscriptions provide immediate access to Premium features upon
-          successful payment.
+          successful payment, including unlimited AI messages, AI spending coach
+          reports, receipt scanning, recurring payment management, and shareable
+          report cards.
         </p>
       </section>
 
@@ -85,7 +91,7 @@ export default function RefundPage() {
         <ul className="list-disc pl-6 space-y-2">
           <li>
             You may cancel your Premium subscription at any time from your
-            account settings.
+            account settings on web or the mobile app.
           </li>
           <li>
             Upon cancellation, your Premium access continues until the end of
@@ -93,7 +99,8 @@ export default function RefundPage() {
           </li>
           <li>
             After the billing period ends, your account will revert to the free
-            tier. Your data will be fully retained.
+            tier. Your data — including expenses, budgets, recurring rules, and
+            AI conversations — will be fully retained.
           </li>
           <li>
             No refunds or credits are issued for the remaining unused period
@@ -113,7 +120,27 @@ export default function RefundPage() {
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold mb-3">7. Contact</h2>
+        <h2 className="text-xl font-semibold mb-3">7. Play Store Purchases</h2>
+        <p>
+          If you purchase a Premium subscription through the Google Play Store,
+          your purchase is also subject to the{" "}
+          <a
+            href="https://play.google.com/about/play-terms/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-primary hover:underline"
+          >
+            Google Play Terms of Service
+          </a>
+          . Refund requests for Play Store purchases must be submitted through
+          the Google Play Store within the eligible window as defined by Google.
+          AiXpense&apos;s no-refund policy applies to direct purchases made on
+          aixpense.in.
+        </p>
+      </section>
+
+      <section>
+        <h2 className="text-xl font-semibold mb-3">8. Contact</h2>
         <p>
           For any questions regarding this policy, reach out to us at{" "}
           <a

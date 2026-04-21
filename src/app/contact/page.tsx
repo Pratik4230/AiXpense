@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import LegalPageLayout from "@/components/legal/LegalPageLayout";
-import { Mail, Clock, MessageSquare } from "lucide-react";
+import { Mail, Clock, MessageSquare, Smartphone } from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Contact Us",
@@ -11,12 +11,12 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   return (
-    <LegalPageLayout title="Contact Us" lastUpdated="February 12, 2026">
+    <LegalPageLayout title="Contact Us" lastUpdated="April 21, 2026">
       <section>
         <p>
           We are here to help. If you have questions, feedback, or need
-          assistance with your AiXpense account, reach out through any of the
-          channels below.
+          assistance with your AiXpense account — on web or the Android app —
+          reach out through any of the channels below.
         </p>
       </section>
 
@@ -28,8 +28,8 @@ export default function ContactPage() {
             </div>
             <h3 className="text-lg font-semibold">Email Support</h3>
             <p className="text-sm text-muted-foreground">
-              For general inquiries, account issues, billing questions, or
-              refund requests.
+              For general inquiries, account issues, billing questions, voice or
+              camera feature issues, or refund requests.
             </p>
             <a
               href={`mailto:${process.env.ADMIN_EMAIL}`}
@@ -50,7 +50,19 @@ export default function ContactPage() {
             </p>
           </div>
 
-          <div className="rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm p-6 space-y-3 sm:col-span-2">
+          <div className="rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm p-6 space-y-3">
+            <div className="size-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
+              <Smartphone className="size-5 text-blue-500" />
+            </div>
+            <h3 className="text-lg font-semibold">Android App Support</h3>
+            <p className="text-sm text-muted-foreground">
+              For issues specific to the Android app (voice input, camera
+              scanning, permissions, or Play Store billing), email us with your
+              device model and Android version for faster resolution.
+            </p>
+          </div>
+
+          <div className="rounded-xl border border-border/50 bg-card/50 backdrop-blur-sm p-6 space-y-3">
             <div className="size-10 rounded-lg bg-purple-500/10 flex items-center justify-center">
               <MessageSquare className="size-5 text-purple-500" />
             </div>

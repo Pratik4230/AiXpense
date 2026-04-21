@@ -4,7 +4,7 @@ import LegalPageLayout from "@/components/legal/LegalPageLayout";
 export const metadata: Metadata = {
   title: "Shipping & Delivery Policy",
   description:
-    "AiXpense is a digital SaaS product. Access is granted instantly upon signup or payment - no physical shipping involved.",
+    "AiXpense is a digital SaaS product available on web and Android. Access is granted instantly upon signup or payment - no physical shipping involved.",
   alternates: { canonical: "https://aixpense.in/shipping" },
 };
 
@@ -12,14 +12,15 @@ export default function ShippingPage() {
   return (
     <LegalPageLayout
       title="Shipping & Delivery Policy"
-      lastUpdated="February 12, 2026"
+      lastUpdated="April 21, 2026"
     >
       <section>
         <h2 className="text-xl font-semibold mb-3">Digital Product</h2>
         <p>
           AiXpense is a fully digital, cloud-based Software-as-a-Service (SaaS)
           application. There are no physical products, goods, or shipments
-          involved.
+          involved. The Service is available on the web at aixpense.in and as a
+          mobile application on the Google Play Store.
         </p>
       </section>
 
@@ -32,24 +33,35 @@ export default function ShippingPage() {
         </p>
         <ul className="list-disc pl-6 mt-3 space-y-2">
           <li>
-            <strong>Free Tier:</strong> Immediate access upon account creation.
-            No payment required.
+            <strong>Free Tier (Web):</strong> Immediate access upon account
+            creation. No payment required.
+          </li>
+          <li>
+            <strong>Free Tier (Android App):</strong> Immediate access upon
+            installing the app from the Google Play Store and signing in.
           </li>
           <li>
             <strong>Premium Subscription:</strong> Immediate access to all
-            Premium features upon successful payment confirmation from Razorpay.
+            Premium features upon successful payment confirmation from Razorpay
+            or Google Play.
           </li>
         </ul>
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold mb-3">Access Method</h2>
-        <p>
-          The Service is accessed entirely through your web browser at our
-          website. No software download or installation is required. You can
-          access AiXpense from any device with a modern web browser and an
-          internet connection.
-        </p>
+        <h2 className="text-xl font-semibold mb-3">Access Methods</h2>
+        <ul className="list-disc pl-6 mt-2 space-y-2">
+          <li>
+            <strong>Web:</strong> Access the Service through your browser at
+            aixpense.in. No installation required. Works on any modern browser
+            on desktop or mobile.
+          </li>
+          <li>
+            <strong>Android App:</strong> Download the AiXpense app from the
+            Google Play Store. Install on any Android device running Android 8.0
+            (Oreo) or later.
+          </li>
+        </ul>
       </section>
 
       <section>
