@@ -24,9 +24,14 @@ export const auth = betterAuth({
   trustedOrigins: [
     "https://aixpense.in",
     "https://www.aixpense.in",
+    // Some native/expo clients send no Origin header; Better Auth may fall back to Host.
+    "aixpense.in",
+    "www.aixpense.in",
     "http://localhost:8081",
     "exp://localhost:8081",
     "aixpensemobile://",
+    // Expo scheme used by the mobile client (`scheme: "aixpense"`).
+    "aixpense://",
     "exp://**",
     "exp://*",
   ],
