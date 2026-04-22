@@ -4,6 +4,7 @@ import { aiCoachWeekly, aiCoachMonthly } from "./aiCoach";
 import { cleanupUnverified } from "./cleanupUnverified";
 import { broadcastEmailFunction } from "./broadcastEmail";
 import { processRecurringPayments } from "./recurringPayments";
+import { targetedEmailFunction } from "./targetedEmail";
 
 export const functions = [
   onboardingDrip,
@@ -11,6 +12,7 @@ export const functions = [
   aiCoachMonthly,
   cleanupUnverified,
   broadcastEmailFunction,
+  targetedEmailFunction,
   processRecurringPayments,
 ];
 export { inngest };

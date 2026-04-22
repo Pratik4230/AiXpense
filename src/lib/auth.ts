@@ -32,6 +32,7 @@ export const auth = betterAuth({
     "aixpensemobile://",
     // Expo scheme used by the mobile client (`scheme: "aixpense"`).
     "aixpense://",
+    "aixpense://*",
     "exp://**",
     "exp://*",
   ],
