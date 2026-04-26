@@ -96,6 +96,9 @@ export function AndroidBetaDialog({
               width={24}
               height={24}
               className="size-6 rounded-sm"
+              unoptimized
+              loading="eager"
+              priority
             />
           </span>
           {triggerLabel}
