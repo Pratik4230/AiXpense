@@ -5,7 +5,7 @@ import { logger } from "@/lib/logger";
 
 export const cleanupUnverified = inngest.createFunction(
   { id: "cleanup-unverified-users" },
-  { cron: "0 2 1 * *" },
+  { cron: "0 0 * * 1" },
   async ({ step }) => {
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
 

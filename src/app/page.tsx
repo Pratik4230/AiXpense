@@ -19,9 +19,11 @@ import {
   Mic2,
   Camera,
   ExternalLink,
+  Smartphone,
 } from "lucide-react";
 import { SmartLink, SmartTextLink } from "@/components/auth/SmartLink";
 import { Button } from "@/components/ui/button";
+import { AndroidBetaDialog } from "@/components/landing/AndroidBetaDialog";
 import {
   Accordion,
   AccordionContent,
@@ -174,6 +176,10 @@ export default function LandingPage() {
           </span>
         </Link>
         <div className="flex items-center gap-4">
+          <AndroidBetaDialog
+            triggerLabel="Android Closed Beta"
+            triggerClassName="rounded-full hidden sm:inline-flex"
+          />
           <SmartTextLink className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors hidden sm:block">
             Login
           </SmartTextLink>
@@ -219,6 +225,15 @@ export default function LandingPage() {
               Start Tracking Free
               <ArrowRight className="ml-2 size-5" />
             </SmartLink>
+            <AndroidBetaDialog
+              size="lg"
+              triggerLabel="Get it on Android"
+              triggerClassName="h-12 px-8 rounded-full text-base sm:text-lg"
+            />
+          </div>
+          <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/70 px-3 py-1.5 text-xs sm:text-sm text-muted-foreground">
+            <Smartphone className="size-3.5 sm:size-4 text-primary" />
+            Android app in closed beta on Google Play
           </div>
 
           {/* Chat Demo UI */}
