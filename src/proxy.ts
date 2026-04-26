@@ -19,6 +19,23 @@ const authRoutes = [
   "/verify-email",
 ];
 
+async function hasValidSession(req: NextRequest) {
+  const cookieHeader = req.headers.get("cookie");
+  if (!cookieHeader) return false;
+
+  try {
+    const res = await fetch(`${req.nextUrl.origin}/api/auth/get-session`, {
+      headers: { cookie: cookieHeader },
+      cache: "no-store",
+    });
+    if (!res.ok) return false;
+    const data = (await res.json()) as { session?: unknown };
+    return Boolean(data?.session);
+  } catch {
+    return false;
+  }
+}
+
 export default async function proxy(req: NextRequest) {
   const path = req.nextUrl.pathname;
   const isProtectedRoute = protectedRoutes.some((route) =>
@@ -27,12 +44,13 @@ export default async function proxy(req: NextRequest) {
   const isAuthRoute = authRoutes.includes(path);
 
   const sessionCookie = getSessionCookie(req);
+  const validSession = sessionCookie ? await hasValidSession(req) : false;
 
-  if (isProtectedRoute && !sessionCookie) {
+  if (isProtectedRoute && !validSession) {
     return NextResponse.redirect(new URL("/login", req.nextUrl));
   }
 
-  if (isAuthRoute && sessionCookie) {
+  if (isAuthRoute && validSession) {
     return NextResponse.redirect(new URL("/aixpense", req.nextUrl));
   }
 
