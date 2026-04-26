@@ -3,10 +3,10 @@ import { connectDB } from "@/lib/db";
 import { Expense, RecurringPayment } from "@/models";
 import { computeNextDueDate } from "@/lib/recurring";
 import { logger } from "@/lib/logger";
+import { cron } from "inngest";
 
 export const processRecurringPayments = inngest.createFunction(
-  { id: "process-recurring-payments" },
-  { cron: "0 1 * * *" },
+  { id: "process-recurring-payments", triggers: [cron("0 1 * * *")] },
   async ({ step }) => {
     return step.run("process-due-payments", async () => {
       await connectDB();

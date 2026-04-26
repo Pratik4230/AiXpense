@@ -8,6 +8,7 @@ import { openai } from "@ai-sdk/openai";
 import { generateText } from "ai";
 import mongoose from "mongoose";
 import { logger } from "@/lib/logger";
+import { cron } from "inngest";
 
 function getPeriodRange(type: "weekly" | "monthly") {
   const now = new Date();
@@ -169,8 +170,7 @@ async function runCoachForPeriod(type: "weekly" | "monthly") {
 }
 
 export const aiCoachWeekly = inngest.createFunction(
-  { id: "ai-coach-weekly" },
-  { cron: "30 3 * * 1" },
+  { id: "ai-coach-weekly", triggers: [cron("30 3 * * 1")] },
   async ({ step }) => {
     return step.run("run-weekly-coach", async () => {
       await connectDB();
@@ -180,8 +180,7 @@ export const aiCoachWeekly = inngest.createFunction(
 );
 
 export const aiCoachMonthly = inngest.createFunction(
-  { id: "ai-coach-monthly" },
-  { cron: "30 2 1 * *" },
+  { id: "ai-coach-monthly", triggers: [cron("30 2 1 * *")] },
   async ({ step }) => {
     return step.run("run-monthly-coach", async () => {
       await connectDB();

@@ -10,8 +10,11 @@ function sleep(ms: number) {
 }
 
 export const targetedEmailFunction = inngest.createFunction(
-  { id: "admin-targeted-email", retries: 2 },
-  { event: "admin/targeted-email" },
+  {
+    id: "admin-targeted-email",
+    retries: 2,
+    triggers: [{ event: "admin/targeted-email" }],
+  },
   async ({ event, step }) => {
     const { subject, body, emails, sentBy } = event.data as {
       subject: string;
