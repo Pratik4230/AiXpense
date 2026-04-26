@@ -24,12 +24,14 @@ type AndroidBetaDialogProps = {
   triggerClassName?: string;
   triggerLabel?: string;
   size?: "default" | "lg";
+  triggerVariant?: React.ComponentProps<typeof Button>["variant"];
 };
 
 export function AndroidBetaDialog({
   triggerClassName,
   triggerLabel = "Get Android App",
   size = "default",
+  triggerVariant = "outline",
 }: AndroidBetaDialogProps) {
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
@@ -82,21 +84,27 @@ export function AndroidBetaDialog({
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
-        <Button size={size} className={triggerClassName}>
-          <Image
-            src="/gp.png"
-            alt="Google Play"
-            width={16}
-            height={16}
-            className="size-4 rounded-xs"
-          />
+        <Button
+          size={size}
+          variant={triggerVariant}
+          className={triggerClassName}
+        >
+          <span className="inline-flex size-7 shrink-0 items-center justify-center rounded-md bg-white ring-1 ring-border/70 dark:bg-zinc-100">
+            <Image
+              src="/gp.png"
+              alt="Google Play"
+              width={24}
+              height={24}
+              className="size-6 rounded-sm"
+            />
+          </span>
           {triggerLabel}
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Smartphone className="size-5 text-primary" />
+            <Smartphone className="size-5 text-foreground" />
             AiXpense Android Closed Beta
           </DialogTitle>
           <DialogDescription>
@@ -105,7 +113,7 @@ export function AndroidBetaDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="rounded-lg border border-primary/20 bg-primary/5 px-3 py-2 text-sm">
+        <div className="rounded-lg border border-border bg-muted/40 px-3 py-2 text-sm">
           Public version will go live between <strong>5-10 May</strong>.
         </div>
 

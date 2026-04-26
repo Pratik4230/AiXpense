@@ -178,7 +178,8 @@ export default function LandingPage() {
         <div className="flex items-center gap-4">
           <AndroidBetaDialog
             triggerLabel="Android Closed Beta"
-            triggerClassName="rounded-full hidden sm:inline-flex"
+            triggerVariant="outline"
+            triggerClassName="rounded-full hidden sm:inline-flex border-border/80 bg-background hover:bg-muted gap-2.5 px-4"
           />
           <SmartTextLink className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors hidden sm:block">
             Login
@@ -228,7 +229,8 @@ export default function LandingPage() {
             <AndroidBetaDialog
               size="lg"
               triggerLabel="Get it on Android"
-              triggerClassName="h-12 px-8 rounded-full text-base sm:text-lg"
+              triggerVariant="outline"
+              triggerClassName="h-12 px-8 rounded-full text-base sm:text-lg border-border/80 bg-background hover:bg-muted gap-2.5"
             />
           </div>
           <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/70 px-3 py-1.5 text-xs sm:text-sm text-muted-foreground">
