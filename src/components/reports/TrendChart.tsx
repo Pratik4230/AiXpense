@@ -13,6 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useChartColors } from "@/hooks/useChartColors";
 import type { TrendPoint, ReportRange, ReportMode } from "@/services/reports";
+import { useCurrency } from "@/hooks/useCurrency";
 
 const MONTH_NAMES = [
   "Jan",
@@ -45,6 +46,7 @@ interface Props {
 
 export function TrendChart({ data, isLoading, range, mode }: Props) {
   const c = useChartColors();
+  const { format, symbol } = useCurrency();
 
   const chartData = (data ?? []).map((p) => ({
     label: formatLabel(p, range),
@@ -83,17 +85,11 @@ export function TrendChart({ data, isLoading, range, mode }: Props) {
                 axisLine={false}
                 tickLine={false}
                 tickFormatter={(v) =>
-                  `₹${v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v}`
+                  `${symbol}${v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v}`
                 }
               />
               <Tooltip
-                formatter={(v: number | undefined) =>
-                  new Intl.NumberFormat("en-IN", {
-                    style: "currency",
-                    currency: "INR",
-                    maximumFractionDigits: 0,
-                  }).format(v ?? 0)
-                }
+                formatter={(v: number | undefined) => format(v ?? 0)}
                 contentStyle={{
                   fontSize: 12,
                   borderRadius: 8,

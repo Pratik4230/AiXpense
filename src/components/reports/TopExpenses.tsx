@@ -3,14 +3,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import type { TopExpense, ReportMode } from "@/services/reports";
+import { useCurrency } from "@/hooks/useCurrency";
 
-function fmt(n: number) {
-  return new Intl.NumberFormat("en-IN", {
-    style: "currency",
-    currency: "INR",
-    maximumFractionDigits: 0,
-  }).format(n);
-}
 
 interface Props {
   data?: TopExpense[];
@@ -19,6 +13,7 @@ interface Props {
 }
 
 export function TopExpenses({ data, isLoading, mode }: Props) {
+  const { format } = useCurrency();
   return (
     <Card className="border-border/60">
       <CardHeader className="pb-2 flex-row items-center justify-between">
@@ -73,7 +68,7 @@ export function TopExpenses({ data, isLoading, mode }: Props) {
                   </div>
                 </div>
                 <span className="text-sm font-semibold shrink-0 ml-2">
-                  {fmt(e.amount)}
+                  {format(e.amount)}
                 </span>
               </div>
             ))}

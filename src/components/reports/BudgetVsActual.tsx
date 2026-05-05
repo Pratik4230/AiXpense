@@ -1,14 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { BudgetVsActualPoint } from "@/services/reports";
+import { useCurrency } from "@/hooks/useCurrency";
 
-function fmt(n: number) {
-  return new Intl.NumberFormat("en-IN", {
-    style: "currency",
-    currency: "INR",
-    maximumFractionDigits: 0,
-  }).format(n);
-}
+
 
 interface Props {
   data?: BudgetVsActualPoint[];
@@ -16,6 +11,7 @@ interface Props {
 }
 
 export function BudgetVsActual({ data, isLoading }: Props) {
+  const { format } = useCurrency();
   if (isLoading) {
     return (
       <Card className="border-border/60">
@@ -63,7 +59,7 @@ export function BudgetVsActual({ data, isLoading }: Props) {
               <div className="flex items-center justify-between text-sm">
                 <span className="font-medium capitalize">{item.category}</span>
                 <span className={`text-xs font-semibold ${textColor}`}>
-                  {fmt(item.spent)} / {fmt(item.budget)}
+                  {format(item.spent)} / {format(item.budget)}
                 </span>
               </div>
               <div className="h-2 w-full bg-muted rounded-full overflow-hidden">

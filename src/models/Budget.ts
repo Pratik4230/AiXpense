@@ -5,6 +5,7 @@ export interface IBudget {
   userId: mongoose.Types.ObjectId;
   category: Category;
   amount: number;
+  currency: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -28,6 +29,11 @@ const budgetSchema = new Schema<IBudgetDocument>(
       type: Number,
       required: true,
       min: 0,
+    },
+    currency: {
+      type: String,
+      default: "INR",
+      required: true,
     },
   },
   { timestamps: true },

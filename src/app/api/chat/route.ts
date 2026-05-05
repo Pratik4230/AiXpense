@@ -19,6 +19,7 @@ import { connectDB } from "@/lib/db";
 import mongoose from "mongoose";
 import { logger } from "@/lib/logger";
 import { getISTMidnight } from "@/lib/ist";
+import { getCurrency } from "@/constants/currency";
 
 export const maxDuration = 30;
 
@@ -108,6 +109,8 @@ export async function POST(req: Request) {
 
   const toolParams = { userId, rawInput };
 
+  const userCurrency = getCurrency((dbUser.currency as string) ?? "INR");
+
   const currentDateStr = now.toLocaleDateString("en-IN", {
     weekday: "long",
     year: "numeric",
@@ -144,7 +147,7 @@ export async function POST(req: Request) {
 
   const result = streamText({
     model: openai("gpt-5.4-nano"),
-    system: SYSTEM_PROMPT(currentDateStr),
+    system: SYSTEM_PROMPT(currentDateStr, userCurrency.code, userCurrency.symbol),
     messages: await convertToModelMessages(interceptedMessages),
     providerOptions: {
       openai: {

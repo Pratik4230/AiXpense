@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { Check, ChevronsUpDown } from "lucide-react";
 import { signUp, signIn, authClient } from "@/lib/authClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +15,19 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from "@/components/ui/command";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 import { OAuthButtons } from "./oauthButtons";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -21,25 +35,40 @@ import {
   InputOTPGroup,
   InputOTPSlot,
 } from "@/components/ui/input-otp";
+import { CURRENCIES, DEFAULT_CURRENCY, type CurrencyCode } from "@/constants/currency";
+import { cn } from "@/lib/utils";
 
 export function SignupForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [currency, setCurrency] = useState<CurrencyCode>(DEFAULT_CURRENCY);
+  const [currencyOpen, setCurrencyOpen] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [showOtp, setShowOtp] = useState(false);
   const [otp, setOtp] = useState("");
 
+  const selectedCurrency = CURRENCIES.find((c) => c.code === currency)!;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError("");
+
+    if (!currency) {
+      setError("Please select a currency.");
+      return;
+    }
+
     setIsLoading(true);
 
     const { error } = await signUp.email({
       name,
       email,
       password,
+      // @ts-expect-error betterAuth additionalFields passed through signUp body
+      currency,
+      country: selectedCurrency.country,
     });
 
     if (error) {
@@ -188,6 +217,62 @@ export function SignupForm() {
               minLength={8}
               disabled={isLoading}
             />
+          </div>
+          <div className="space-y-2">
+            <Label>
+              Currency <span className="text-destructive">*</span>
+            </Label>
+            <Popover open={currencyOpen} onOpenChange={setCurrencyOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={currencyOpen}
+                  className="w-full justify-between h-10"
+                  disabled={isLoading}
+                  type="button"
+                >
+                  <span>
+                    {selectedCurrency.flag} {selectedCurrency.code} — {selectedCurrency.name}
+                  </span>
+                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-full p-0" align="start">
+                <Command>
+                  <CommandInput placeholder="Search currency or country..." />
+                  <CommandList>
+                    <CommandEmpty>No currency found.</CommandEmpty>
+                    <CommandGroup>
+                      {CURRENCIES.map((c) => (
+                        <CommandItem
+                          key={c.code}
+                          value={`${c.code} ${c.name}`}
+                          onSelect={() => {
+                            setCurrency(c.code as CurrencyCode);
+                            setCurrencyOpen(false);
+                          }}
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              currency === c.code ? "opacity-100" : "opacity-0"
+                            )}
+                          />
+                          {c.flag} {c.code} — {c.name}
+                          <span className="ml-auto text-xs text-muted-foreground">
+                            {c.symbol}
+                          </span>
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
+            <p className="text-xs text-muted-foreground">
+              Used to display all your expenses. You can change this later.
+            </p>
           </div>
           <Button type="submit" className="w-full h-11" disabled={isLoading}>
             {isLoading ? "Creating account..." : "Create account"}

@@ -90,6 +90,14 @@ export const auth = betterAuth({
         type: "date",
         defaultValue: () => new Date(),
       },
+      currency: {
+        type: "string",
+        defaultValue: "INR",
+      },
+      country: {
+        type: "string",
+        defaultValue: "IN",
+      },
     },
     deleteUser: {
       enabled: true,

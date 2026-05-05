@@ -21,6 +21,23 @@ export async function updateName(name: string) {
   }
 }
 
+export async function updateCurrency(currency: string, country: string) {
+  const session = await getSession();
+  if (!session) return { error: "Not authenticated" };
+
+  try {
+    await auth.api.updateUser({
+      headers: await headers(),
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      body: { currency, country } as any,
+    });
+    revalidatePath("/profile");
+    return { success: true };
+  } catch {
+    return { error: "Failed to update currency" };
+  }
+}
+
 export async function changePassword(
   currentPassword: string,
   newPassword: string,

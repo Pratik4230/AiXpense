@@ -9,6 +9,7 @@ import {
   PlanUsageCard,
   DangerZoneCard,
   MyReportsCard,
+  CurrencyCard,
 } from "@/components/profile";
 import { getSubscription } from "@/actions/subscription";
 import { db } from "@/lib/db";
@@ -26,7 +27,7 @@ export default async function ProfilePage() {
   const [dbUser, subscription] = await Promise.all([
     db.collection("user").findOne(
       { _id: new ObjectId(user.id) },
-      { projection: { freeTrials: 1, freeTrialResetAt: 1, isPremium: 1 } },
+      { projection: { freeTrials: 1, freeTrialResetAt: 1, isPremium: 1, currency: 1 } },
     ),
     getSubscription(user.id),
   ]);
@@ -56,6 +57,7 @@ export default async function ProfilePage() {
         subscription={subscription}
       />
       <MyReportsCard />
+      <CurrencyCard currentCurrency={dbUser?.currency ?? user.currency ?? "INR"} />
       <ChangePasswordCard />
       <DangerZoneCard />
     </div>

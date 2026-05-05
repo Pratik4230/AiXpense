@@ -9,6 +9,7 @@ import { generateText } from "ai";
 import mongoose from "mongoose";
 import { logger } from "@/lib/logger";
 import { cron } from "inngest";
+import { getCurrency } from "@/constants/currency";
 
 function getPeriodRange(type: "weekly" | "monthly") {
   const now = new Date();
@@ -47,7 +48,7 @@ async function runCoachForPeriod(type: "weekly" | "monthly") {
   const users = await db
     .collection("user")
     .find({ isPremium: true, emailVerified: true })
-    .project({ _id: 1, email: 1, name: 1 })
+    .project({ _id: 1, email: 1, name: 1, currency: 1 })
     .toArray();
 
   const results = { sent: 0, skipped: 0 };
@@ -93,10 +94,13 @@ async function runCoachForPeriod(type: "weekly" | "monthly") {
     for (const e of stats.byCategory) {
       categoryMap[e.category] = (categoryMap[e.category] ?? 0) + e.amount;
     }
+    const userCurrency = getCurrency((user.currency as string) ?? "INR");
+    const sym = userCurrency.symbol;
+
     const topCategories = Object.entries(categoryMap)
       .sort((a, b) => b[1] - a[1])
       .slice(0, 3)
-      .map(([cat, amt]) => `${cat}: ₹${amt.toFixed(0)}`)
+      .map(([cat, amt]) => `${cat}: ${sym}${amt.toFixed(0)}`)
       .join(", ");
 
     let text: string;
@@ -118,7 +122,7 @@ async function runCoachForPeriod(type: "weekly" | "monthly") {
           },
           {
             role: "user",
-            content: `My ${label} spending:\nTotal: ₹${stats.total.toFixed(0)}\nTop categories: ${topCategories}\nBiggest expense: ₹${stats.biggest.toFixed(0)}\nTotal transactions: ${stats.count}`,
+            content: `My ${label} spending:\nTotal: ${sym}${stats.total.toFixed(0)}\nTop categories: ${topCategories}\nBiggest expense: ${sym}${stats.biggest.toFixed(0)}\nTotal transactions: ${stats.count}`,
           },
         ],
       }));
@@ -149,6 +153,7 @@ async function runCoachForPeriod(type: "weekly" | "monthly") {
         insight: text,
         period: label,
         totalSpent: stats.total,
+        currency: userCurrency.code,
       });
       return { html: r.html, emailText: r.text };
     })();

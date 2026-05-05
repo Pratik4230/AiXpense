@@ -3,7 +3,8 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { RefreshCw, IndianRupee, Pencil, Trash2 } from "lucide-react";
+import { RefreshCw, Pencil, Trash2 } from "lucide-react";
+import { useCurrency } from "@/hooks/useCurrency";
 
 interface UpdatedCardProps {
   id?: string;
@@ -38,6 +39,7 @@ export function UpdatedCard({
   onEdit,
   onDelete,
 }: UpdatedCardProps) {
+  const { format } = useCurrency();
   const categoryDisplay = subcategory
     ? `${category} / ${subcategory}`
     : category;
@@ -102,8 +104,7 @@ export function UpdatedCard({
             <span className="text-muted-foreground">Amount</span>
             <span className="font-medium flex items-center">
               {!isExpense && "+"}
-              <IndianRupee className="size-3" />
-              {amount.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+              {format(amount)}
             </span>
           </div>
           <div className="flex justify-between items-center">

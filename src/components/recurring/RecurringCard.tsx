@@ -10,6 +10,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { RecurringPayment } from "@/services/recurring";
+import { useCurrency } from "@/hooks/useCurrency";
 
 interface Props {
   rule: RecurringPayment;
@@ -37,6 +38,7 @@ export function RecurringCard({ rule, onEdit, onToggle, onDelete }: Props) {
   const nextDue = formatDate(rule.nextDueDate);
   const isOverdue =
     new Date(rule.nextDueDate) < new Date() && rule.isActive;
+  const { format } = useCurrency();
 
   return (
     <Card
@@ -59,8 +61,7 @@ export function RecurringCard({ rule, onEdit, onToggle, onDelete }: Props) {
 
             <div className="mt-2 flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
               <span className="font-medium text-foreground text-base">
-                {rule.type === "expense" ? "-" : "+"}₹
-                {rule.amount.toLocaleString("en-IN")}
+                {rule.type === "expense" ? "-" : "+"}{format(rule.amount)}
               </span>
 
               <span className="flex items-center gap-1">

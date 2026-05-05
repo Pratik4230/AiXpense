@@ -29,6 +29,7 @@ import {
   type SelectedTransaction,
 } from "@/components/chat";
 import { toast } from "sonner";
+import { useCurrency } from "@/hooks/useCurrency";
 import {
   MAX_MESSAGES_PER_CONVERSATION,
   MESSAGE_WARNING_THRESHOLDS,
@@ -69,6 +70,7 @@ export function ChatView({
   onShowLimitDialog,
   onConversationCreated,
 }: ChatViewProps) {
+  const { symbol } = useCurrency();
   const [input, setInput] = useState("");
   const [selectedTransaction, setSelectedTransaction] =
     useState<SelectedTransaction | null>(null);
@@ -379,11 +381,11 @@ export function ChatView({
                           .trim();
 
                         if (action === "delete") {
-                          displayText = `Delete: ${itemName} (₹${amount})`;
+                          displayText = `Delete: ${itemName} (${symbol}${amount})`;
                         } else {
                           displayText = userText
                             ? `Edit ${itemName}: ${userText}`
-                            : `Edit: ${itemName} (₹${amount})`;
+                            : `Edit: ${itemName} (${symbol}${amount})`;
                         }
                       }
                       return (

@@ -5,17 +5,19 @@ export function coachInsightEmail({
   insight,
   period,
   totalSpent,
+  currency = "INR",
 }: {
   name: string;
   insight: string;
   period: string;
   totalSpent: number;
+  currency?: string;
 }) {
   const firstName = name?.split(" ")[0] || "there";
   const cleanInsight = insight.replace(/\s*--\s*/g, " ").replace(/\s*—\s*/g, " ").trim();
-  const formattedAmount = new Intl.NumberFormat("en-IN", {
+  const formattedAmount = new Intl.NumberFormat("en", {
     style: "currency",
-    currency: "INR",
+    currency,
     maximumFractionDigits: 0,
   }).format(totalSpent);
 

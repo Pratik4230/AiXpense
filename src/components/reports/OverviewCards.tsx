@@ -1,3 +1,5 @@
+"use client";
+
 import {
   TrendingUp,
   TrendingDown,
@@ -9,14 +11,9 @@ import {
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { OverviewData, ReportMode } from "@/services/reports";
+import { useCurrency } from "@/hooks/useCurrency";
 
-function fmt(n: number) {
-  return new Intl.NumberFormat("en-IN", {
-    style: "currency",
-    currency: "INR",
-    maximumFractionDigits: 0,
-  }).format(n);
-}
+
 
 interface Props {
   data?: OverviewData;
@@ -25,6 +22,7 @@ interface Props {
 }
 
 export function OverviewCards({ data, isLoading, mode }: Props) {
+  const { format } = useCurrency();
   if (isLoading) {
     return (
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -55,7 +53,7 @@ export function OverviewCards({ data, isLoading, mode }: Props) {
   const cards = [
     {
       label: isExpense ? "Total Spent" : "Total Earned",
-      value: fmt(data?.total ?? 0),
+      value: format(data?.total ?? 0),
       icon: Wallet,
       sub: (
         <span className={`flex items-center gap-1 text-xs ${trendColor}`}>
@@ -78,13 +76,13 @@ export function OverviewCards({ data, isLoading, mode }: Props) {
       icon: Tag,
       sub: (
         <span className="text-xs text-muted-foreground">
-          {fmt(data?.topCategoryAmount ?? 0)}
+          {format(data?.topCategoryAmount ?? 0)}
         </span>
       ),
     },
     {
       label: isExpense ? "Largest Expense" : "Largest Income",
-      value: fmt(data?.largestExpense ?? 0),
+      value: format(data?.largestExpense ?? 0),
       icon: TrendingUp,
       sub: (
         <span className="text-xs text-muted-foreground">

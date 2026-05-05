@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useChartColors } from "@/hooks/useChartColors";
 import type { CategoryPoint } from "@/services/reports";
+import { useCurrency } from "@/hooks/useCurrency";
 
 const COLORS = [
   "#ef4444",
@@ -40,6 +41,7 @@ interface Props {
 
 export function CategoryChart({ data, isLoading }: Props) {
   const c = useChartColors();
+  const { format } = useCurrency();
 
   const total = (data ?? []).reduce((s, item) => s + item.total, 0);
 
@@ -76,15 +78,8 @@ export function CategoryChart({ data, isLoading }: Props) {
                 dataKey="value"
               />
               <Tooltip
-                formatter={(
-                  v: number | undefined,
-                  name: string | undefined,
-                ) => [
-                  new Intl.NumberFormat("en-IN", {
-                    style: "currency",
-                    currency: "INR",
-                    maximumFractionDigits: 0,
-                  }).format(v ?? 0) +
+                formatter={(v: number | undefined, name: string | undefined) => [
+                  format(v ?? 0) +
                     ` (${total > 0 ? (((v ?? 0) / total) * 100).toFixed(1) : 0}%)`,
                   name ?? "",
                 ]}

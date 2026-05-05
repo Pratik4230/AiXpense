@@ -2,6 +2,7 @@
 
 import { useCallback } from "react";
 import { ChevronUp, ChevronDown, Loader2 } from "lucide-react";
+import { useCurrency } from "@/hooks/useCurrency";
 import {
   Table,
   TableBody,
@@ -16,13 +17,6 @@ import { useIntersectionObserver } from "@/hooks/useIntersectionObserver";
 import type { TransactionFilters } from "@/services/transactions";
 import type { TransactionsPage } from "@/services/transactions";
 
-function fmt(n: number) {
-  return new Intl.NumberFormat("en-IN", {
-    style: "currency",
-    currency: "INR",
-    maximumFractionDigits: 0,
-  }).format(n);
-}
 
 interface SortHeaderProps {
   label: string;
@@ -80,6 +74,7 @@ export function TransactionsTable({
   filters,
   onFilterChange,
 }: Props) {
+  const { format } = useCurrency();
   const onIntersect = useCallback(() => {
     if (hasNextPage && !isFetchingNextPage) fetchNextPage();
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
@@ -181,7 +176,7 @@ export function TransactionsTable({
                 }`}
               >
                 {tx.type === "expense" ? "-" : "+"}
-                {fmt(tx.amount)}
+                {format(tx.amount, tx.currency)}
               </TableCell>
             </TableRow>
           ))}

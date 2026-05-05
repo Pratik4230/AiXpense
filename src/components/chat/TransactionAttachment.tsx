@@ -2,7 +2,8 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { X, Pencil, Trash2, IndianRupee } from "lucide-react";
+import { X, Pencil, Trash2 } from "lucide-react";
+import { useCurrency } from "@/hooks/useCurrency";
 
 export interface SelectedTransaction {
   id: string;
@@ -22,6 +23,7 @@ export function TransactionAttachment({
   transaction,
   onRemove,
 }: TransactionAttachmentProps) {
+  const { format } = useCurrency();
   const isDelete = transaction.action === "delete";
 
   return (
@@ -60,8 +62,7 @@ export function TransactionAttachment({
         </div>
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <span className="flex items-center">
-            <IndianRupee className="size-3" />
-            {transaction.amount.toLocaleString("en-IN")}
+            {format(transaction.amount)}
           </span>
           <span>-</span>
           <span className="capitalize">{transaction.category}</span>

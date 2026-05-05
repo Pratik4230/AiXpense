@@ -54,7 +54,7 @@ export async function GET(req: Request) {
       .sort(sortObj)
       .skip((page - 1) * LIMIT)
       .limit(LIMIT)
-      .select("item amount category type date")
+      .select("item amount currency category type date")
       .lean(),
     Expense.countDocuments(match),
   ]);

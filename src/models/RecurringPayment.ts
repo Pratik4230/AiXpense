@@ -14,6 +14,7 @@ export interface IRecurringPayment {
   userId: mongoose.Types.ObjectId;
   name: string;
   amount: number;
+  currency: string;
   category: Category;
   type: ExpenseType;
   frequency: Frequency;
@@ -45,6 +46,11 @@ const recurringPaymentSchema = new Schema<IRecurringPaymentDocument>(
       type: Number,
       required: true,
       min: 0,
+    },
+    currency: {
+      type: String,
+      default: "INR",
+      required: true,
     },
     category: {
       type: String,

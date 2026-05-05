@@ -6,14 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useLatestInsight } from "@/services/insights";
 import Link from "next/link";
+import { useCurrency } from "@/hooks/useCurrency";
 
-function fmt(n: number) {
-  return new Intl.NumberFormat("en-IN", {
-    style: "currency",
-    currency: "INR",
-    maximumFractionDigits: 0,
-  }).format(n);
-}
 
 function getPeriodLabel(periodKey: string) {
   if (periodKey.startsWith("week-")) {
@@ -41,6 +35,7 @@ interface CoachInsightCardProps {
 
 export function CoachInsightCard({ isPremium }: CoachInsightCardProps) {
   const { data: insight, isLoading } = useLatestInsight(isPremium);
+  const { format } = useCurrency();
 
   if (!isPremium) {
     return (
@@ -107,7 +102,7 @@ export function CoachInsightCard({ isPremium }: CoachInsightCardProps) {
           AI Coach Insight
         </CardTitle>
         <div className="flex items-baseline gap-2 mt-1">
-          <span className="text-2xl font-bold tracking-tight">{fmt(insight.totalSpent)}</span>
+          <span className="text-2xl font-bold tracking-tight">{format(insight.totalSpent)}</span>
           <span className="text-xs text-muted-foreground">{period}</span>
         </div>
       </CardHeader>

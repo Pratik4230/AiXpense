@@ -1,7 +1,8 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
-import { Trash2, IndianRupee } from "lucide-react";
+import { Trash2 } from "lucide-react";
+import { useCurrency } from "@/hooks/useCurrency";
 
 interface DeletedCardProps {
   type: "expense" | "income";
@@ -11,6 +12,7 @@ interface DeletedCardProps {
 
 export function DeletedCard({ type, item, amount }: DeletedCardProps) {
   const isExpense = type === "expense";
+  const { format } = useCurrency();
 
   return (
     <Card className="w-full sm:min-w-72 md:min-w-sm sm:max-w-sm bg-red-500/10 border-red-500/20">
@@ -32,9 +34,8 @@ export function DeletedCard({ type, item, amount }: DeletedCardProps) {
           </div>
           <div className="flex justify-between items-center">
             <span className="text-muted-foreground">Amount</span>
-            <span className="font-medium line-through text-muted-foreground flex items-center">
-              <IndianRupee className="size-3" />
-              {amount.toLocaleString("en-IN")}
+            <span className="font-medium line-through text-muted-foreground">
+              {format(amount)}
             </span>
           </div>
         </div>

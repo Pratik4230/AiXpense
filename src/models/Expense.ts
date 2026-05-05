@@ -10,6 +10,7 @@ export interface IExpense {
   userId: mongoose.Types.ObjectId;
   item: string;
   amount: number;
+  currency: string;
   category: Category;
   subcategory?: string;
   type: ExpenseType;
@@ -42,6 +43,11 @@ const expenseSchema = new Schema<IExpenseDocument>(
       type: Number,
       required: true,
       min: 0,
+    },
+    currency: {
+      type: String,
+      default: "INR",
+      required: true,
     },
     category: {
       type: String,

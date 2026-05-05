@@ -20,6 +20,7 @@ import { useDeleteBudget } from "@/services/budgets";
 import { BudgetDialog } from "./BudgetDialog";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { useCurrency } from "@/hooks/useCurrency";
 
 interface Props {
   budget: BudgetSummary;
@@ -28,6 +29,7 @@ interface Props {
 export function BudgetCard({ budget }: Props) {
   const [editOpen, setEditOpen] = useState(false);
   const deleteMutation = useDeleteBudget();
+  const { format } = useCurrency();
 
   const raw = (budget.spent / budget.amount) * 100;
   const percent = Math.min(raw, 100);
@@ -108,8 +110,8 @@ export function BudgetCard({ budget }: Props) {
           />
         </div>
         <div className="flex justify-between text-sm text-muted-foreground">
-          <span>₹{budget.spent.toLocaleString("en-IN")} spent</span>
-          <span>₹{budget.amount.toLocaleString("en-IN")} limit</span>
+          <span>{format(budget.spent)} spent</span>
+          <span>{format(budget.amount)} limit</span>
         </div>
       </div>
 

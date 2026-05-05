@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CheckCircle2, Pencil, Trash2 } from "lucide-react";
+import { useCurrency } from "@/hooks/useCurrency";
 
 interface IncomeCardProps {
   id?: string;
@@ -40,6 +41,7 @@ export function IncomeCard({
   onEdit,
   onDelete,
 }: IncomeCardProps) {
+  const { format } = useCurrency();
   const categoryDisplay = subcategory
     ? `${category} / ${subcategory}`
     : category;
@@ -109,7 +111,7 @@ export function IncomeCard({
           <div className="flex justify-between items-center">
             <span className="text-muted-foreground">Amount</span>
             <span className="font-medium text-green-500">
-              +₹{amount.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
+              +{format(amount)}
             </span>
           </div>
           <div className="flex justify-between items-center">
