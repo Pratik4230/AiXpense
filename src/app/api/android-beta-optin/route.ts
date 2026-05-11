@@ -1,5 +1,7 @@
 import { z } from "zod";
 import { sendEmail } from "@/lib/email";
+import { connectDB } from "@/lib/db";
+import { AndroidBetaSignup } from "@/models";
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 
@@ -26,6 +28,17 @@ export async function POST(req: Request) {
   }
 
   const email = parsed.data.email.trim().toLowerCase();
+
+  try {
+    await connectDB();
+    await AndroidBetaSignup.updateOne(
+      { email },
+      { $setOnInsert: { email } },
+      { upsert: true },
+    );
+  } catch (e) {
+    console.error("[android-beta-optin] persist signup:", e);
+  }
 
   await sendEmail({
     to: ADMIN_EMAIL,

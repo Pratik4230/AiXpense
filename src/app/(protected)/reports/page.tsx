@@ -1,11 +1,23 @@
 import { Suspense } from "react";
 import { getSession } from "@/lib/session";
 import { ReportsClient } from "./ReportsClient";
+import { db } from "@/lib/db";
+import { ObjectId } from "mongodb";
+import { effectivePremium } from "@/lib/premium";
 
 export default async function ReportsPage() {
   const session = await getSession();
-  const isPremium =
-    (session?.user as { isPremium?: boolean })?.isPremium ?? false;
+  let isPremium = false;
+  if (session?.user?.id) {
+    const dbUser = await db.collection("user").findOne(
+      { _id: new ObjectId(session.user.id) },
+      { projection: { isPremium: 1, bonusPremiumUntil: 1 } },
+    );
+    isPremium = effectivePremium({
+      isPremium: dbUser?.isPremium as boolean | undefined,
+      bonusPremiumUntil: dbUser?.bonusPremiumUntil as Date | undefined,
+    });
+  }
 
   return (
     <Suspense>

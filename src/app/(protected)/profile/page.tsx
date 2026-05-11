@@ -15,6 +15,7 @@ import { getSubscription } from "@/actions/subscription";
 import { db } from "@/lib/db";
 import { ObjectId } from "mongodb";
 import { getISTMidnight } from "@/lib/ist";
+import { effectivePremium } from "@/lib/premium";
 
 export default async function ProfilePage() {
   const session = await getSession();
@@ -27,12 +28,23 @@ export default async function ProfilePage() {
   const [dbUser, subscription] = await Promise.all([
     db.collection("user").findOne(
       { _id: new ObjectId(user.id) },
-      { projection: { freeTrials: 1, freeTrialResetAt: 1, isPremium: 1, currency: 1 } },
+      {
+        projection: {
+          freeTrials: 1,
+          freeTrialResetAt: 1,
+          isPremium: 1,
+          bonusPremiumUntil: 1,
+          currency: 1,
+        },
+      },
     ),
     getSubscription(user.id),
   ]);
 
-  const isPremiumLive = dbUser?.isPremium ?? user.isPremium ?? false;
+  const isPremiumLive = effectivePremium({
+    isPremium: (dbUser?.isPremium ?? user.isPremium) as boolean | undefined,
+    bonusPremiumUntil: dbUser?.bonusPremiumUntil as Date | undefined,
+  });
   const lastReset = dbUser?.freeTrialResetAt ? new Date(dbUser.freeTrialResetAt) : new Date(0);
   const freeTrialsLive = isPremiumLive
     ? 0

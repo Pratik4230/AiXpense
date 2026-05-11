@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { connectDB } from "@/lib/db";
 import mongoose from "mongoose";
 import { getISTMidnight } from "@/lib/ist";
+import { effectivePremium } from "@/lib/premium";
 
 export async function GET() {
   const session = await auth.api.getSession({ headers: await headers() });
@@ -18,14 +19,26 @@ export async function GET() {
     .collection("user")
     .findOne(
       { _id: new mongoose.Types.ObjectId(session.user.id) },
-      { projection: { freeTrials: 1, freeTrialResetAt: 1, isPremium: 1 } },
+      {
+        projection: {
+          freeTrials: 1,
+          freeTrialResetAt: 1,
+          isPremium: 1,
+          bonusPremiumUntil: 1,
+        },
+      },
     );
 
   if (!user) {
     return new Response("Not found", { status: 404 });
   }
 
-  if (user.isPremium) {
+  const premium = effectivePremium({
+    isPremium: user.isPremium as boolean | undefined,
+    bonusPremiumUntil: user.bonusPremiumUntil as Date | undefined,
+  });
+
+  if (premium) {
     return Response.json({ freeTrials: null, isPremium: true });
   }
 

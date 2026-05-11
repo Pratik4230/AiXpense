@@ -20,6 +20,8 @@ import mongoose from "mongoose";
 import { logger } from "@/lib/logger";
 import { getISTMidnight } from "@/lib/ist";
 import { getCurrency } from "@/constants/currency";
+import { effectivePremium } from "@/lib/premium";
+import { applyMobileChatStreak, isMobileStreakClient } from "@/lib/streakMobile";
 
 export const maxDuration = 30;
 
@@ -47,6 +49,7 @@ export async function POST(req: Request) {
         _id: new mongoose.Types.ObjectId(userId),
         $or: [
           { isPremium: true },
+          { bonusPremiumUntil: { $gt: now } },
           { freeTrials: { $gt: 0 } },
           { freeTrialResetAt: { $lt: todayISTMidnight } },
         ],
@@ -59,6 +62,12 @@ export async function POST(req: Request) {
                 if: {
                   $and: [
                     { $ne: ["$isPremium", true] },
+                    {
+                      $or: [
+                        { $eq: ["$bonusPremiumUntil", null] },
+                        { $lte: ["$bonusPremiumUntil", now] },
+                      ],
+                    },
                     { $lt: ["$freeTrialResetAt", todayISTMidnight] },
                   ],
                 },
@@ -68,7 +77,17 @@ export async function POST(req: Request) {
             },
             freeTrials: {
               $cond: {
-                if: { $eq: ["$isPremium", true] },
+                if: {
+                  $or: [
+                    { $eq: ["$isPremium", true] },
+                    {
+                      $and: [
+                        { $ne: ["$bonusPremiumUntil", null] },
+                        { $gt: ["$bonusPremiumUntil", now] },
+                      ],
+                    },
+                  ],
+                },
                 then: "$freeTrials",
                 else: {
                   $subtract: [
@@ -102,6 +121,10 @@ export async function POST(req: Request) {
 
   const { messages }: { messages: UIMessage[] } = await req.json();
 
+  if (isMobileStreakClient(req)) {
+    await applyMobileChatStreak(userId);
+  }
+
   const lastUserMessage = messages.filter((m) => m.role === "user").pop()
     ?.parts?.[0];
   const rawInput =
@@ -123,7 +146,12 @@ export async function POST(req: Request) {
       const newParts = msg.parts.map((part) => {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         if (part.type === "file" && (part as any).url) {
-          if (!dbUser.isPremium) {
+          if (
+            !effectivePremium({
+              isPremium: dbUser.isPremium as boolean | undefined,
+              bonusPremiumUntil: dbUser.bonusPremiumUntil as Date | undefined,
+            })
+          ) {
             logger.warn("ocr_premium_required", { userId });
             return {
               type: "text" as const,
@@ -145,10 +173,33 @@ export async function POST(req: Request) {
     return msg;
   });
 
+  const tools = {
+    saveExpense: createSaveExpenseTool(toolParams),
+    saveIncome: createSaveIncomeTool(toolParams),
+    searchTransactions: createSearchTransactionsTool({
+      userId,
+      currentDate: now,
+    }),
+    deleteTransaction: createDeleteTransactionTool({ userId }),
+    updateTransaction: createUpdateTransactionTool({ userId }),
+    scanBill: createScanBillTool({
+      isPremium: effectivePremium({
+        isPremium: dbUser.isPremium as boolean | undefined,
+        bonusPremiumUntil: dbUser.bonusPremiumUntil as Date | undefined,
+      }),
+    }),
+    createUpdateBudget: createCreateUpdateBudgetTool({ userId }),
+    deleteBudget: createDeleteBudgetTool({ userId }),
+    readBudgets: createReadBudgetsTool({ userId }),
+  };
+
   const result = streamText({
     model: openai("gpt-5.4-nano"),
     system: SYSTEM_PROMPT(currentDateStr, userCurrency.code, userCurrency.symbol),
-    messages: await convertToModelMessages(interceptedMessages),
+    messages: await convertToModelMessages(interceptedMessages, {
+      tools,
+      ignoreIncompleteToolCalls: true,
+    }),
     providerOptions: {
       openai: {
         reasoningEffort: "medium",
@@ -160,20 +211,7 @@ export async function POST(req: Request) {
         store: false,
       },
     },
-    tools: {
-      saveExpense: createSaveExpenseTool(toolParams),
-      saveIncome: createSaveIncomeTool(toolParams),
-      searchTransactions: createSearchTransactionsTool({
-        userId,
-        currentDate: now,
-      }),
-      deleteTransaction: createDeleteTransactionTool({ userId }),
-      updateTransaction: createUpdateTransactionTool({ userId }),
-      scanBill: createScanBillTool({ isPremium: dbUser.isPremium }),
-      createUpdateBudget: createCreateUpdateBudgetTool({ userId }),
-      deleteBudget: createDeleteBudgetTool({ userId }),
-      readBudgets: createReadBudgetsTool({ userId }),
-    },
+    tools,
     stopWhen: stepCountIs(5),
   });
 

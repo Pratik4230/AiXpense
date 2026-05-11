@@ -98,6 +98,30 @@ export const auth = betterAuth({
         type: "string",
         defaultValue: "IN",
       },
+      bonusPremiumUntil: {
+        type: "date",
+        required: false,
+      },
+      streakRewardGrantedAt: {
+        type: "date",
+        required: false,
+      },
+      streakDayKey: {
+        type: "string",
+        required: false,
+      },
+      streakChatsToday: {
+        type: "number",
+        defaultValue: 0,
+      },
+      streakCount: {
+        type: "number",
+        defaultValue: 0,
+      },
+      streakLastQualifiedDayKey: {
+        type: "string",
+        required: false,
+      },
     },
     deleteUser: {
       enabled: true,

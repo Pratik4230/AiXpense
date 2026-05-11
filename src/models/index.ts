@@ -19,3 +19,7 @@ export {
   type Frequency,
   FREQUENCIES,
 } from "./RecurringPayment";
+export {
+  AndroidBetaSignup,
+  type IAndroidBetaSignup,
+} from "./AndroidBetaSignup";

@@ -45,9 +45,13 @@ async function runCoachForPeriod(type: "weekly" | "monthly") {
 
   await connectDB();
 
+  const now = new Date();
   const users = await db
     .collection("user")
-    .find({ isPremium: true, emailVerified: true })
+    .find({
+      emailVerified: true,
+      $or: [{ isPremium: true }, { bonusPremiumUntil: { $gt: now } }],
+    })
     .project({ _id: 1, email: 1, name: 1, currency: 1 })
     .toArray();
 

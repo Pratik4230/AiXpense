@@ -233,9 +233,16 @@ export default function LandingPage() {
               triggerClassName="h-12 px-8 rounded-full text-base sm:text-lg border-border/80 bg-background hover:bg-muted gap-2.5"
             />
           </div>
-          <div className="mt-4 inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/70 px-3 py-1.5 text-xs sm:text-sm text-muted-foreground">
-            <Smartphone className="size-3.5 sm:size-4 text-primary" />
-            Android app in closed beta on Google Play
+          <div className="mt-4 flex flex-col items-center gap-2 max-w-xl mx-auto">
+            <div className="inline-flex items-center gap-2 rounded-full border border-border/60 bg-background/70 px-3 py-1.5 text-xs sm:text-sm text-muted-foreground">
+              <Smartphone className="size-3.5 sm:size-4 text-primary" />
+              Android closed beta — 20-day streak (3 chats/day) = 3 months
+              premium (mobile only)
+            </div>
+            <p className="text-xs sm:text-sm text-muted-foreground text-center leading-relaxed">
+              Streaks count only in the Android app. Join the beta with your
+              email above, then install from Play when you receive the invite.
+            </p>
           </div>
 
           {/* Chat Demo UI */}
