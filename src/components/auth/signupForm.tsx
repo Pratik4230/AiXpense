@@ -233,7 +233,7 @@ export function SignupForm() {
                   type="button"
                 >
                   <span>
-                    {selectedCurrency.flag} {selectedCurrency.code} — {selectedCurrency.name}
+                    {selectedCurrency.flag} {selectedCurrency.code} · {selectedCurrency.name}
                   </span>
                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
@@ -259,7 +259,7 @@ export function SignupForm() {
                               currency === c.code ? "opacity-100" : "opacity-0"
                             )}
                           />
-                          {c.flag} {c.code} — {c.name}
+                          {c.flag} {c.code} · {c.name}
                           <span className="ml-auto text-xs text-muted-foreground">
                             {c.symbol}
                           </span>

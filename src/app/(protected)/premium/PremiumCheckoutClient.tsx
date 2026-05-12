@@ -6,6 +6,7 @@ import { createSubscription } from "@/lib/api";
 import { authClient } from "@/lib/authClient";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import {
   Card,
   CardContent,
@@ -21,35 +22,69 @@ import {
   Star,
   Sparkles,
   TrendingUp,
-  Download,
   PieChart,
+  ScanLine,
   Loader2,
   Globe,
   AlertCircle,
+  type LucideIcon,
 } from "lucide-react";
 
-const features = [
+const features: {
+  icon: LucideIcon;
+  text: string;
+  desc: string;
+}[] = [
   {
     icon: Sparkles,
-    text: "Unlimited AI Conversations",
-    desc: "No daily limits. Ask as much as you need.",
+    text: "Unlimited AI conversations",
+    desc: "Chat without tight daily caps so you can plan and review freely.",
   },
   {
     icon: TrendingUp,
-    text: "Smart Spending Insights",
-    desc: "AI analyzes your patterns to save money.",
+    text: "Spending insights",
+    desc: "Ask the assistant to interpret trends and categories from your data.",
   },
   {
     icon: PieChart,
-    text: "Advanced Visualizations",
-    desc: "Interactive charts for income & expenses.",
+    text: "Charts & breakdowns",
+    desc: "See income and expenses in the views you already use in the app.",
   },
   {
-    icon: Download,
-    text: "Export Tax-Ready Reports",
-    desc: "Download simplified CSV & PDF summaries.",
+    icon: ScanLine,
+    text: "AI bill & receipt scanning",
+    desc: "Turn receipt photos into logged entries where scanning is enabled.",
   },
 ];
+
+function PremiumFeatureList({ accent }: { accent: "default" | "amber" }) {
+  const iconWrap =
+    accent === "amber"
+      ? "bg-amber-500/10 text-amber-600 dark:text-amber-400"
+      : "bg-primary/10 text-primary";
+  return (
+    <ul className="space-y-4 pt-2 list-none m-0 p-0">
+      {features.map((feature) => (
+        <li key={feature.text} className="flex gap-3 items-start">
+          <div
+            className={`mt-0.5 p-1 rounded-full shrink-0 ${iconWrap}`}
+            aria-hidden
+          >
+            <feature.icon className="size-3.5" />
+          </div>
+          <div className="min-w-0">
+            <p className="text-sm font-medium leading-snug mb-1">
+              {feature.text}
+            </p>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              {feature.desc}
+            </p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  );
+}
 
 export function PremiumCheckoutClient({
   useInternationalCheckout,
@@ -122,14 +157,14 @@ export function PremiumCheckoutClient({
     : handleRazorpayUpgrade;
 
   return (
-    <div className="min-h-[calc(100vh-4rem)] flex flex-col items-center justify-center p-4 md:p-8 relative overflow-hidden">
+    <div className="min-h-[calc(100vh-4rem)] flex flex-col items-center justify-start py-10 md:py-14 pb-20 px-4 md:px-8 relative overflow-hidden">
       <div className="absolute inset-0 bg-background z-[-1]" />
       <div className="absolute top-[-10%] right-[-5%] w-125 h-125 bg-amber-500/10 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute bottom-[-10%] left-[-5%] w-125 h-125 bg-blue-500/5 rounded-full blur-[120px] pointer-events-none" />
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-size-[24px_24px] z-[-1]" />
 
-      <div className="max-w-5xl w-full space-y-12 relative z-10">
-        <div className="text-center space-y-4">
+      <div className="max-w-5xl w-full space-y-10 md:space-y-12 relative z-10">
+        <header className="text-center space-y-5 max-w-3xl mx-auto">
           <Badge
             variant="outline"
             className="px-4 py-1.5 border-amber-500/30 text-amber-600 dark:text-amber-400 bg-amber-500/5 backdrop-blur-sm shadow-sm"
@@ -137,32 +172,45 @@ export function PremiumCheckoutClient({
             <Crown className="size-3.5 mr-2 animate-pulse" />
             Premium Access
           </Badge>
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight bg-clip-text text-transparent bg-linear-to-b from-foreground to-foreground/70">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight text-balance bg-clip-text text-transparent bg-linear-to-b from-foreground to-foreground/70">
             Invest in Your Financial Clarity
           </h1>
-          <p className="text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Unlock the full potential of AiXpense with unlimited AI
-            interactions, deep insights, and premium security.
+          <p className="text-lg md:text-xl text-muted-foreground leading-relaxed">
+            More room for AI help, clearer views of your money, and the extras
+            we reserve for subscribers, without overpromising.
           </p>
           {internationalBillingUnavailable ? (
-            <p className="text-sm text-amber-700 dark:text-amber-400 flex items-center justify-center gap-2 max-w-xl mx-auto">
-              <AlertCircle className="size-4 shrink-0" />
-              International checkout is not configured yet (missing Dodo env
-              or webhook). Your profile country is{" "}
-              <span className="font-medium">{country}</span>. Contact support or
-              set country to IN for Rupee billing.
-            </p>
+            <Alert
+              className="max-w-xl mx-auto text-left border-amber-500/35 bg-amber-500/10 text-foreground dark:border-amber-500/25 dark:bg-amber-500/15 [&>svg]:text-amber-600 dark:[&>svg]:text-amber-400"
+              variant="default"
+            >
+              <AlertCircle />
+              <AlertTitle className="text-amber-950 dark:text-amber-50">
+                Billing isn&apos;t available for your region yet
+              </AlertTitle>
+              <AlertDescription className="text-amber-950/85 dark:text-amber-50/85 [&_strong]:font-semibold [&_strong]:text-foreground">
+                International checkout needs Dodo Payments and a webhook to be
+                configured on the server. Your profile country is{" "}
+                <strong>{country}</strong>. You can use INR checkout by setting
+                your country to India in your profile, or contact support for
+                help.
+              </AlertDescription>
+            </Alert>
           ) : null}
           {useInternationalCheckout ? (
-            <p className="text-sm text-muted-foreground flex items-center justify-center gap-2">
-              <Globe className="size-4 shrink-0" />
-              International checkout — pricing in your local currency at
-              checkout (country: {country})
+            <p className="text-sm text-muted-foreground text-center max-w-lg mx-auto leading-relaxed">
+              <Globe
+                className="inline size-4 align-[-0.125em] mr-1.5 text-muted-foreground"
+                aria-hidden
+              />
+              You&apos;ll complete payment in your local currency on the next
+              screen. Profile country:{" "}
+              <span className="font-medium text-foreground">{country}</span>.
             </p>
           ) : null}
-        </div>
+        </header>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto items-stretch">
+        <div className="grid md:grid-cols-2 gap-6 lg:gap-8 max-w-4xl mx-auto items-stretch">
           <Card className="relative flex flex-col overflow-hidden border-border/50 shadow-lg bg-background hover:border-primary/20 transition-all duration-300">
             <CardHeader className="text-center pb-2 pt-8">
               <CardTitle className="text-xl font-medium text-muted-foreground">
@@ -211,23 +259,7 @@ export function PremiumCheckoutClient({
                 )}
               </Button>
 
-              <div className="space-y-4 pt-2">
-                {features.map((feature, i) => (
-                  <div key={i} className="flex gap-3 items-start">
-                    <div className="mt-0.5 p-1 rounded-full bg-primary/10 text-primary shrink-0">
-                      <feature.icon className="size-3.5" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium leading-none mb-1">
-                        {feature.text}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {feature.desc}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <PremiumFeatureList accent="default" />
             </CardContent>
 
             <CardFooter className="flex justify-center border-t bg-muted/20 p-6 mt-auto">
@@ -305,23 +337,7 @@ export function PremiumCheckoutClient({
                 )}
               </Button>
 
-              <div className="space-y-4 pt-2">
-                {features.map((feature, i) => (
-                  <div key={i} className="flex gap-3 items-start">
-                    <div className="mt-0.5 p-1 rounded-full bg-amber-500/10 text-amber-600 dark:text-amber-400 shrink-0">
-                      <feature.icon className="size-3.5" />
-                    </div>
-                    <div>
-                      <p className="text-sm font-medium leading-none mb-1">
-                        {feature.text}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {feature.desc}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
+              <PremiumFeatureList accent="amber" />
             </CardContent>
 
             <CardFooter className="flex justify-center gap-4 border-t border-amber-500/10 bg-amber-500/5 p-6 mt-auto">
@@ -337,15 +353,13 @@ export function PremiumCheckoutClient({
           </Card>
         </div>
 
-        <div className="text-center space-y-2 pt-8 border-t border-border/40 max-w-2xl mx-auto">
-          <p className="text-sm text-foreground/80 font-medium">
-            Join thousands of users mastering their finance.
+        <footer className="text-center space-y-2 pt-8 border-t border-border/40 max-w-2xl mx-auto">
+          <p className="text-sm text-muted-foreground leading-relaxed">
+            Payments are processed by Razorpay or Dodo depending on your region.
+            You can cancel from your account when your plan allows it. No
+            surprise lock-ins.
           </p>
-          <p className="text-xs text-muted-foreground">
-            100% Secure. Cancel anytime from your account settings. No questions
-            asked.
-          </p>
-        </div>
+        </footer>
       </div>
     </div>
   );

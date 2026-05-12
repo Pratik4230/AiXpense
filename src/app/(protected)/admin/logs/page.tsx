@@ -29,7 +29,7 @@ export default async function AdminLogsPage() {
             <h1 className="text-2xl font-bold">Logs</h1>
           </div>
           <p className="text-sm text-muted-foreground mt-1">
-            Application logs — 10 day retention, errors highlighted
+            Application logs  10 day retention, errors highlighted
           </p>
         </div>
         <Link href="/admin">

@@ -34,6 +34,6 @@ export function broadcastEmail({
 
   return {
     html: baseLayout(content),
-    text: `Hey ${firstName},\n\n${body}\n\n— AiXpense Team\nhttps://aixpense.in`,
+    text: `Hey ${firstName},\n\n${body}\n\nAiXpense Team\nhttps://aixpense.in`,
   };
 }

@@ -1,21 +1,50 @@
-import { Metadata } from "next";
-import LegalPageLayout from "@/components/legal/LegalPageLayout";
+import type { Metadata } from "next";
 import { Mail, Clock, MessageSquare, Smartphone } from "lucide-react";
+
+import LegalPageLayout from "@/components/legal/LegalPageLayout";
+import { LegalWebPageJsonLd } from "@/components/legal/LegalWebPageJsonLd";
+import { SITE_URL, getSupportEmail } from "@/lib/site";
+
+export const dynamic = "force-static";
+
+const PAGE_PATH = "/contact" as const;
+const CANONICAL = `${SITE_URL}${PAGE_PATH}`;
 
 export const metadata: Metadata = {
   title: "Contact Us",
   description:
-    "Get in touch with the AiXpense team for billing, support, or general inquiries. We respond within 48 hours.",
-  alternates: { canonical: "https://aixpense.in/contact" },
+    "Contact AiXpense for billing, subscriptions, product support, or partnerships. Email the team; typical response within 48 business hours.",
+  alternates: { canonical: CANONICAL },
+  openGraph: {
+    type: "website",
+    locale: "en_IN",
+    url: CANONICAL,
+    siteName: "AiXpense",
+    title: "Contact AiXpense",
+    description:
+      "Reach AiXpense for help with your account, Premium billing, or general questions about the AI expense tracker.",
+  },
+  twitter: {
+    card: "summary",
+    title: "Contact AiXpense",
+    description: "Billing, support, and general inquiries for AiXpense users.",
+  },
 };
 
 export default function ContactPage() {
+  const supportEmail = getSupportEmail();
+
   return (
-    <LegalPageLayout title="Contact Us" lastUpdated="April 21, 2026">
+    <LegalPageLayout title="Contact Us" lastUpdated="May 12, 2026">
+      <LegalWebPageJsonLd
+        name="Contact AiXpense"
+        description="Contact information for AiXpense support, billing, and general inquiries."
+        path={PAGE_PATH}
+      />
       <section>
         <p>
           We are here to help. If you have questions, feedback, or need
-          assistance with your AiXpense account — on web or the Android app —
+          assistance with your AiXpense account on the web or the Android app,
           reach out through any of the channels below.
         </p>
       </section>
@@ -28,14 +57,13 @@ export default function ContactPage() {
             </div>
             <h3 className="text-lg font-semibold">Email Support</h3>
             <p className="text-sm text-muted-foreground">
-              For general inquiries, account issues, billing questions, voice or
-              camera feature issues, or refund requests.
+              For general inquiries, account issues, billing and subscription questions, or voice and camera feature issues.
             </p>
             <a
-              href={`mailto:${process.env.ADMIN_EMAIL}`}
+              href={`mailto:${supportEmail}`}
               className="text-primary hover:underline text-sm font-medium inline-block"
             >
-              {process.env.ADMIN_EMAIL}
+              {supportEmail}
             </a>
           </div>
 
@@ -104,10 +132,10 @@ export default function ContactPage() {
           <p>
             <strong>Email:</strong>{" "}
             <a
-              href={`mailto:${process.env.ADMIN_EMAIL}`}
+              href={`mailto:${supportEmail}`}
               className="text-primary hover:underline"
             >
-              {process.env.ADMIN_EMAIL}
+              {supportEmail}
             </a>
           </p>
         </div>
@@ -127,10 +155,10 @@ export default function ContactPage() {
           <p>
             <strong>Email:</strong>{" "}
             <a
-              href={`mailto:${process.env.ADMIN_EMAIL}`}
+              href={`mailto:${supportEmail}`}
               className="text-primary hover:underline"
             >
-              {process.env.ADMIN_EMAIL}
+              {supportEmail}
             </a>
           </p>
           <p className="text-sm text-muted-foreground mt-2">

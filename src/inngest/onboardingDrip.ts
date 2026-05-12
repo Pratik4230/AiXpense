@@ -74,7 +74,7 @@ export const onboardingDrip = inngest.createFunction(
       const { html, text } = nudgeDay7Email({ name });
       await sendEmail({
         to: email,
-        subject: "One week in — where does your money go?",
+        subject: "One week in: where does your money go?",
         html,
         text,
       });

@@ -115,7 +115,7 @@ export function AndroidBetaDialog({
             and we will invite you. On the app, complete a{" "}
             <strong>20-day streak</strong> (log in each IST day and send at
             least <strong>3 chats</strong>) to unlock{" "}
-            <strong>3 months of premium free</strong>—only in the mobile app.
+            <strong>3 months of premium free</strong>, only in the mobile app.
           </DialogDescription>
         </DialogHeader>
 

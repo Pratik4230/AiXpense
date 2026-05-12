@@ -253,7 +253,7 @@ export function RecurringFormDialog({
                         </SelectContent>
                       </Select>
                       <p className="text-xs text-muted-foreground">
-                        Max 28 — safe across all months.
+                        Max 28, safe across all months.
                       </p>
                     </div>
                   )}

@@ -28,6 +28,6 @@ export function targetedEmail({
 
   return {
     html: baseLayout(content),
-    text: `${body}\n\n— AiXpense Team\nhttps://aixpense.in`,
+    text: `${body}\n\nAiXpense Team\nhttps://aixpense.in`,
   };
 }

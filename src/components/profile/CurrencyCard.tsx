@@ -71,7 +71,7 @@ export function CurrencyCard({ currentCurrency }: CurrencyCardProps) {
               type="button"
             >
               <span>
-                {selectedData.flag} {selectedData.code} — {selectedData.name}
+                {selectedData.flag} {selectedData.code} · {selectedData.name}
               </span>
               <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
@@ -98,7 +98,7 @@ export function CurrencyCard({ currentCurrency }: CurrencyCardProps) {
                           selected === c.code ? "opacity-100" : "opacity-0",
                         )}
                       />
-                      {c.flag} {c.code} — {c.name}
+                      {c.flag} {c.code} · {c.name}
                       <span className="ml-auto text-xs text-muted-foreground">
                         {c.symbol}
                       </span>

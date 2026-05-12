@@ -1,23 +1,53 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
+
 import LegalPageLayout from "@/components/legal/LegalPageLayout";
+import { LegalWebPageJsonLd } from "@/components/legal/LegalWebPageJsonLd";
+import { SITE_URL, getSupportEmail } from "@/lib/site";
+
+export const dynamic = "force-static";
+
+const PAGE_PATH = "/privacy" as const;
+const CANONICAL = `${SITE_URL}${PAGE_PATH}`;
 
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description:
-    "AiXpense privacy policy - how we collect, use, and protect your personal and financial data including voice, camera, and mobile data. Compliant with the DPDP Act 2023.",
-  alternates: { canonical: "https://aixpense.in/privacy" },
+    "AiXpense privacy policy: data we collect (account, expenses, voice, images), how we use AI providers, retention, your rights under Indian law including the DPDP Act 2023, and contact for grievances.",
+  alternates: { canonical: CANONICAL },
+  openGraph: {
+    type: "article",
+    locale: "en_IN",
+    url: CANONICAL,
+    siteName: "AiXpense",
+    title: "Privacy Policy | AiXpense",
+    description:
+      "How AiXpense collects, uses, and protects personal and financial data on web and Android, including voice and camera features.",
+  },
+  twitter: {
+    card: "summary",
+    title: "AiXpense Privacy Policy",
+    description:
+      "Data collection, AI processing, retention, security, and your privacy rights for AiXpense.",
+  },
 };
 
 export default function PrivacyPage() {
+  const supportEmail = getSupportEmail();
+
   return (
-    <LegalPageLayout title="Privacy Policy" lastUpdated="April 21, 2026">
+    <LegalPageLayout title="Privacy Policy" lastUpdated="May 12, 2026">
+      <LegalWebPageJsonLd
+        name="Privacy Policy"
+        description="Privacy policy for AiXpense: personal data, financial data, voice and images, retention, and user rights."
+        path={PAGE_PATH}
+      />
       <section>
         <h2 className="text-xl font-semibold mb-3">1. Introduction</h2>
         <p>
           This Privacy Policy explains how AiXpense, operated by Pratik Jadhav
           (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;), collects, uses,
           stores, and protects your personal data when you use our AI-powered
-          expense tracking application — available on the web at aixpense.in and
+          expense tracking application, available on the web at aixpense.in and
           as a mobile application on the Google Play Store. This policy complies
           with the Information Technology Act, 2000, the IT (Reasonable Security
           Practices and Procedures and Sensitive Personal Data or Information)
@@ -190,7 +220,7 @@ export default function PrivacyPage() {
             <p className="text-sm mt-1">
               Your audio recordings (captured when you use voice input) are sent
               to Sarvam AI&apos;s speech recognition API for transcription into
-              text. Only audio data is shared — no personal account information
+              text. Only audio data is shared; no personal account information
               is transmitted. Sarvam AI supports 22+ Indian languages.
             </p>
           </div>
@@ -240,9 +270,9 @@ export default function PrivacyPage() {
         <h2 className="text-xl font-semibold mb-3">7. Data Retention</h2>
         <p>
           We retain your personal data for as long as your account remains
-          active. When you delete your account, all your personal data —
+          active. When you delete your account, all your personal data,
           including expenses, budgets, AI conversations, recurring payment
-          rules, and subscription records — is permanently and immediately
+          rules, and subscription records, is permanently and immediately
           deleted from our systems. This action is irreversible. Anonymized or
           aggregated statistical data that cannot be linked back to you may be
           retained for analytics purposes. We may also retain data where
@@ -332,10 +362,10 @@ export default function PrivacyPage() {
           <p>
             <strong>Email:</strong>{" "}
             <a
-              href={`mailto:${process.env.ADMIN_EMAIL}`}
+              href={`mailto:${supportEmail}`}
               className="text-primary hover:underline"
             >
-              {process.env.ADMIN_EMAIL}
+              {supportEmail}
             </a>
           </p>
           <p className="text-sm text-muted-foreground mt-2">

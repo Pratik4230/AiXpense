@@ -137,7 +137,7 @@ export function ChatInput({
 
   const getPlaceholder = () => {
     if (isUploadingFile) return "Uploading bill...";
-    if (uploadError) return "Upload failed — try again or type manually";
+    if (uploadError) return "Upload failed. Try again or type manually";
     if (isRecording) return "Listening...";
     if (isProcessing) return "Transcribing...";
     if (!selectedTransaction) return "Coffee 50  or  Salary received 55000";

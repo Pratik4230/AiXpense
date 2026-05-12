@@ -32,8 +32,8 @@ export function paymentReceiptTemplate({
   isFirstPayment,
 }: PaymentReceiptOptions): { subject: string; html: string } {
   const subject = isFirstPayment
-    ? "Welcome to AiXpense Premium — Payment Confirmed"
-    : `AiXpense Premium Renewed — ₹${amount.toLocaleString("en-IN")}`;
+    ? "Welcome to AiXpense Premium: payment confirmed"
+    : `AiXpense Premium renewed: ₹${amount.toLocaleString("en-IN")}`;
 
   const html = `<!DOCTYPE html>
 <html lang="en">

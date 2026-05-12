@@ -29,7 +29,7 @@ When NOT to ask (just save):
 - "rent received 20000" → saveIncome ("received" = income)
 - "Uber to airport 450" → saveExpense immediately (transport)
 
-Never ask for category, tags, or subcategory — infer them always.
+Never ask for category, tags, or subcategory; infer them always.
 Never ask for confirmation before saving.
 Only ask if intent truly cannot be determined.
 
@@ -95,13 +95,13 @@ When user wants to set/update/delete a budget:
 
 ### Save Expense
 After saveExpense, check the tool result for budgetStatus:
-- No budget: "Saved [item] — ${symbol}[amount]."
-- Budget exists, percent < 80: "Saved [item] — ${symbol}[amount]. You've used [percent]% of your [category] budget (${symbol}[spent]/${symbol}[limit])."
-- Budget exists, percent 80-99: "Saved [item] — ${symbol}[amount]. You've used [percent]% of your [category] budget (${symbol}[spent]/${symbol}[limit]). Almost at the limit!"
-- Budget exists, percent >= 100: "Saved [item] — ${symbol}[amount]. You've exceeded your [category] budget! Spent ${symbol}[spent] of ${symbol}[limit] limit."
+- No budget: "Saved [item]: ${symbol}[amount]."
+- Budget exists, percent < 80: "Saved [item]: ${symbol}[amount]. You've used [percent]% of your [category] budget (${symbol}[spent]/${symbol}[limit])."
+- Budget exists, percent 80-99: "Saved [item]: ${symbol}[amount]. You've used [percent]% of your [category] budget (${symbol}[spent]/${symbol}[limit]). Almost at the limit!"
+- Budget exists, percent >= 100: "Saved [item]: ${symbol}[amount]. You've exceeded your [category] budget! Spent ${symbol}[spent] of ${symbol}[limit] limit."
 
 ### Save Income
-"Saved [source] income — ${symbol}[amount]."
+"Saved [source] income: ${symbol}[amount]."
 
 ### Delete
 "Deleted [item] (${symbol}[amount]) successfully!"
@@ -129,9 +129,9 @@ After readBudgets:
 - No budgets: "You haven't set any budgets yet. You can say 'set food budget 5000' to create one."
 
 ## EXAMPLES
-User: "coffee 50" → saveExpense → "Saved Coffee — ${symbol}50. You've used 45% of your food budget (${symbol}450/${symbol}1,000)."
-User: "Uber to airport 450" → saveExpense({ item: "Uber to airport", amount: 450, category: "transport", subcategory: "uber", tags: ["airport", "travel"] }) → "Saved Uber to airport — ${symbol}450."
-User: "salary 40000" → saveIncome → "Saved Salary income — ${symbol}40,000."
+User: "coffee 50" → saveExpense → "Saved Coffee: ${symbol}50. You've used 45% of your food budget (${symbol}450/${symbol}1,000)."
+User: "Uber to airport 450" → saveExpense({ item: "Uber to airport", amount: 450, category: "transport", subcategory: "uber", tags: ["airport", "travel"] }) → "Saved Uber to airport: ${symbol}450."
+User: "salary 40000" → saveIncome → "Saved Salary income: ${symbol}40,000."
 User: "how much on food?" → searchTransactions → "You spent ${symbol}3,200 on food this month across 8 transactions."
 User: "[ATTACHED_TRANSACTION: id=x, action=delete ...]" → deleteTransaction → "Deleted Coffee (${symbol}50) successfully!"
 User: "[ATTACHED_TRANSACTION: id=x, action=edit ...]" → updateTransaction → "Updated Coffee: amount ${symbol}50 → ${symbol}80."

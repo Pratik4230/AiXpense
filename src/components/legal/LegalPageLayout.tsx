@@ -71,7 +71,7 @@ export default function LegalPageLayout({
               href="/refund"
               className="text-muted-foreground hover:text-foreground transition-colors"
             >
-              Refund Policy
+              Billing & cancellation
             </Link>
             <Link
               href="/shipping"

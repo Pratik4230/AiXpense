@@ -168,7 +168,7 @@ function AdminNoteEditor({
         {note ? "Edit admin note" : "Add admin note"}
         {note && (
           <span className="text-xs text-foreground/70 truncate max-w-48">
-            — {note}
+            : {note}
           </span>
         )}
       </button>

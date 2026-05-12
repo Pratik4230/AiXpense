@@ -6,7 +6,7 @@ export function welcomeEmail({ name }: { name: string }) {
   const content = `
     <h2 style="margin: 0 0 8px; font-size: 22px; font-weight: 700; color: #18181b;">Welcome to AiXpense, ${firstName}!</h2>
     <p style="margin: 0 0 20px; font-size: 15px; color: #52525b; line-height: 1.7;">
-      Your AI-powered expense tracker is ready. Just chat naturally — no forms, no categories to pick.
+      Your AI-powered expense tracker is ready. Just chat naturally: no forms, no categories to pick.
     </p>
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin: 0 0 24px;">
       <tr>
@@ -30,6 +30,6 @@ export function welcomeEmail({ name }: { name: string }) {
 
   return {
     html: baseLayout(content),
-    text: `Welcome to AiXpense, ${firstName}!\n\nYour AI expense tracker is ready. Just chat naturally — no forms needed.\n\nGet started: https://aixpense.in/aixpense`,
+    text: `Welcome to AiXpense, ${firstName}!\n\nYour AI expense tracker is ready. Just chat naturally: no forms needed.\n\nGet started: https://aixpense.in/aixpense`,
   };
 }

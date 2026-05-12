@@ -143,7 +143,7 @@ export function AiXpenseClient({ initialIsPremium }: AiXpenseClientProps) {
               </DialogTitle>
               <DialogDescription>
                 You&apos;ve used all your free messages for today. Upgrade to
-                Premium for unlimited access — resets every day.
+                Premium for unlimited access  resets every day.
               </DialogDescription>
             </DialogHeader>
             <div className="py-4">

@@ -31,7 +31,7 @@ export function nudgeDay3Email({ name }: { name: string }) {
   const content = `
     <h2 style="margin: 0 0 8px; font-size: 22px; font-weight: 700; color: #18181b;">Try voice-style input</h2>
     <p style="margin: 0 0 20px; font-size: 15px; color: #52525b; line-height: 1.7;">
-      Hey ${firstName}, AiXpense understands natural language — even Hindi-English mix.
+      Hey ${firstName}, AiXpense understands natural language, even Hindi-English mix.
     </p>
     <div style="background: #fafaf9; border-left: 3px solid #b45309; border-radius: 6px; padding: 14px 16px; margin: 0 0 24px;">
       <p style="margin: 0; font-size: 14px; color: #3f3f46; font-style: italic; line-height: 1.6;">
@@ -54,7 +54,7 @@ export function nudgeDay7Email({ name }: { name: string }) {
   const firstName = name?.split(" ")[0] || "there";
 
   const content = `
-    <h2 style="margin: 0 0 8px; font-size: 22px; font-weight: 700; color: #18181b;">One week in — where does your money go?</h2>
+    <h2 style="margin: 0 0 8px; font-size: 22px; font-weight: 700; color: #18181b;">One week in: where does your money go?</h2>
     <p style="margin: 0 0 20px; font-size: 15px; color: #52525b; line-height: 1.7;">
       Hey ${firstName}, most people have no idea where 30% of their monthly income disappears. AiXpense makes it visible.
     </p>
@@ -80,6 +80,6 @@ export function nudgeDay7Email({ name }: { name: string }) {
 
   return {
     html: baseLayout(content),
-    text: `Hey ${firstName}, one week in — where does your money go?\n\nLog in 5 seconds, get insights instantly.\n\nStart: https://aixpense.in/aixpense`,
+    text: `Hey ${firstName}, one week in: where does your money go?\n\nLog in 5 seconds, get insights instantly.\n\nStart: https://aixpense.in/aixpense`,
   };
 }

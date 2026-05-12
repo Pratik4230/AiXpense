@@ -1,16 +1,46 @@
-import { Metadata } from "next";
+import type { Metadata } from "next";
+
 import LegalPageLayout from "@/components/legal/LegalPageLayout";
+import { LegalWebPageJsonLd } from "@/components/legal/LegalWebPageJsonLd";
+import { SITE_URL, getSupportEmail } from "@/lib/site";
+
+export const dynamic = "force-static";
+
+const PAGE_PATH = "/terms" as const;
+const CANONICAL = `${SITE_URL}${PAGE_PATH}`;
 
 export const metadata: Metadata = {
   title: "Terms & Conditions",
   description:
-    "Terms and conditions for using AiXpense AI-powered expense tracking service on web and mobile (Android).",
-  alternates: { canonical: "https://aixpense.in/terms" },
+    "Terms and conditions for using AiXpense AI-powered expense tracking on web and Android: accounts, Premium billing, voice and camera features, acceptable use, and liability.",
+  alternates: { canonical: CANONICAL },
+  openGraph: {
+    type: "article",
+    locale: "en_IN",
+    url: CANONICAL,
+    siteName: "AiXpense",
+    title: "Terms & Conditions | AiXpense",
+    description:
+      "Legal terms for AiXpense: service description, subscriptions, payments, voice and image processing, and user responsibilities.",
+  },
+  twitter: {
+    card: "summary",
+    title: "AiXpense Terms & Conditions",
+    description:
+      "Read the terms for using AiXpense on web and Android, including Premium and data processing.",
+  },
 };
 
 export default function TermsPage() {
+  const supportEmail = getSupportEmail();
+
   return (
-    <LegalPageLayout title="Terms & Conditions" lastUpdated="April 21, 2026">
+    <LegalPageLayout title="Terms & Conditions" lastUpdated="May 12, 2026">
+      <LegalWebPageJsonLd
+        name="Terms & Conditions"
+        description="Terms of use for the AiXpense AI expense tracking service on web and Android."
+        path={PAGE_PATH}
+      />
       <section>
         <h2 className="text-xl font-semibold mb-3">1. Introduction</h2>
         <p>
@@ -35,19 +65,19 @@ export default function TermsPage() {
         </p>
         <ul className="list-disc pl-6 mt-2 space-y-1">
           <li>
-            <strong>Natural language text</strong> — type in plain English,
+            <strong>Natural language text</strong>: type in plain English,
             Hindi, or 22+ Indian languages
           </li>
           <li>
-            <strong>Voice input</strong> — speak in Hindi, Marathi, Hinglish,
+            <strong>Voice input</strong>: speak in English, Hindi, Marathi, Hinglish,
             and 22+ Indian languages via Sarvam AI&apos;s speech recognition
           </li>
           <li>
-            <strong>Camera / bill scanning</strong> — photograph receipts and
+            <strong>Camera / bill scanning</strong>: photograph receipts and
             bills; our AI extracts amounts and merchant details automatically
           </li>
           <li>
-            <strong>Image upload</strong> — upload existing photos of bills from
+            <strong>Image upload</strong>: upload existing photos of bills from
             your device gallery
           </li>
         </ul>
@@ -115,7 +145,7 @@ export default function TermsPage() {
         </p>
         <ul className="list-disc pl-6 mt-2 space-y-1">
           <li>Monthly: ₹499/month</li>
-          <li>Yearly: ₹4,000/year</li>
+          <li>Yearly: ₹3,999/year</li>
         </ul>
         <p className="mt-2">
           Prices are inclusive of applicable taxes unless stated otherwise. We
@@ -133,7 +163,7 @@ export default function TermsPage() {
           billing cycle unless cancelled before the renewal date. All payments
           are non-refundable. Refer to our{" "}
           <a href="/refund" className="text-primary hover:underline">
-            Refund &amp; Cancellation Policy
+            Billing, payments &amp; cancellation
           </a>{" "}
           for full details.
         </p>
@@ -150,7 +180,7 @@ export default function TermsPage() {
         </p>
         <ul className="list-disc pl-6 mt-2 space-y-1">
           <li>
-            AiXpense&apos;s recurring feature logs entries in the app — it does
+            AiXpense&apos;s recurring feature logs entries in the app; it does
             not initiate actual bank debits on your behalf
           </li>
           <li>You are responsible for verifying the accuracy of recurring entries</li>
@@ -190,8 +220,8 @@ export default function TermsPage() {
           All rights, title, and interest in the Service, including its source
           code, design, logos, and content, are owned by us. You retain
           ownership of the financial data you input into the Service. You grant
-          us a limited, non-exclusive license to process your data — including
-          voice transcripts and extracted bill data — solely for the purpose of
+          us a limited, non-exclusive license to process your data, including
+          voice transcripts and extracted bill data, solely for the purpose of
           providing the Service.
         </p>
       </section>
@@ -199,9 +229,9 @@ export default function TermsPage() {
       <section>
         <h2 className="text-xl font-semibold mb-3">11. AI Disclaimer</h2>
         <p>
-          The AI-powered features of AiXpense — including natural language
+          The AI-powered features of AiXpense, including natural language
           parsing, voice transcription, bill scanning, and AI spending coach
-          insights — are provided for convenience and may not always be 100%
+          insights, are provided for convenience and may not always be 100%
           accurate. AI-generated categorizations, insights, and suggestions
           should not be considered financial advice. You are responsible for
           verifying the accuracy of your financial records. We are not liable
@@ -250,8 +280,8 @@ export default function TermsPage() {
           We may suspend or terminate your account at any time for violation of
           these Terms. You may delete your account at any time from your account
           settings. Upon deletion, your access ceases immediately and all your
-          personal data — including expenses, budgets, AI conversations,
-          recurring rules, and subscription records — is permanently and
+          personal data, including expenses, budgets, AI conversations,
+          recurring rules, and subscription records, is permanently and
           irreversibly deleted. This action cannot be undone.
         </p>
       </section>
@@ -284,10 +314,10 @@ export default function TermsPage() {
         <p>
           For questions regarding these Terms, contact us at:{" "}
           <a
-            href={`mailto:${process.env.ADMIN_EMAIL}`}
+            href={`mailto:${supportEmail}`}
             className="text-primary hover:underline"
           >
-            {process.env.ADMIN_EMAIL}
+            {supportEmail}
           </a>
         </p>
       </section>

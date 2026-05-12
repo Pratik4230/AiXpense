@@ -21,7 +21,7 @@ Rules:
 - For documents in Hindi/Marathi/any Indian language, still output in English
 - Use the TOTAL amount, not individual line items for the main amount
 - Use ₹ symbol for all amounts
-- If you genuinely cannot read any amount, output exactly: "Document scan — please enter amount manually"`;
+- If you genuinely cannot read any amount, output exactly: "Document scan. Please enter amount manually"`;
 
 export const createScanBillTool = ({
   isPremium = false,
