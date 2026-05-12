@@ -40,7 +40,6 @@ export const createScanBillTool = ({
         };
       }
       try {
-        console.log("its called : ", imageUrl);
         // Fetch the image from URL to pass to Gemini
         const res = await fetch(imageUrl);
         if (!res.ok) throw new Error("Failed to fetch image");

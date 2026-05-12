@@ -1,12 +1,16 @@
 import mongoose from "mongoose";
 
+export type BillingProvider = "razorpay" | "dodo";
+
 export interface ISubscription extends mongoose.Document {
   userId: string;
+  billingProvider: BillingProvider;
   plan: "monthly" | "yearly";
   status: "created" | "active" | "cancelled" | "expired" | "past_due";
-  razorpaySubscriptionId: string;
+  razorpaySubscriptionId?: string;
   razorpayCustomerId?: string;
-  razorpayPlanId: string;
+  razorpayPlanId?: string;
+  dodoSubscriptionId?: string;
   currentPeriodStart: Date;
   currentPeriodEnd: Date;
   cancelAtPeriodEnd: boolean;
@@ -21,6 +25,11 @@ const subscriptionSchema = new mongoose.Schema<ISubscription>(
       required: true,
       index: true,
     },
+    billingProvider: {
+      type: String,
+      enum: ["razorpay", "dodo"],
+      default: "razorpay",
+    },
     plan: {
       type: String,
       enum: ["monthly", "yearly"],
@@ -34,7 +43,8 @@ const subscriptionSchema = new mongoose.Schema<ISubscription>(
     },
     razorpaySubscriptionId: {
       type: String,
-      required: true,
+      required: false,
+      sparse: true,
       unique: true,
     },
     razorpayCustomerId: {
@@ -43,7 +53,13 @@ const subscriptionSchema = new mongoose.Schema<ISubscription>(
     },
     razorpayPlanId: {
       type: String,
-      required: true,
+      required: false,
+    },
+    dodoSubscriptionId: {
+      type: String,
+      required: false,
+      sparse: true,
+      unique: true,
     },
     currentPeriodStart: {
       type: Date,

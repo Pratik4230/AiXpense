@@ -17,12 +17,16 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { Crown, Sparkles, Loader2 } from "lucide-react";
-import { cancelSubscription } from "@/actions/subscription";
+import { Crown, Sparkles, Loader2, ExternalLink } from "lucide-react";
+import {
+  cancelSubscription,
+  getDodoBillingPortalUrl,
+} from "@/actions/subscription";
 
 interface Subscription {
   status: string;
   plan: string;
+  billingProvider?: "razorpay" | "dodo";
   cancelAtPeriodEnd: boolean;
   currentPeriodEnd: string;
 }
@@ -39,6 +43,20 @@ export function PlanUsageCard({
   subscription,
 }: PlanUsageCardProps) {
   const [loading, setLoading] = useState(false);
+  const [portalLoading, setPortalLoading] = useState(false);
+
+  const openBillingPortal = async () => {
+    setPortalLoading(true);
+    const result = await getDodoBillingPortalUrl();
+    setPortalLoading(false);
+    if ("error" in result && result.error) {
+      toast.error(result.error);
+      return;
+    }
+    if ("url" in result && result.url) {
+      window.location.href = result.url;
+    }
+  };
 
   const handleCancel = async () => {
     setLoading(true);
@@ -106,45 +124,62 @@ export function PlanUsageCard({
                   <span className="text-muted-foreground">Renews on</span>
                   <span className="font-medium">{periodEndDate}</span>
                 </div>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      className="w-full text-destructive border-destructive/30 hover:bg-destructive/5 hover:text-destructive"
-                    >
-                      Cancel Subscription
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>Cancel subscription?</AlertDialogTitle>
-                      <AlertDialogDescription>
-                        You will keep premium access until{" "}
-                        <strong>{periodEndDate}</strong>. After that, your
-                        account reverts to the free plan. This action cannot be
-                        undone.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Keep subscription</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={handleCancel}
-                        disabled={loading}
-                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                {subscription.billingProvider === "dodo" ? (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="w-full gap-2"
+                    onClick={openBillingPortal}
+                    disabled={portalLoading}
+                  >
+                    {portalLoading ? (
+                      <Loader2 className="size-4 animate-spin" />
+                    ) : (
+                      <ExternalLink className="size-4" />
+                    )}
+                    Billing portal (cancel or update card)
+                  </Button>
+                ) : (
+                  <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="w-full text-destructive border-destructive/30 hover:bg-destructive/5 hover:text-destructive"
                       >
-                        {loading ? (
-                          <>
-                            <Loader2 className="size-4 animate-spin" />
-                            Cancelling...
-                          </>
-                        ) : (
-                          "Yes, cancel"
-                        )}
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                        Cancel Subscription
+                      </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Cancel subscription?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          You will keep premium access until{" "}
+                          <strong>{periodEndDate}</strong>. After that, your
+                          account reverts to the free plan. This action cannot be
+                          undone.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <AlertDialogCancel>Keep subscription</AlertDialogCancel>
+                        <AlertDialogAction
+                          onClick={handleCancel}
+                          disabled={loading}
+                          className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                        >
+                          {loading ? (
+                            <>
+                              <Loader2 className="size-4 animate-spin" />
+                              Cancelling...
+                            </>
+                          ) : (
+                            "Yes, cancel"
+                          )}
+                        </AlertDialogAction>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                )}
               </>
             )}
           </>

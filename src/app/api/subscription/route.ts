@@ -19,6 +19,7 @@ export async function GET() {
   return NextResponse.json({
     status: sub.status,
     plan: sub.plan,
+    billingProvider: sub.billingProvider ?? "razorpay",
     cancelAtPeriodEnd: sub.cancelAtPeriodEnd,
     currentPeriodEnd: sub.currentPeriodEnd.toISOString(),
   });

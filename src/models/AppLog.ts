@@ -15,6 +15,8 @@ export type LogEvent =
   | "razorpay_sub_create_fail"
   | "razorpay_sub_cancelled"
   | "razorpay_sub_cancel_fail"
+  | "dodo_webhook_missing_userId"
+  | "dodo_webhook_unknown_product"
   | "issue_created"
   | "issue_notify_email_failed"
   | "imagekit_delete_failed"

@@ -81,6 +81,7 @@ export async function POST(req: NextRequest) {
 
     await Subscription.create({
       userId: session.user.id,
+      billingProvider: "razorpay",
       plan: planType,
       status: subscription.status,
       razorpaySubscriptionId: subscription.id,

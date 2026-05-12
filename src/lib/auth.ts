@@ -1,6 +1,12 @@
 import { betterAuth, APIError } from "better-auth";
 import { expo } from "@better-auth/expo";
 import { emailOTP } from "better-auth/plugins";
+import {
+  dodopayments,
+  checkout,
+  portal,
+  webhooks,
+} from "@dodopayments/better-auth";
 import { mongodbAdapter } from "better-auth/adapters/mongodb";
 import { client, db } from "@/lib/db";
 import { sendEmail } from "@/lib/email/index";
@@ -17,11 +23,75 @@ import {
 } from "@/models";
 import { isDisposableEmail } from "@/lib/auth/blockedDomains";
 import { inngest } from "@/inngest/client";
+import {
+  dodoWebhookSecretConfigured,
+  isDodoPaymentsConfigured,
+} from "@/lib/dodo/config";
+import { getDodoPaymentsClient } from "@/lib/dodo/client";
+import {
+  onDodoSubscriptionActiveLike,
+  onDodoSubscriptionCancelled,
+  onDodoSubscriptionExpiredOrFailed,
+  onDodoSubscriptionOnHold,
+  onDodoSubscriptionRenewedLike,
+  onDodoSubscriptionUpdatedLike,
+} from "@/lib/dodo/webhookHandlers";
 
-export const auth = betterAuth({
-  database: mongodbAdapter(db, { client }),
-  secret: process.env.BETTER_AUTH_SECRET,
-  trustedOrigins: [
+const dodoPaymentsPlugin =
+  isDodoPaymentsConfigured() && dodoWebhookSecretConfigured()
+    ? dodopayments({
+        client: getDodoPaymentsClient(),
+        createCustomerOnSignUp: true,
+        getCustomerParams: (user) => ({
+          metadata: { userId: user.id },
+        }),
+        use: [
+          checkout({
+            products: [
+              {
+                productId: process.env.DODO_PRODUCT_ID_PREMIUM_MONTHLY!,
+                slug: "premium-monthly-intl",
+              },
+              {
+                productId: process.env.DODO_PRODUCT_ID_PREMIUM_YEARLY!,
+                slug: "premium-yearly-intl",
+              },
+            ],
+            successUrl: "/premium/success",
+            authenticatedUsersOnly: true,
+          }),
+          portal(),
+          webhooks({
+            webhookKey: process.env.DODO_PAYMENTS_WEBHOOK_SECRET!,
+            onSubscriptionActive: onDodoSubscriptionActiveLike,
+            onSubscriptionRenewed: onDodoSubscriptionRenewedLike,
+            onSubscriptionPlanChanged: onDodoSubscriptionUpdatedLike,
+            onSubscriptionUpdated: onDodoSubscriptionUpdatedLike,
+            onSubscriptionCancelled: onDodoSubscriptionCancelled,
+            onSubscriptionExpired: onDodoSubscriptionExpiredOrFailed,
+            onSubscriptionFailed: onDodoSubscriptionExpiredOrFailed,
+            onSubscriptionOnHold: onDodoSubscriptionOnHold,
+          }),
+        ],
+      })
+    : null;
+
+function buildTrustedOrigins(): string[] {
+  const origins: string[] = [];
+  const add = (value?: string | null) => {
+    const o = value?.trim().replace(/\/$/, "");
+    if (o && !origins.includes(o)) origins.push(o);
+  };
+  add(process.env.NEXT_PUBLIC_APP_URL);
+  add(process.env.BETTER_AUTH_URL);
+  for (const part of process.env.ADDITIONAL_TRUSTED_ORIGINS?.split(",") ?? []) {
+    add(part);
+  }
+  if (process.env.NODE_ENV !== "production") {
+    add("http://localhost:3000");
+    add("http://127.0.0.1:3000");
+  }
+  origins.push(
     "https://aixpense.in",
     "https://www.aixpense.in",
     // Some native/expo clients send no Origin header; Better Auth may fall back to Host.
@@ -35,7 +105,14 @@ export const auth = betterAuth({
     "aixpense://*",
     "exp://**",
     "exp://*",
-  ],
+  );
+  return origins;
+}
+
+export const auth = betterAuth({
+  database: mongodbAdapter(db, { client }),
+  secret: process.env.BETTER_AUTH_SECRET,
+  trustedOrigins: buildTrustedOrigins(),
   plugins: [
     expo(),
     emailOTP({
@@ -61,6 +138,7 @@ export const auth = betterAuth({
       otpLength: 6,
       expiresIn: 300,
     }),
+    ...(dodoPaymentsPlugin ? [dodoPaymentsPlugin] : []),
   ],
   emailAndPassword: {
     enabled: true,

@@ -28,10 +28,25 @@ export async function POST() {
       );
     }
 
-    await razorpay.subscriptions.cancel(
-      subscription.razorpaySubscriptionId,
-      false,
-    );
+    if (subscription.billingProvider === "dodo") {
+      return NextResponse.json(
+        {
+          error:
+            "International subscriptions are managed in the Dodo billing portal.",
+        },
+        { status: 400 },
+      );
+    }
+
+    const rpId = subscription.razorpaySubscriptionId;
+    if (!rpId) {
+      return NextResponse.json(
+        { error: "No Razorpay subscription id on record" },
+        { status: 400 },
+      );
+    }
+
+    await razorpay.subscriptions.cancel(rpId, false);
 
     await Subscription.updateOne(
       { _id: subscription._id },
@@ -40,7 +55,7 @@ export async function POST() {
 
     logger.info("razorpay_sub_cancelled", {
       userId: session.user.id,
-      data: { subscriptionId: subscription.razorpaySubscriptionId },
+      data: { subscriptionId: rpId },
     });
 
     return NextResponse.json({
