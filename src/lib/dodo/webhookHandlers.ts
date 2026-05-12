@@ -21,25 +21,33 @@ type DodoSubscriptionPayload = {
   };
 };
 
-function stringMeta(
+/** Dodo metadata values are string-like in APIs; coerce so webhooks still match after JSON round-trips. */
+function metaString(
   meta: Record<string, unknown> | undefined,
   key: string,
 ): string | null {
   if (!meta) return null;
   const v = meta[key];
-  if (typeof v === "string" && v.length > 0) return v;
+  if (typeof v === "string") {
+    const t = v.trim();
+    return t.length > 0 ? t : null;
+  }
+  if (typeof v === "number" && Number.isFinite(v)) return String(v);
+  if (typeof v === "boolean") return v ? "true" : "false";
   return null;
 }
 
 async function resolveDodoWebhookUserId(
   data: DodoSubscriptionPayload,
 ): Promise<string | null> {
-  const fromCustomer = stringMeta(data.customer?.metadata, "userId");
+  const fromCustomer =
+    metaString(data.customer?.metadata, "userId") ??
+    metaString(data.customer?.metadata, "referenceId");
   if (fromCustomer) return fromCustomer;
 
   const fromSubMeta =
-    stringMeta(data.metadata, "userId") ??
-    stringMeta(data.metadata, "referenceId");
+    metaString(data.metadata, "userId") ??
+    metaString(data.metadata, "referenceId");
   if (fromSubMeta) return fromSubMeta;
 
   const email = data.customer?.email;

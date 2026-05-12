@@ -43,7 +43,8 @@ const dodoPaymentsPlugin =
         client: getDodoPaymentsClient(),
         createCustomerOnSignUp: true,
         getCustomerParams: (user) => ({
-          metadata: { userId: user.id },
+          // Per Dodo metadata guide + Better Auth adaptor: stable ids on the customer for webhooks.
+          metadata: { userId: user.id, referenceId: user.id },
         }),
         use: [
           checkout({
@@ -117,6 +118,7 @@ export const auth = betterAuth({
     expo(),
     emailOTP({
       sendVerificationOTP: async ({ email, otp, type }) => {
+
         const { html, text } = otpEmail(otp, type);
         const subjects: Record<string, string> = {
           "email-verification": "Verify your AiXpense email",

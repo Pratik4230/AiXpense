@@ -4,6 +4,8 @@ import { ThemeProvider, QueryProvider } from "@/components/providers";
 import { Toaster } from "@/components/ui/sonner";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
+import { getConfiguredPublicAppUrl } from "@/lib/publicAppUrl";
+import { SITE_URL } from "@/lib/site";
 import "./globals.css";
 
 const inter = Inter({
@@ -15,10 +17,10 @@ const inter = Inter({
 
 
 
-const BASE_URL = "https://aixpense.in";
+const metadataBaseUrl = getConfiguredPublicAppUrl() ?? SITE_URL;
 
 export const metadata: Metadata = {
-  metadataBase: new URL(BASE_URL),
+  metadataBase: new URL(metadataBaseUrl),
   title: {
     default: "AiXpense - AI Expense Tracker | Track Expenses by Voice & Text",
     template: "%s | AiXpense - AI Expense Tracker",
@@ -79,12 +81,12 @@ export const metadata: Metadata = {
     },
   },
   alternates: {
-    canonical: BASE_URL,
+    canonical: metadataBaseUrl,
   },
   openGraph: {
     type: "website",
     locale: "en_IN",
-    url: BASE_URL,
+    url: metadataBaseUrl,
     siteName: "AiXpense",
     title: "AiXpense - Best AI Expense Tracker App | Free for India",
     description:
@@ -118,7 +120,6 @@ export const metadata: Metadata = {
       { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" },
     ],
   },
-  manifest: "/site.webmanifest",
 };
 
 export default function RootLayout({
@@ -140,8 +141,12 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <QueryProvider>{children}</QueryProvider>
-          <Analytics />
-          <SpeedInsights />
+          {process.env.NODE_ENV === "production" ? (
+            <>
+              <Analytics />
+              <SpeedInsights />
+            </>
+          ) : null}
           <Toaster />
         </ThemeProvider>
       </body>

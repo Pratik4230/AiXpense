@@ -13,6 +13,18 @@ import {
 } from "@/lib/dodo/config";
 import { Subscription } from "@/models";
 import { razorpay } from "@/lib/razorpay/client";
+import { getConfiguredPublicAppUrl } from "@/lib/publicAppUrl";
+
+function resolvePublicBaseUrl(h: Headers): string | null {
+  return (
+    getConfiguredPublicAppUrl() ??
+    (() => {
+      const host = h.get("x-forwarded-host") ?? h.get("host");
+      const proto = h.get("x-forwarded-proto") ?? "http";
+      return host ? `${proto}://${host}` : null;
+    })()
+  );
+}
 
 export async function getSubscription(userId?: string) {
   let uid = userId;
@@ -63,13 +75,12 @@ export async function createDodoPremiumCheckoutUrl(plan: "monthly" | "yearly") {
   }
 
   const h = await headers();
-  const host = h.get("x-forwarded-host") ?? h.get("host");
-  const proto = h.get("x-forwarded-proto") ?? "http";
-  const base =
-    process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ??
-    (host ? `${proto}://${host}` : null);
+  const base = resolvePublicBaseUrl(h);
   if (!base) {
-    return { error: "App URL is not configured (NEXT_PUBLIC_APP_URL)" as const };
+    return {
+      error:
+        "App URL is not configured. Set NEXT_PUBLIC_APP_URL (e.g. your public https base, including ngrok when tunneling)." as const,
+    };
   }
 
   await connectDB();
@@ -102,7 +113,11 @@ export async function createDodoPremiumCheckoutUrl(plan: "monthly" | "yearly") {
               email: session.user.email,
               name: session.user.name ?? "AiXpense user",
             },
-        metadata: { userId: session.user.id },
+        // Official adaptor pattern uses `referenceId`; Dodo also returns checkout metadata on subscription webhooks.
+        metadata: {
+          userId: session.user.id,
+          referenceId: session.user.id,
+        },
         return_url: returnUrl,
       },
     });
@@ -118,14 +133,13 @@ export async function getDodoBillingPortalUrl() {
   if (!session?.user?.id) return { error: "Not authenticated" as const };
 
   const h = await headers();
-  const host = h.get("x-forwarded-host") ?? h.get("host");
-  const proto = h.get("x-forwarded-proto") ?? "http";
-  const base =
-    process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ??
-    (host ? `${proto}://${host}` : null);
+  const base = resolvePublicBaseUrl(h);
 
   if (!base) {
-    return { error: "App URL is not configured (NEXT_PUBLIC_APP_URL)" as const };
+    return {
+      error:
+        "App URL is not configured. Set NEXT_PUBLIC_APP_URL (e.g. your public https base, including ngrok when tunneling)." as const,
+    };
   }
 
   const portalPath = `${base}/api/auth/dodopayments/customer/portal`;
