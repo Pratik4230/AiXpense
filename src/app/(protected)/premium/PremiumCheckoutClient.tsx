@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { createSubscription } from "@/lib/api";
-import { authClient } from "@/lib/authClient";
+import { createDodoPremiumCheckoutUrl } from "@/actions/subscription";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -125,22 +125,13 @@ export function PremiumCheckoutClient({
   const handleDodoCheckout = async (plan: "monthly" | "yearly") => {
     try {
       setLoading(plan);
-      const slug =
-        plan === "monthly" ? "premium-monthly-intl" : "premium-yearly-intl";
-      const { data, error } =
-        await authClient.dodopayments.checkoutSession({
-          slug,
-        });
-      if (error) {
-        toast.error(
-          typeof error.message === "string"
-            ? error.message
-            : "Checkout failed",
-        );
+      const result = await createDodoPremiumCheckoutUrl(plan);
+      if ("error" in result && result.error) {
+        toast.error(result.error);
         return;
       }
-      if (data?.url) {
-        window.location.href = data.url;
+      if (result.url) {
+        window.location.href = result.url;
       } else {
         toast.error("No checkout URL returned");
       }

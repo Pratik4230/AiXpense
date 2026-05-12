@@ -1,4 +1,4 @@
-import { connectDB } from "@/lib/db";
+import { connectDB, db } from "@/lib/db";
 import { Subscription } from "@/models";
 import { updateUserPremiumFlag } from "@/lib/razorpay/subscription";
 import { planFromDodoProductId } from "@/lib/dodo/config";
@@ -11,6 +11,8 @@ type DodoSubscriptionPayload = {
   previous_billing_date: Date;
   next_billing_date: Date;
   cancel_at_next_billing_date: boolean;
+  /** Checkout / API metadata (strings); includes `userId` when checkout sets it. */
+  metadata?: Record<string, unknown>;
   customer: {
     customer_id: string;
     email: string;
@@ -19,22 +21,51 @@ type DodoSubscriptionPayload = {
   };
 };
 
-function userIdFromPayload(data: DodoSubscriptionPayload): string | null {
-  const raw = data.customer?.metadata?.userId;
-  if (typeof raw === "string" && raw.length > 0) return raw;
+function stringMeta(
+  meta: Record<string, unknown> | undefined,
+  key: string,
+): string | null {
+  if (!meta) return null;
+  const v = meta[key];
+  if (typeof v === "string" && v.length > 0) return v;
+  return null;
+}
+
+async function resolveDodoWebhookUserId(
+  data: DodoSubscriptionPayload,
+): Promise<string | null> {
+  const fromCustomer = stringMeta(data.customer?.metadata, "userId");
+  if (fromCustomer) return fromCustomer;
+
+  const fromSubMeta =
+    stringMeta(data.metadata, "userId") ??
+    stringMeta(data.metadata, "referenceId");
+  if (fromSubMeta) return fromSubMeta;
+
+  const email = data.customer?.email;
+  if (typeof email !== "string" || !email.trim()) return null;
+
+  await connectDB();
+  const user = await db.collection("user").findOne(
+    { email: email.toLowerCase().trim() },
+    { projection: { _id: 1 } },
+  );
+  if (user?._id && typeof user._id.toString === "function") {
+    return user._id.toString();
+  }
   return null;
 }
 
 async function upsertDodoSubscription(
   data: DodoSubscriptionPayload,
   opts: { cancelAtPeriodEnd?: boolean },
-) {
-  const userId = userIdFromPayload(data);
+): Promise<string | null> {
+  const userId = await resolveDodoWebhookUserId(data);
   if (!userId) {
     logger.warn("dodo_webhook_missing_userId", {
       data: { subscriptionId: data.subscription_id },
     });
-    return;
+    return null;
   }
 
   const plan = planFromDodoProductId(data.product_id);
@@ -43,7 +74,7 @@ async function upsertDodoSubscription(
       userId,
       data: { productId: data.product_id, subscriptionId: data.subscription_id },
     });
-    return;
+    return null;
   }
 
   await connectDB();
@@ -83,6 +114,7 @@ async function upsertDodoSubscription(
     },
     { upsert: true, new: true, setDefaultsOnInsert: true },
   );
+  return userId;
 }
 
 function shouldKeepPremiumAfterCancel(data: DodoSubscriptionPayload): boolean {
@@ -97,8 +129,7 @@ export async function onDodoSubscriptionActiveLike(
   payload: { data: DodoSubscriptionPayload },
 ) {
   const data = payload.data;
-  await upsertDodoSubscription(data, { cancelAtPeriodEnd: false });
-  const userId = userIdFromPayload(data);
+  const userId = await upsertDodoSubscription(data, { cancelAtPeriodEnd: false });
   if (userId && data.status === "active") {
     await updateUserPremiumFlag(userId, true);
   }
@@ -114,8 +145,7 @@ export async function onDodoSubscriptionUpdatedLike(
   payload: { data: DodoSubscriptionPayload },
 ) {
   const data = payload.data;
-  await upsertDodoSubscription(data, {});
-  const userId = userIdFromPayload(data);
+  const userId = await upsertDodoSubscription(data, {});
   if (!userId) return;
   if (data.status === "active") {
     await updateUserPremiumFlag(userId, true);
@@ -132,10 +162,9 @@ export async function onDodoSubscriptionCancelled(
   payload: { data: DodoSubscriptionPayload },
 ) {
   const data = payload.data;
-  await upsertDodoSubscription(data, {
+  const userId = await upsertDodoSubscription(data, {
     cancelAtPeriodEnd: data.cancel_at_next_billing_date === true,
   });
-  const userId = userIdFromPayload(data);
   if (!userId) return;
 
   if (shouldKeepPremiumAfterCancel(data)) {
@@ -149,8 +178,7 @@ export async function onDodoSubscriptionExpiredOrFailed(
   payload: { data: DodoSubscriptionPayload },
 ) {
   const data = payload.data;
-  await upsertDodoSubscription(data, {});
-  const userId = userIdFromPayload(data);
+  const userId = await upsertDodoSubscription(data, {});
   if (userId) await updateUserPremiumFlag(userId, false);
 }
 
@@ -158,7 +186,6 @@ export async function onDodoSubscriptionOnHold(
   payload: { data: DodoSubscriptionPayload },
 ) {
   const data = payload.data;
-  await upsertDodoSubscription(data, {});
-  const userId = userIdFromPayload(data);
+  const userId = await upsertDodoSubscription(data, {});
   if (userId) await updateUserPremiumFlag(userId, false);
 }
