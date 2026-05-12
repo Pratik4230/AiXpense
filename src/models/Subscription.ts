@@ -44,8 +44,6 @@ const subscriptionSchema = new mongoose.Schema<ISubscription>(
     razorpaySubscriptionId: {
       type: String,
       required: false,
-      sparse: true,
-      unique: true,
     },
     razorpayCustomerId: {
       type: String,
@@ -58,8 +56,6 @@ const subscriptionSchema = new mongoose.Schema<ISubscription>(
     dodoSubscriptionId: {
       type: String,
       required: false,
-      sparse: true,
-      unique: true,
     },
     currentPeriodStart: {
       type: Date,
@@ -76,6 +72,29 @@ const subscriptionSchema = new mongoose.Schema<ISubscription>(
   },
   {
     timestamps: true,
+  },
+);
+
+/** Unique only when the id is a real string — avoids E11000 on many docs with `razorpaySubscriptionId: null`. */
+subscriptionSchema.index(
+  { razorpaySubscriptionId: 1 },
+  {
+    name: "razorpaySubscriptionId_1",
+    unique: true,
+    partialFilterExpression: {
+      razorpaySubscriptionId: { $exists: true, $type: "string" },
+    },
+  },
+);
+
+subscriptionSchema.index(
+  { dodoSubscriptionId: 1 },
+  {
+    name: "dodoSubscriptionId_1",
+    unique: true,
+    partialFilterExpression: {
+      dodoSubscriptionId: { $exists: true, $type: "string" },
+    },
   },
 );
 

@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "db:fix-subscription-indexes": "node --env-file=.env ./node_modules/tsx/dist/cli.mjs scripts/fix-subscription-indexes.ts"
   },
   "dependencies": {
     "@ai-sdk/google": "^3.0.43",
@@ -77,6 +78,7 @@
     "eslint": "^9.39.2",
     "eslint-config-next": "16.1.5",
     "tailwindcss": "^4.1.18",
+    "tsx": "^4.21.0",
     "typescript": "^5.9.3"
   },
   "ignoreScripts": [

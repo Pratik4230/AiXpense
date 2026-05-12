@@ -105,6 +105,8 @@ async function upsertDodoSubscription(
   const cancelAtPeriodEnd =
     opts.cancelAtPeriodEnd ?? data.cancel_at_next_billing_date === true;
 
+  // Dodo rows must not persist `razorpaySubscriptionId: null` — MongoDB unique+sparse still
+  // indexes explicit null once; a second upsert collides (E11000 dup key on null).
   await Subscription.findOneAndUpdate(
     { dodoSubscriptionId: data.subscription_id },
     {
@@ -119,8 +121,9 @@ async function upsertDodoSubscription(
         currentPeriodEnd: data.next_billing_date,
         cancelAtPeriodEnd,
       },
+      $unset: { razorpaySubscriptionId: "", razorpayCustomerId: "" },
     },
-    { upsert: true, new: true, setDefaultsOnInsert: true },
+    { upsert: true, returnDocument: "after", setDefaultsOnInsert: true },
   );
   return userId;
 }
