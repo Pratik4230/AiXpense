@@ -23,19 +23,20 @@ export const LANDING_FAQS = [
     q: "What is the difference between the free and premium plans?",
     a: "The free plan includes 7 AI messages per day. Premium unlocks unlimited AI conversations, deeper spending insights and charts, shareable report cards, recurring payment tracking in the app, and AI receipt and bill scanning—plus priority support.",
   },
-] as const;
-
-export const BLOG_HIGHLIGHTS = [
   {
-    href: "/blog/how-to-track-expenses-with-ai",
-    title: "How to track expenses with AI (without spreadsheets)",
+    q: "Do I need to log every expense manually?",
+    a: "No. For everyday spends you describe them once in chat and AiXpense structures them. For bills that repeat—subscriptions, rent, EMIs—Premium recurring rules can add those on a schedule so you are not retyping the same entry every month. You can always search, edit, or delete entries later.",
   },
   {
-    href: "/blog/track-expenses-by-voice-in-hindi-marathi",
-    title: "Voice expense tracking in Hindi, Marathi & Hinglish",
+    q: "Is this better than a notes app or Google Sheets?",
+    a: "Notes and Sheets are flexible, but you still do all the work: columns, formulas, and remembering to update them. AiXpense is built as a ledger: categories, tags, budgets, reports, and voice or chat input in one place—so totals and trends stay consistent without maintaining a spreadsheet.",
   },
   {
-    href: "/blog/best-free-expense-tracker-india-2026",
-    title: "Best free expense tracker apps in India (2026)",
+    q: "Which currencies does AiXpense support?",
+    a: "AiXpense supports dozens of account currencies (INR, USD, EUR, GBP, AED, SGD, and many more). Your ledger, budgets, and reports use the currency you choose. After sign-up, open Profile (Settings) to switch your account currency.",
+  },
+  {
+    q: "How does the Android streak reward work?",
+    a: "In the Android closed beta app only: each India Standard Time (IST) calendar day, send at least 3 AI chats to qualify that day. Complete 20 qualified days in a row to unlock 3 months of Premium free. This reward is limited to once per account. Join the beta from the landing page to get a Play Store invite by email.",
   },
 ] as const;

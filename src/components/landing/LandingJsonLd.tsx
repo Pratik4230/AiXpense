@@ -1,3 +1,4 @@
+import { CURRENCIES } from "@/constants/currency";
 import { SITE_URL } from "@/lib/site";
 
 import { LANDING_FAQS } from "./data";
@@ -51,7 +52,7 @@ const softwareJsonLd = {
   alternateName: ["AiXpense", "AI Xpense", "AI Expense Tracker"],
   url: SITE_URL,
   description:
-    "Best AI expense tracker app for India. Track daily expenses and income by voice, text, or bill scan in Hindi, Marathi, English & 22+ Indian languages. Free expense manager with budget tracking, spending analytics & AI auto-categorization.",
+    "AiXpense: stop losing track of spending—log with plain lines like Zomato 450 or petrol 800 aaj in Hindi, Marathi, Hinglish, English & 22+ Indian languages. No forms or spreadsheets. Free tier with 7 AI messages/day; Premium adds unlimited AI, receipt scan, recurring rules, reports. Android closed beta: 20 IST-day streak (3 chats/day) unlocks 3 months Premium once.",
   applicationCategory: "FinanceApplication",
   applicationSubCategory: "Expense Tracker",
   operatingSystem: "Web",
@@ -59,12 +60,14 @@ const softwareJsonLd = {
   featureList: [
     "Voice and text expense tracking in 22+ Indian languages",
     "Natural language and Hinglish input",
+    `Multi-currency account support (${CURRENCIES.length}+ ISO currencies)`,
     "AI auto-categorization, tags, and search",
     "Bill and receipt scanning (Premium)",
     "Monthly budgets with alerts",
     "Spending analytics, charts, and shareable report cards (Premium)",
     "Recurring payment rules in the app (Premium)",
     "Unlimited AI conversations (Premium)",
+    "Android app: 20-day IST streak with 3 chats per day earns 3 months Premium (once per account, closed beta)",
   ],
   screenshot: `${SITE_URL}/og-image.png`,
   offers: [
