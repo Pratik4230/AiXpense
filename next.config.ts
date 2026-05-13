@@ -3,6 +3,12 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   compress: true,
   poweredByHeader: false,
+  async redirects() {
+    return [
+      { source: "/blog", destination: "/", permanent: true },
+      { source: "/blog/:path*", destination: "/", permanent: true },
+    ];
+  },
   /** ngrok-free: some clients respect this on responses; also set on tunnel if issues persist. */
   async headers() {
     return [
