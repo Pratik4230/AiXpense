@@ -5,6 +5,7 @@ import {
   type Category,
   type ExpenseType,
 } from "@/constants/expense";
+import { DEFAULT_CURRENCY } from "@/constants/currency";
 
 export interface IExpense {
   userId: mongoose.Types.ObjectId;
@@ -46,7 +47,7 @@ const expenseSchema = new Schema<IExpenseDocument>(
     },
     currency: {
       type: String,
-      default: "INR",
+      default: DEFAULT_CURRENCY,
       required: true,
     },
     category: {

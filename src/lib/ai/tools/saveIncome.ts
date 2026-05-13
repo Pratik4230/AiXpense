@@ -5,18 +5,26 @@ import { Expense } from "@/models";
 import { CATEGORIES } from "@/constants/expense";
 import mongoose from "mongoose";
 import { logger } from "@/lib/logger";
+import { parseTransactionDateForStorage } from "@/lib/utcDates";
 
 interface SaveIncomeParams {
   userId: string;
   rawInput: string;
+  currency: string;
 }
 
-export const createSaveIncomeTool = ({ userId, rawInput }: SaveIncomeParams) =>
+export const createSaveIncomeTool = ({
+  userId,
+  rawInput,
+  currency,
+}: SaveIncomeParams) =>
   tool({
     description: "Save income (money received) to the database",
     inputSchema: z.object({
       source: z.string().describe("Source of the income"),
-      amount: z.number().describe("The amount received in INR"),
+      amount: z
+        .number()
+        .describe(`The amount received in the user's account currency (${currency})`),
       category: z.enum(CATEGORIES).describe("Category of the income"),
       subcategory: z
         .string()
@@ -29,7 +37,9 @@ export const createSaveIncomeTool = ({ userId, rawInput }: SaveIncomeParams) =>
       date: z
         .string()
         .optional()
-        .describe("ISO date string if the user mentions a specific date, otherwise omit"),
+        .describe(
+          "ISO date (YYYY-MM-DD or full ISO). Calendar dates are stored as UTC midnight for that day.",
+        ),
       notes: z
         .string()
         .optional()
@@ -49,10 +59,11 @@ export const createSaveIncomeTool = ({ userId, rawInput }: SaveIncomeParams) =>
           userId: userObjectId,
           item: source,
           amount,
+          currency,
           category,
           subcategory,
           type: "income",
-          date: date ? new Date(date) : new Date(),
+          date: parseTransactionDateForStorage(date),
           rawInput,
           tags: tags || [],
           notes,

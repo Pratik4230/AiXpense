@@ -16,6 +16,7 @@ import { db } from "@/lib/db";
 import { ObjectId } from "mongodb";
 import { getISTMidnight } from "@/lib/ist";
 import { effectivePremium } from "@/lib/premium";
+import { resolveUserCurrencyCode } from "@/lib/userCurrency";
 
 export default async function ProfilePage() {
   const session = await getSession();
@@ -69,7 +70,11 @@ export default async function ProfilePage() {
         subscription={subscription}
       />
       <MyReportsCard />
-      <CurrencyCard currentCurrency={dbUser?.currency ?? user.currency ?? "INR"} />
+      <CurrencyCard
+        currentCurrency={resolveUserCurrencyCode(
+          dbUser?.currency ?? user.currency,
+        )}
+      />
       <ChangePasswordCard />
       <DangerZoneCard />
     </div>

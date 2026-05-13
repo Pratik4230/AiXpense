@@ -1,11 +1,12 @@
 import { baseLayout, actionButton } from "./base";
+import { DEFAULT_CURRENCY } from "@/constants/currency";
 
 export function coachInsightEmail({
   name,
   insight,
   period,
   totalSpent,
-  currency = "INR",
+  currency = DEFAULT_CURRENCY,
 }: {
   name: string;
   insight: string;

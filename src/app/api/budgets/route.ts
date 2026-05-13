@@ -6,12 +6,12 @@ import { Budget, Expense } from "@/models";
 import mongoose from "mongoose";
 import { z } from "zod";
 import { CATEGORIES } from "@/constants/expense";
+import { fetchUserCurrencyCodeFromDb } from "@/lib/userCurrencyFromDb";
+import { getUtcMonthRangeHalfOpen } from "@/lib/utcDates";
 
 function getMonthRange() {
-  const now = new Date();
-  const start = new Date(now.getFullYear(), now.getMonth(), 1);
-  const end = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-  return { start, end };
+  const { start, endExclusive } = getUtcMonthRangeHalfOpen();
+  return { start, end: endExclusive };
 }
 
 export async function GET() {
@@ -71,10 +71,11 @@ export async function POST(req: Request) {
 
   const userId = new mongoose.Types.ObjectId(session.user.id);
   const { category, amount } = parsed.data;
+  const currency = await fetchUserCurrencyCodeFromDb(session.user.id);
 
   const budget = await Budget.findOneAndUpdate(
     { userId, category },
-    { amount },
+    { amount, currency },
     { upsert: true, returnDocument: "after" },
   );
 

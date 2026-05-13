@@ -7,3 +7,4 @@ export { createScanBillTool } from "./scanBill";
 export { createCreateUpdateBudgetTool } from "./createUpdateBudget";
 export { createDeleteBudgetTool } from "./deleteBudget";
 export { createReadBudgetsTool } from "./readBudgets";
+export { createListSupportedCurrenciesTool } from "./listSupportedCurrencies";

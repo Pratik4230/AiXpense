@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import { api } from "@/lib/api";
 import { IssueItem } from "@/lib/admin/issues";
+import { useUtcCalendarDateFormat } from "@/hooks/useUtcCalendarDateFormat";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
@@ -262,6 +263,7 @@ function DeleteIssueButton({ issueId }: { issueId: string }) {
 }
 
 function IssueCard({ issue }: { issue: IssueItem }) {
+  const { locale } = useUtcCalendarDateFormat();
   const qc = useQueryClient();
   const { mutate, isPending } = useMutation({
     mutationFn: (status: string) =>
@@ -314,7 +316,7 @@ function IssueCard({ issue }: { issue: IssueItem }) {
           </span>
           <span className="flex items-center gap-1">
             <Calendar className="size-3" />
-            {new Date(issue.createdAt).toLocaleDateString("en-IN", {
+            {new Date(issue.createdAt).toLocaleDateString(locale, {
               day: "numeric",
               month: "short",
               year: "numeric",

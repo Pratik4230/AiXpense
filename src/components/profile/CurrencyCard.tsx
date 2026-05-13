@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Check, ChevronsUpDown } from "lucide-react";
 import { updateCurrency } from "@/actions/user";
 import { Button } from "@/components/ui/button";
@@ -18,7 +18,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { CURRENCIES, type CurrencyCode } from "@/constants/currency";
+import { CURRENCIES, type CurrencyCode, DEFAULT_CURRENCY } from "@/constants/currency";
 import { cn } from "@/lib/utils";
 
 interface CurrencyCardProps {
@@ -26,9 +26,13 @@ interface CurrencyCardProps {
 }
 
 export function CurrencyCard({ currentCurrency }: CurrencyCardProps) {
-  const [selected, setSelected] = useState<CurrencyCode>(
-    (currentCurrency as CurrencyCode) ?? "INR",
-  );
+  const resolvedCode =
+    CURRENCIES.find((c) => c.code === currentCurrency)?.code ?? DEFAULT_CURRENCY;
+  const [selected, setSelected] = useState<CurrencyCode>(resolvedCode);
+
+  useEffect(() => {
+    setSelected(resolvedCode);
+  }, [resolvedCode]);
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");

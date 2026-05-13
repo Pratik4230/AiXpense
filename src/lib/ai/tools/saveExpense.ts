@@ -5,29 +5,29 @@ import { Expense, Budget } from "@/models";
 import { CATEGORIES } from "@/constants/expense";
 import mongoose from "mongoose";
 import { logger } from "@/lib/logger";
+import {
+  getUtcMonthRangeHalfOpen,
+  parseTransactionDateForStorage,
+} from "@/lib/utcDates";
 
 interface SaveExpenseParams {
   userId: string;
   rawInput: string;
-}
-
-function getMonthRange() {
-  const now = new Date();
-  return {
-    start: new Date(now.getFullYear(), now.getMonth(), 1),
-    end: new Date(now.getFullYear(), now.getMonth() + 1, 1),
-  };
+  currency: string;
 }
 
 export const createSaveExpenseTool = ({
   userId,
   rawInput,
+  currency,
 }: SaveExpenseParams) =>
   tool({
     description: "Save an expense (money spent) to the database",
     inputSchema: z.object({
       item: z.string().describe("What was purchased"),
-      amount: z.number().describe("The cost in INR"),
+      amount: z
+        .number()
+        .describe(`The cost in the user's account currency (${currency})`),
       category: z.enum(CATEGORIES).describe("Category of the expense"),
       subcategory: z
         .string()
@@ -40,7 +40,9 @@ export const createSaveExpenseTool = ({
       date: z
         .string()
         .optional()
-        .describe("ISO date string if the user mentions a specific date, otherwise omit"),
+        .describe(
+          "ISO date (YYYY-MM-DD or full ISO). Calendar dates are stored as UTC midnight for that day.",
+        ),
       notes: z
         .string()
         .optional()
@@ -55,17 +57,18 @@ export const createSaveExpenseTool = ({
         await connectDB();
 
         const userObjectId = new mongoose.Types.ObjectId(userId);
-        const { start, end } = getMonthRange();
+        const { start, endExclusive: end } = getUtcMonthRangeHalfOpen();
 
         const [expense, budget] = await Promise.all([
           Expense.create({
             userId: userObjectId,
             item,
             amount,
+            currency,
             category,
             subcategory,
             type: "expense",
-            date: date ? new Date(date) : new Date(),
+            date: parseTransactionDateForStorage(date),
             rawInput,
             tags: tags || [],
             notes,

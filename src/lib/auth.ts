@@ -36,6 +36,7 @@ import {
   onDodoSubscriptionRenewedLike,
   onDodoSubscriptionUpdatedLike,
 } from "@/lib/dodo/webhookHandlers";
+import { DEFAULT_COUNTRY, DEFAULT_CURRENCY } from "@/constants/currency";
 
 const dodoPaymentsPlugin =
   isDodoPaymentsConfigured() && dodoWebhookSecretConfigured()
@@ -172,11 +173,11 @@ export const auth = betterAuth({
       },
       currency: {
         type: "string",
-        defaultValue: "INR",
+        defaultValue: DEFAULT_CURRENCY,
       },
       country: {
         type: "string",
-        defaultValue: "IN",
+        defaultValue: DEFAULT_COUNTRY,
       },
       bonusPremiumUntil: {
         type: "date",

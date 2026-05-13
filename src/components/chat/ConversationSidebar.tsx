@@ -21,6 +21,7 @@ import {
   PanelLeft,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useUtcCalendarDateFormat } from "@/hooks/useUtcCalendarDateFormat";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -48,6 +49,7 @@ export function ConversationSidebar({
   const { data: conversations, isLoading } = useConversations(open);
   const deleteMutation = useDeleteConversation();
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const { locale } = useUtcCalendarDateFormat();
 
   const handleNewChat = () => {
     onSelectConversation(null);
@@ -78,7 +80,7 @@ export function ConversationSidebar({
     if (diffDays === 0) return "Today";
     if (diffDays === 1) return "Yesterday";
     if (diffDays < 7) return `${diffDays} days ago`;
-    return date.toLocaleDateString("en-IN", { month: "short", day: "numeric" });
+    return date.toLocaleDateString(locale, { month: "short", day: "numeric" });
   };
 
   const groupConversations = () => {

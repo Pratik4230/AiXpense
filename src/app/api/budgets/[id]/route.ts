@@ -5,6 +5,7 @@ import { connectDB } from "@/lib/db";
 import { Budget } from "@/models";
 import mongoose from "mongoose";
 import { z } from "zod";
+import { fetchUserCurrencyCodeFromDb } from "@/lib/userCurrencyFromDb";
 
 const updateSchema = z.object({ amount: z.number().positive() });
 
@@ -24,12 +25,14 @@ export async function PATCH(
 
   await connectDB();
 
+  const currency = await fetchUserCurrencyCodeFromDb(session.user.id);
+
   const budget = await Budget.findOneAndUpdate(
     {
       _id: new mongoose.Types.ObjectId(id),
       userId: new mongoose.Types.ObjectId(session.user.id),
     },
-    { amount: parsed.data.amount },
+    { amount: parsed.data.amount, currency },
     { returnDocument: "after" },
   );
 

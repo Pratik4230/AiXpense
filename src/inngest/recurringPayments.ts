@@ -11,8 +11,18 @@ export const processRecurringPayments = inngest.createFunction(
     return step.run("process-due-payments", async () => {
       await connectDB();
 
-      const today = new Date();
-      today.setHours(23, 59, 59, 999);
+      const n = new Date();
+      const today = new Date(
+        Date.UTC(
+          n.getUTCFullYear(),
+          n.getUTCMonth(),
+          n.getUTCDate(),
+          23,
+          59,
+          59,
+          999,
+        ),
+      );
 
       const due = await RecurringPayment.find({
         isActive: true,
@@ -30,6 +40,7 @@ export const processRecurringPayments = inngest.createFunction(
             userId: rule.userId,
             item: rule.name,
             amount: rule.amount,
+            currency: rule.currency,
             category: rule.category,
             type: rule.type,
             date: rule.nextDueDate,

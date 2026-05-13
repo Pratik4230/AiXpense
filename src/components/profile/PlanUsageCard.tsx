@@ -22,6 +22,7 @@ import {
   cancelSubscription,
   getDodoBillingPortalUrl,
 } from "@/actions/subscription";
+import { useUtcCalendarDateFormat } from "@/hooks/useUtcCalendarDateFormat";
 
 interface Subscription {
   status: string;
@@ -44,6 +45,7 @@ export function PlanUsageCard({
 }: PlanUsageCardProps) {
   const [loading, setLoading] = useState(false);
   const [portalLoading, setPortalLoading] = useState(false);
+  const { locale } = useUtcCalendarDateFormat();
 
   const openBillingPortal = async () => {
     setPortalLoading(true);
@@ -72,7 +74,7 @@ export function PlanUsageCard({
   };
 
   const periodEndDate = subscription?.currentPeriodEnd
-    ? new Date(subscription.currentPeriodEnd).toLocaleDateString("en-IN", {
+    ? new Date(subscription.currentPeriodEnd).toLocaleDateString(locale, {
         day: "numeric",
         month: "long",
         year: "numeric",

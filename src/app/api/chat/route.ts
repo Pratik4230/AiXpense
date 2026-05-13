@@ -14,6 +14,7 @@ import {
   createCreateUpdateBudgetTool,
   createDeleteBudgetTool,
   createReadBudgetsTool,
+  createListSupportedCurrenciesTool,
 } from "@/lib/ai/tools";
 import { connectDB } from "@/lib/db";
 import mongoose from "mongoose";
@@ -22,6 +23,8 @@ import { getISTMidnight } from "@/lib/ist";
 import { getCurrency } from "@/constants/currency";
 import { effectivePremium } from "@/lib/premium";
 import { applyMobileChatStreak, isMobileStreakClient } from "@/lib/streakMobile";
+import { resolveUserCurrencyCode } from "@/lib/userCurrency";
+import { formatUtcCalendarDateLong } from "@/lib/utcDates";
 
 export const maxDuration = 30;
 
@@ -130,16 +133,15 @@ export async function POST(req: Request) {
   const rawInput =
     lastUserMessage && "text" in lastUserMessage ? lastUserMessage.text : "";
 
-  const toolParams = { userId, rawInput };
+  const userCurrency = getCurrency(resolveUserCurrencyCode(dbUser.currency));
 
-  const userCurrency = getCurrency((dbUser.currency as string) ?? "INR");
+  const toolParams = {
+    userId,
+    rawInput,
+    currency: userCurrency.code,
+  };
 
-  const currentDateStr = now.toLocaleDateString("en-IN", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  const currentDateStr = formatUtcCalendarDateLong(now);
 
   const interceptedMessages = messages.map((msg) => {
     if (msg.role === "user" && msg.parts) {
@@ -187,10 +189,18 @@ export async function POST(req: Request) {
         isPremium: dbUser.isPremium as boolean | undefined,
         bonusPremiumUntil: dbUser.bonusPremiumUntil as Date | undefined,
       }),
+      currencyCode: userCurrency.code,
+      currencySymbol: userCurrency.symbol,
     }),
-    createUpdateBudget: createCreateUpdateBudgetTool({ userId }),
+    createUpdateBudget: createCreateUpdateBudgetTool({
+      userId,
+      currency: userCurrency.code,
+    }),
     deleteBudget: createDeleteBudgetTool({ userId }),
     readBudgets: createReadBudgetsTool({ userId }),
+    listSupportedCurrencies: createListSupportedCurrenciesTool({
+      accountCurrencyCode: userCurrency.code,
+    }),
   };
 
   const result = streamText({

@@ -10,6 +10,8 @@ import mongoose from "mongoose";
 import { logger } from "@/lib/logger";
 import { cron } from "inngest";
 import { getCurrency } from "@/constants/currency";
+import { resolveUserCurrencyCode } from "@/lib/userCurrency";
+import { formatInsightPeriodKey } from "@/lib/utcDates";
 
 function getPeriodRange(type: "weekly" | "monthly") {
   const now = new Date();
@@ -20,23 +22,24 @@ function getPeriodRange(type: "weekly" | "monthly") {
     monday.setHours(0, 0, 0, 0);
     const prevMonday = new Date(monday);
     prevMonday.setDate(monday.getDate() - 7);
+    const isoWeekStart = prevMonday.toISOString().slice(0, 10);
     return {
       start: prevMonday,
       end: monday,
-      periodKey: `week-${prevMonday.toISOString().slice(0, 10)}`,
-      label: `Week of ${prevMonday.toLocaleDateString("en-IN", { day: "numeric", month: "short" })}`,
+      periodKey: `week-${isoWeekStart}`,
+      label: formatInsightPeriodKey(`week-${isoWeekStart}`, "en"),
     };
   }
-  const firstOfThisMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-  const firstOfLastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+  const y = now.getUTCFullYear();
+  const m = now.getUTCMonth();
+  const firstOfThisMonth = new Date(Date.UTC(y, m, 1, 0, 0, 0, 0));
+  const firstOfLastMonth = new Date(Date.UTC(y, m - 1, 1, 0, 0, 0, 0));
+  const monthKey = firstOfLastMonth.toISOString().slice(0, 7);
   return {
     start: firstOfLastMonth,
     end: firstOfThisMonth,
-    periodKey: `month-${firstOfLastMonth.toISOString().slice(0, 7)}`,
-    label: firstOfLastMonth.toLocaleDateString("en-IN", {
-      month: "long",
-      year: "numeric",
-    }),
+    periodKey: `month-${monthKey}`,
+    label: formatInsightPeriodKey(`month-${monthKey}`, "en"),
   };
 }
 
@@ -98,7 +101,7 @@ async function runCoachForPeriod(type: "weekly" | "monthly") {
     for (const e of stats.byCategory) {
       categoryMap[e.category] = (categoryMap[e.category] ?? 0) + e.amount;
     }
-    const userCurrency = getCurrency((user.currency as string) ?? "INR");
+    const userCurrency = getCurrency(resolveUserCurrencyCode(user.currency));
     const sym = userCurrency.symbol;
 
     const topCategories = Object.entries(categoryMap)
@@ -122,7 +125,7 @@ async function runCoachForPeriod(type: "weekly" | "monthly") {
           {
             role: "system",
             content:
-              "You are a warm, encouraging personal finance coach. Analyse the user's spending data and write a friendly, easy-to-read summary. Acknowledge their efforts, highlight any patterns worth noting, and close with one specific, practical tip they can act on this week. Be conversational and supportive. Do not use bullet points, dashes (-- or -), em-dashes, or harsh judgements. Write in plain flowing sentences only.",
+              "You are a warm, encouraging personal finance coach. Analyse the user's spending data and write a friendly, easy-to-read summary. The user message states totals using their own currency symbol—keep that framing; do not switch to another currency. Acknowledge their efforts, highlight any patterns worth noting, and close with one specific, practical tip they can act on this week. Be conversational and supportive. Do not use bullet points, dashes (-- or -), em-dashes, or harsh judgements. Write in plain flowing sentences only.",
           },
           {
             role: "user",

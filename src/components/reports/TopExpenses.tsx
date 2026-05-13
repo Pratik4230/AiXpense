@@ -1,9 +1,12 @@
+"use client";
+
 import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import type { TopExpense, ReportMode } from "@/services/reports";
 import { useCurrency } from "@/hooks/useCurrency";
+import { useUtcCalendarDateFormat } from "@/hooks/useUtcCalendarDateFormat";
 
 
 interface Props {
@@ -14,6 +17,7 @@ interface Props {
 
 export function TopExpenses({ data, isLoading, mode }: Props) {
   const { format } = useCurrency();
+  const { formatTransactionDate } = useUtcCalendarDateFormat();
   return (
     <Card className="border-border/60">
       <CardHeader className="pb-2 flex-row items-center justify-between">
@@ -59,10 +63,7 @@ export function TopExpenses({ data, isLoading, mode }: Props) {
                         {e.category}
                       </Badge>
                       <span className="text-xs text-muted-foreground">
-                        {new Date(e.date).toLocaleDateString("en-IN", {
-                          day: "numeric",
-                          month: "short",
-                        })}
+                        {formatTransactionDate(e.date, false)}
                       </span>
                     </div>
                   </div>

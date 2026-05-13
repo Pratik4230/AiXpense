@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useMyIssues, type MyIssueItem } from "@/hooks/useMyIssues";
+import { useUtcCalendarDateFormat } from "@/hooks/useUtcCalendarDateFormat";
 
 const TYPE_ICON = { bug: Bug, feature: Lightbulb, other: HelpCircle };
 
@@ -35,6 +36,7 @@ const STATUS_LABELS: Record<string, string> = {
 
 function MyIssueCard({ issue }: { issue: MyIssueItem }) {
   const TypeIcon = TYPE_ICON[issue.type];
+  const { locale } = useUtcCalendarDateFormat();
 
   return (
     <Card>
@@ -57,7 +59,7 @@ function MyIssueCard({ issue }: { issue: MyIssueItem }) {
         </div>
         <div className="flex items-center gap-1 text-xs text-muted-foreground mt-1">
           <Calendar className="size-3" />
-          {new Date(issue.createdAt).toLocaleDateString("en-IN", {
+          {new Date(issue.createdAt).toLocaleDateString(locale, {
             day: "numeric",
             month: "short",
             year: "numeric",

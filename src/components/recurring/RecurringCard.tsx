@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { RecurringPayment } from "@/services/recurring";
 import { useCurrency } from "@/hooks/useCurrency";
+import { useUtcCalendarDateFormat } from "@/hooks/useUtcCalendarDateFormat";
 
 interface Props {
   rule: RecurringPayment;
@@ -26,16 +27,9 @@ const FREQ_LABELS: Record<string, string> = {
   yearly: "Yearly",
 };
 
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-IN", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-  });
-}
-
 export function RecurringCard({ rule, onEdit, onToggle, onDelete }: Props) {
-  const nextDue = formatDate(rule.nextDueDate);
+  const { formatTransactionDate } = useUtcCalendarDateFormat();
+  const nextDue = formatTransactionDate(rule.nextDueDate);
   const isOverdue =
     new Date(rule.nextDueDate) < new Date() && rule.isActive;
   const { format } = useCurrency();

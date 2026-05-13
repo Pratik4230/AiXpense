@@ -7,20 +7,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useLatestInsight } from "@/services/insights";
 import Link from "next/link";
 import { useCurrency } from "@/hooks/useCurrency";
-
-
-function getPeriodLabel(periodKey: string) {
-  if (periodKey.startsWith("week-")) {
-    const date = new Date(periodKey.replace("week-", ""));
-    return `Week of ${date.toLocaleDateString("en-IN", { day: "numeric", month: "long" })}`;
-  }
-  if (periodKey.startsWith("month-")) {
-    const [year, month] = periodKey.replace("month-", "").split("-");
-    const date = new Date(Number(year), Number(month) - 1, 1);
-    return date.toLocaleDateString("en-IN", { month: "long", year: "numeric" });
-  }
-  return periodKey;
-}
+import { useUtcCalendarDateFormat } from "@/hooks/useUtcCalendarDateFormat";
+import { formatInsightPeriodKey } from "@/lib/utcDates";
 
 function cleanInsightText(text: string) {
   return text
@@ -36,6 +24,7 @@ interface CoachInsightCardProps {
 export function CoachInsightCard({ isPremium }: CoachInsightCardProps) {
   const { data: insight, isLoading } = useLatestInsight(isPremium);
   const { format } = useCurrency();
+  const { locale } = useUtcCalendarDateFormat();
 
   if (!isPremium) {
     return (
@@ -92,7 +81,7 @@ export function CoachInsightCard({ isPremium }: CoachInsightCardProps) {
     );
   }
 
-  const period = getPeriodLabel(insight.periodKey);
+  const period = formatInsightPeriodKey(insight.periodKey, locale);
 
   return (
     <Card className="border-amber-500/20 bg-linear-to-br from-amber-950/10 to-background overflow-hidden">

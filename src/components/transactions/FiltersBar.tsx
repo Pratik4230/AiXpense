@@ -20,6 +20,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { CATEGORIES } from "@/constants/expense";
 import type { TransactionFilters } from "@/services/transactions";
+import { useCurrency } from "@/hooks/useCurrency";
 
 interface Props {
   draft: TransactionFilters;
@@ -39,6 +40,7 @@ export function FiltersBar({
   total,
 }: Props) {
   const [catOpen, setCatOpen] = useState(false);
+  const { symbol } = useCurrency();
 
   function toggleCategory(cat: string) {
     const next = draft.categories.includes(cat)
@@ -122,14 +124,14 @@ export function FiltersBar({
         <div className="flex items-center gap-1.5">
           <Input
             type="number"
-            placeholder="Min ₹"
+            placeholder={`Min ${symbol}`}
             value={draft.minAmount}
             onChange={(e) => onDraftChange({ minAmount: e.target.value })}
             className="h-9 w-20 text-xs"
           />
           <Input
             type="number"
-            placeholder="Max ₹"
+            placeholder={`Max ${symbol}`}
             value={draft.maxAmount}
             onChange={(e) => onDraftChange({ maxAmount: e.target.value })}
             className="h-9 w-20 text-xs"

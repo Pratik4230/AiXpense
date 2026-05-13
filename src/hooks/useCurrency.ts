@@ -1,9 +1,11 @@
 import { useSession } from "@/lib/authClient";
-import { getCurrency, DEFAULT_CURRENCY } from "@/constants/currency";
+import { getCurrency } from "@/constants/currency";
+import { resolveUserCurrencyCode } from "@/lib/userCurrency";
 
 export function useCurrency() {
   const { data: session } = useSession();
-  const code = (session?.user as { currency?: string })?.currency ?? DEFAULT_CURRENCY;
+  const sessionUser = session?.user as { currency?: string } | undefined;
+  const code = resolveUserCurrencyCode(sessionUser?.currency);
   const currency = getCurrency(code);
 
   function format(amount: number, currencyOverride?: string): string {

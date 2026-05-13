@@ -6,6 +6,8 @@ interface PaymentReceiptOptions {
   nextBillingDate: Date;
   subscriptionId: string;
   isFirstPayment: boolean;
+  /** ISO 4217; Razorpay charges are INR */
+  currency?: string;
 }
 
 const PLAN_LABEL: Record<string, string> = {
@@ -14,7 +16,7 @@ const PLAN_LABEL: Record<string, string> = {
 };
 
 function formatDate(date: Date): string {
-  return date.toLocaleDateString("en-IN", {
+  return date.toLocaleDateString("en", {
     day: "numeric",
     month: "long",
     year: "numeric",
@@ -30,10 +32,17 @@ export function paymentReceiptTemplate({
   nextBillingDate,
   subscriptionId,
   isFirstPayment,
+  currency = "INR",
 }: PaymentReceiptOptions): { subject: string; html: string } {
+  const formatted = new Intl.NumberFormat("en", {
+    style: "currency",
+    currency,
+    maximumFractionDigits: 0,
+  }).format(amount);
+
   const subject = isFirstPayment
     ? "Welcome to AiXpense Premium: payment confirmed"
-    : `AiXpense Premium renewed: ₹${amount.toLocaleString("en-IN")}`;
+    : `AiXpense Premium renewed: ${formatted}`;
 
   const html = `<!DOCTYPE html>
 <html lang="en">
@@ -82,7 +91,7 @@ export function paymentReceiptTemplate({
                 <tr>
                   <td style="padding:24px;text-align:center;">
                     <p style="margin:0 0 4px;font-size:13px;color:#71717a;text-transform:uppercase;letter-spacing:0.8px;">Amount Paid</p>
-                    <p style="margin:0;font-size:40px;font-weight:700;color:#ffffff;">₹${amount.toLocaleString("en-IN")}</p>
+                    <p style="margin:0;font-size:40px;font-weight:700;color:#ffffff;">${formatted}</p>
                     <p style="margin:6px 0 0;font-size:13px;color:#a1a1aa;">${PLAN_LABEL[plan]}</p>
                   </td>
                 </tr>

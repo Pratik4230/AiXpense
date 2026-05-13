@@ -3,29 +3,39 @@ import { z } from "zod";
 import { google } from "@ai-sdk/google";
 import { generateText } from "ai";
 import { logger } from "@/lib/logger";
+import { DEFAULT_CURRENCY, getCurrency } from "@/constants/currency";
 
-const EXTRACTION_PROMPT = `You are a document parser for an Indian expense tracker.
+function buildExtractionPrompt(currencyCode: string, currencySymbol: string) {
+  return `You are a document parser for a personal expense tracker.
 Look at this image and extract ONE summary as a short natural language sentence, optionally followed by a breakdown in parentheses.
 
 Rules:
 - Identify if the document is an Expense (bill/receipt) or an Income (salary slip/refund).
-- Identify the merchant/store/company name (e.g. DMart, TCS, Raju Kirana Store).
-- Find the TOTAL/Grand Total/Net Pay amount in INR.
+- Identify the merchant/store/company name (e.g. DMart, TCS, local store).
+- Find the TOTAL/Grand Total/Net Pay amount. Prefer the currency shown on the document; if unclear, assume the user's account currency ${currencyCode}.
 - Extract the date if visible, output as DD Month YYYY (e.g. 26 January 2018). If year is not on the bill, omit it.
 - Output ONLY one sentence starting with either "Expense:" or "Income:" based on the document type.
-- If line items and taxes (like dishes, products, CGST, SGST, IGST, VAT, service charges, delivery fees, or salary components like Basic, HRA, PF) are clearly readable, append them in parentheses to serve as notes. Format as a comma-separated list.
-- **CRITICAL**: For EVERY single item in the parentheses, you MUST include its price/amount right next to it with the ₹ symbol. Never list an item or a tax without its price.
-- Example 1 Expense: "Expense: Anandha Bhavan meal ₹404 on 26 January 2018 (1 Ghee Pongal ₹50, 3 Vadai ₹60, 3 Roast ₹150, 2 Poori Masal ₹100, 1 Tea ₹25, 2.5% CGST ₹9.63, 2.5% SGST ₹9.63, Rounding -₹0.26)"
-- Example 2 Expense: "Expense: Swiggy order ₹320"
-- Example 3 Income: "Income: Salary from TCS ₹45000 on 30 October 2023 (Basic ₹20000, HRA ₹15000, Special Allowance ₹12000, PF -₹2000)"
-- For documents in Hindi/Marathi/any Indian language, still output in English
+- If line items and taxes (VAT, GST, CGST, SGST, sales tax, service charges, delivery fees, or salary components like Basic, HRA, PF) are clearly readable, append them in parentheses to serve as notes. Format as a comma-separated list.
+- **CRITICAL**: For EVERY single item in the parentheses, you MUST include its price/amount right next to it with the same currency symbol used on the document, or ${currencySymbol} when the document matches ${currencyCode}.
+- Example 1 Expense: "Expense: Cafe meal ${currencySymbol}404 on 26 January 2018 (1 Item A ${currencySymbol}50, 2 Item B ${currencySymbol}60, Tax ${currencySymbol}9.63)"
+- Example 2 Expense: "Expense: Food delivery ${currencySymbol}320"
+- Example 3 Income: "Income: Salary from Acme ${currencySymbol}45000 on 30 October 2023 (Basic ${currencySymbol}20000, Bonus ${currencySymbol}5000)"
+- For documents in any language, still output merchant/description in English when possible
 - Use the TOTAL amount, not individual line items for the main amount
-- Use ₹ symbol for all amounts
 - If you genuinely cannot read any amount, output exactly: "Document scan. Please enter amount manually"`;
+}
+
+const fallbackCurrency = getCurrency(DEFAULT_CURRENCY);
 
 export const createScanBillTool = ({
   isPremium = false,
-}: { isPremium?: boolean } = {}) =>
+  currencyCode = DEFAULT_CURRENCY,
+  currencySymbol = fallbackCurrency.symbol,
+}: {
+  isPremium?: boolean;
+  currencyCode?: string;
+  currencySymbol?: string;
+} = {}) =>
   tool({
     description: "Read and extract details from a receipt or bill image URL.",
     inputSchema: z.object({
@@ -49,7 +59,7 @@ export const createScanBillTool = ({
 
         const { text } = await generateText({
           model: google("gemini-3.1-flash-lite-preview"),
-          system: EXTRACTION_PROMPT,
+          system: buildExtractionPrompt(currencyCode, currencySymbol),
           maxOutputTokens: 1200,
           messages: [
             {

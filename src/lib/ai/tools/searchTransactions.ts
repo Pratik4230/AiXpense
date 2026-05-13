@@ -5,6 +5,11 @@ import mongoose from "mongoose";
 import { connectDB } from "@/lib/db";
 import { Expense } from "@/models";
 import { logger } from "@/lib/logger";
+import {
+  getUtcDayRangeInclusive,
+  getUtcMonthRangeHalfOpen,
+  utcCalendarDateString,
+} from "@/lib/utcDates";
 
 interface ToolParams {
   userId: string;
@@ -36,7 +41,8 @@ Your task is to convert natural language financial queries into valid MongoDB qu
 
 DATABASE SCHEMA (Expense Collection):
 - item: string (e.g. "Starbucks Coffee", "Electricity Bill")
-- amount: number (e.g. 500)
+- amount: number (e.g. 500) — stored in the user's account currency; there is no separate "units" field
+- currency: string (ISO 4217 code, e.g. "INR", "USD", "EUR") — usually one code per user; only add a currency filter if the user explicitly asks to filter by currency
 - category: string (Enum: food, groceries, transport, shopping, entertainment, subscriptions, bills, rent, emi, health, education, personal, travel, salary, bonus, freelance, business, investment, interest, cashback, rental, refund, gift, other)
 - subcategory: string (optional)
 - type: "expense" | "income"
@@ -51,8 +57,9 @@ RULES:
 5. AGGREGATION: Use for "total", "count", "average", "stats".
 6. FIND: Use for "show me", "list", "search".
 7. DEFAULT DATE: Do NOT add date filters unless user explicitly mentions a date period (e.g. "last month", "Jan"). The tool handles the default "current month" context automatically.
-8. ITEMS: Be specific! "Electricity bill" -> { item: { "$regex": "electricity", "$options": "i" } }.
-9. JSON ONLY: All date values MUST be plain ISO 8601 strings (e.g. "2026-03-01T00:00:00.000Z"). NEVER use ISODate(), new Date(), or any JavaScript/shell syntax. Output must be parseable by JSON.parse().`;
+8. CURRENCY: Do not filter by \`currency\` unless the user clearly asks (e.g. "only EUR transactions"). Numeric \`amount\` filters are fine without a currency filter.
+9. ITEMS: Be specific! "Electricity bill" -> { item: { "$regex": "electricity", "$options": "i" } }.
+10. JSON ONLY: All date values MUST be plain ISO 8601 strings (e.g. "2026-03-01T00:00:00.000Z"). NEVER use ISODate(), new Date(), or any JavaScript/shell syntax. Output must be parseable by JSON.parse().`;
 
 function validateQuery(obj: unknown, path = ""): void {
   if (obj === null || obj === undefined) return;
@@ -123,50 +130,15 @@ function convertDateStrings(obj: unknown): unknown {
   return obj;
 }
 
-function getMonthBoundsIST(date: Date): { start: Date; end: Date } {
-  const istOffset = 5.5 * 60 * 60 * 1000;
-
-  const istDate = new Date(date.getTime() + istOffset);
-  const year = istDate.getUTCFullYear();
-  const month = istDate.getUTCMonth();
-
-  const startIST = new Date(Date.UTC(year, month, 1, 0, 0, 0, 0));
-  const startUTC = new Date(startIST.getTime() - istOffset);
-
-  const endIST = new Date(
-    Date.UTC(year, month, istDate.getUTCDate(), 23, 59, 59, 999),
-  );
-  const endUTC = new Date(endIST.getTime() - istOffset);
-
-  return { start: startUTC, end: endUTC };
-}
-
-function getTodayBoundsIST(date: Date): { start: Date; end: Date } {
-  const istOffset = 5.5 * 60 * 60 * 1000;
-  const istDate = new Date(date.getTime() + istOffset);
-  const year = istDate.getUTCFullYear();
-  const month = istDate.getUTCMonth();
-  const day = istDate.getUTCDate();
-
-  const startIST = new Date(Date.UTC(year, month, day, 0, 0, 0, 0));
-  const startUTC = new Date(startIST.getTime() - istOffset);
-
-  const endIST = new Date(Date.UTC(year, month, day, 23, 59, 59, 999));
-  const endUTC = new Date(endIST.getTime() - istOffset);
-
-  return { start: startUTC, end: endUTC };
-}
-
 export const createSearchTransactionsTool = ({
   userId,
   currentDate,
 }: ToolParams) => {
-  const istOffset = 5.5 * 60 * 60 * 1000;
-  const istNow = new Date(currentDate.getTime() + istOffset);
-  const todayIST = istNow.toISOString().split("T")[0];
+  const todayUtc = utcCalendarDateString(currentDate);
   const { start: todayStartUTC, end: todayEndUTC } =
-    getTodayBoundsIST(currentDate);
-  const { start: monthStartUTC0 } = getMonthBoundsIST(currentDate);
+    getUtcDayRangeInclusive(currentDate);
+  const { start: monthStartUTC, endExclusive: monthEndExclusive } =
+    getUtcMonthRangeHalfOpen(currentDate);
 
   return tool({
     description: `Search user's transactions.
@@ -175,7 +147,7 @@ export const createSearchTransactionsTool = ({
     - Pass user's natural language question to 'query' parameter (e.g., "how much spent on food?").
     - The tool will handle date filtering, categories, and analytics automatically.
     
-    CURRENT DATE: ${todayIST}`,
+    CURRENT DATE (UTC calendar): ${todayUtc}`,
     inputSchema: z.object({
       query: z
         .string()
@@ -212,16 +184,16 @@ export const createSearchTransactionsTool = ({
       if (query && !filter && !aggregation) {
         try {
           const { output } = await generateText({
-            model: openai("gpt-5.4-nano"),
+            model: openai("gpt-5.4-mini"),
             output: Output.json(),
             system: SPECIALIST_SYSTEM_PROMPT,
-            prompt: `User timezone: IST (UTC+5:30). DB stores all dates in UTC.
-Today in IST: ${todayIST}
+            prompt: `Calendar for "today" / "this month" uses the UTC calendar (same as stored BSON dates). DB \`date\` values are UTC instants.
+Today (UTC): ${todayUtc}
 Today UTC range: { "$gte": "${todayStartUTC.toISOString()}", "$lte": "${todayEndUTC.toISOString()}" }
-This month UTC start: "${monthStartUTC0.toISOString()}"
+This month UTC: { "$gte": "${monthStartUTC.toISOString()}", "$lt": "${monthEndExclusive.toISOString()}" } (use $lt on month end for a clean month boundary)
 User Query: ${query}
 
-IMPORTANT: When user refers to "today", use the exact UTC range above. All date values must be ISO 8601 strings in UTC.`,
+IMPORTANT: When the user refers to "today" or "this month", use the bounds above. All date values must be ISO 8601 strings in UTC.`,
             providerOptions: {
               openai: {
                 reasoningEffort: "low",
@@ -261,8 +233,6 @@ IMPORTANT: When user refers to "today", use the exact UTC range above. All date 
       }
 
       const safeLimit = Math.min(limit || 20, 50);
-      const { start: monthStartUTC, end: monthEndUTC } =
-        getMonthBoundsIST(currentDate);
 
       const userProvidedDateFilter =
         hasDateFilter(finalFilter) || hasDateFilter(finalAggregation);
@@ -272,13 +242,13 @@ IMPORTANT: When user refers to "today", use the exact UTC range above. All date 
       let dateContextString = "";
       if (shouldApplyDefaultDate) {
         // Format for readability: "Feb 1, 2026 - Feb 28, 2026"
-        const fmt = new Intl.DateTimeFormat("en-IN", {
+        const fmt = new Intl.DateTimeFormat("en", {
           month: "short",
           day: "numeric",
           year: "numeric",
-          timeZone: "Asia/Kolkata",
+          timeZone: "UTC",
         });
-        dateContextString = ` (Data for current month: ${fmt.format(monthStartUTC)} - ${fmt.format(monthEndUTC)})`;
+        dateContextString = ` (Data for current month UTC: ${fmt.format(monthStartUTC)} – ${fmt.format(new Date(monthEndExclusive.getTime() - 1))})`;
       }
 
       try {
@@ -291,7 +261,10 @@ IMPORTANT: When user refers to "today", use the exact UTC range above. All date 
             userId: new mongoose.Types.ObjectId(userId),
           };
           if (shouldApplyDefaultDate) {
-            matchStage.date = { $gte: monthStartUTC, $lte: monthEndUTC };
+            matchStage.date = {
+              $gte: monthStartUTC,
+              $lt: monthEndExclusive,
+            };
           }
 
           const pipeline = [
@@ -313,7 +286,7 @@ IMPORTANT: When user refers to "today", use the exact UTC range above. All date 
             dateRange: shouldApplyDefaultDate
               ? {
                   from: monthStartUTC.toISOString(),
-                  to: monthEndUTC.toISOString(),
+                  to: new Date(monthEndExclusive.getTime() - 1).toISOString(),
                 }
               : "all-time or user-specified",
           };
@@ -328,7 +301,10 @@ IMPORTANT: When user refers to "today", use the exact UTC range above. All date 
           userId,
         };
         if (shouldApplyDefaultDate) {
-          safeFilter.date = { $gte: monthStartUTC, $lte: monthEndUTC };
+          safeFilter.date = {
+            $gte: monthStartUTC,
+            $lt: monthEndExclusive,
+          };
         }
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -376,7 +352,7 @@ IMPORTANT: When user refers to "today", use the exact UTC range above. All date 
           dateRange: shouldApplyDefaultDate
             ? {
                 from: monthStartUTC.toISOString(),
-                to: monthEndUTC.toISOString(),
+                to: new Date(monthEndExclusive.getTime() - 1).toISOString(),
               }
             : "all-time or user-specified",
         };

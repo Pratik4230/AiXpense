@@ -7,6 +7,7 @@ import {
   type ExpenseType,
   type Frequency,
 } from "@/constants/expense";
+import { DEFAULT_CURRENCY } from "@/constants/currency";
 
 export { FREQUENCIES, type Frequency };
 
@@ -49,7 +50,7 @@ const recurringPaymentSchema = new Schema<IRecurringPaymentDocument>(
     },
     currency: {
       type: String,
-      default: "INR",
+      default: DEFAULT_CURRENCY,
       required: true,
     },
     category: {

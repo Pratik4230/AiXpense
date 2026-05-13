@@ -5,6 +5,10 @@ import { Expense, Budget } from "@/models";
 import { CATEGORIES } from "@/constants/expense";
 import mongoose from "mongoose";
 import { logger } from "@/lib/logger";
+import {
+  getUtcMonthRangeHalfOpen,
+  parseTransactionDateForStorage,
+} from "@/lib/utcDates";
 
 interface UpdateTransactionParams {
   userId: string;
@@ -28,10 +32,15 @@ export const createUpdateTransactionTool = ({
       updates: z
         .object({
           item: z.string().optional().describe("New item name"),
-          amount: z.number().optional().describe("New amount"),
+          amount: z.number().optional().describe("New amount in the user's account currency"),
           category: z.enum(CATEGORIES).optional().describe("New category"),
           subcategory: z.string().optional().describe("New subcategory"),
-          date: z.string().optional().describe("ISO date string for the new date, if mentioned"),
+          date: z
+            .string()
+            .optional()
+            .describe(
+              "ISO date (YYYY-MM-DD or full ISO). Calendar dates stored as UTC midnight for that day.",
+            ),
           notes: z.string().optional().describe("New notes or breakdown"),
           attachments: z.array(z.string()).optional().describe("New attachments URLs to add"),
         })
@@ -60,7 +69,7 @@ export const createUpdateTransactionTool = ({
         if (updates.category) updateData.category = updates.category;
         if (updates.subcategory !== undefined)
           updateData.subcategory = updates.subcategory;
-        if (updates.date) updateData.date = new Date(updates.date);
+        if (updates.date) updateData.date = parseTransactionDateForStorage(updates.date);
         if (updates.notes !== undefined) updateData.notes = updates.notes;
         if (updates.attachments && updates.attachments.length > 0) {
           updateData.attachments = [
@@ -83,8 +92,7 @@ export const createUpdateTransactionTool = ({
         if (updated?.type === "expense" && (updates.amount || updates.category)) {
           const effectiveCategory = updated.category;
           const userObjectId = new mongoose.Types.ObjectId(userId);
-          const start = new Date(now.getFullYear(), now.getMonth(), 1);
-          const end = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+          const { start, endExclusive: end } = getUtcMonthRangeHalfOpen(now);
 
           const budget = await Budget.findOne({
             userId: userObjectId,

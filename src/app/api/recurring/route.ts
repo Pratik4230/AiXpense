@@ -7,6 +7,7 @@ import { CATEGORIES, EXPENSE_TYPES, FREQUENCIES } from "@/constants/expense";
 import { getInitialNextDueDate } from "@/lib/recurring";
 import mongoose from "mongoose";
 import { z } from "zod";
+import { fetchUserCurrencyCodeFromDb } from "@/lib/userCurrencyFromDb";
 
 const createSchema = z.object({
   name: z.string().min(1).max(100),
@@ -69,11 +70,13 @@ export async function POST(req: Request) {
 
   await connectDB();
   const uid = new mongoose.Types.ObjectId(session.user.id);
+  const currency = await fetchUserCurrencyCodeFromDb(session.user.id);
 
   const doc = await RecurringPayment.create({
     userId: uid,
     name,
     amount,
+    currency,
     category,
     type,
     frequency,

@@ -97,8 +97,12 @@ export default function BillingAndCancellationPage() {
 
       <section>
         <h2 className="text-xl font-semibold mb-3">
-          4. Premium subscription plans (web, INR)
+          4. Premium subscription plans (India, INR via Razorpay)
         </h2>
+        <p className="mb-2 text-muted-foreground text-sm">
+          In-app expense tracking uses your selected account currency. The prices
+          below apply to Premium billed through Razorpay in Indian Rupees.
+        </p>
         <ul className="list-disc pl-6 space-y-1">
           <li>
             <strong>Monthly plan:</strong> ₹499/month, billed monthly

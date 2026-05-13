@@ -23,6 +23,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { CATEGORIES, EXPENSE_TYPES, FREQUENCIES } from "@/constants/expense";
 import type { RecurringPayment, CreateRecurringPaymentInput } from "@/services/recurring";
 import { useAppForm } from "./form-context";
+import { useCurrency } from "@/hooks/useCurrency";
+import { useUtcCalendarDateFormat } from "@/hooks/useUtcCalendarDateFormat";
+import { formatUtcWeekdayLong } from "@/lib/utcDates";
 
 function toDateInput(iso?: string): string {
   if (!iso) return new Date().toISOString().slice(0, 10);
@@ -47,6 +50,8 @@ export function RecurringFormDialog({
   defaultValues,
 }: Props) {
   const isEdit = !!defaultValues;
+  const { symbol } = useCurrency();
+  const { locale } = useUtcCalendarDateFormat();
 
   const form = useAppForm({
     defaultValues: {
@@ -143,7 +148,7 @@ export function RecurringFormDialog({
             >
               {(field) => (
                 <div className="space-y-1.5">
-                  <Label htmlFor="rp-amount">Amount (₹)</Label>
+                  <Label htmlFor="rp-amount">Amount ({symbol})</Label>
                   <Input
                     id="rp-amount"
                     type="number"
@@ -275,7 +280,7 @@ export function RecurringFormDialog({
                         />
                         <p className="text-xs text-muted-foreground">
                           {frequency === "weekly"
-                            ? `Recurs every ${new Date(field.state.value + "T00:00:00").toLocaleDateString("en-IN", { weekday: "long" })}`
+                            ? `Recurs every ${formatUtcWeekdayLong(field.state.value, locale)}`
                             : frequency === "yearly"
                             ? `Recurs every year on this date`
                             : `Recurs daily from this date`}

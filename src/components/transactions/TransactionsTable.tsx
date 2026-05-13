@@ -3,6 +3,7 @@
 import { useCallback } from "react";
 import { ChevronUp, ChevronDown, Loader2 } from "lucide-react";
 import { useCurrency } from "@/hooks/useCurrency";
+import { useUtcCalendarDateFormat } from "@/hooks/useUtcCalendarDateFormat";
 import {
   Table,
   TableBody,
@@ -75,6 +76,7 @@ export function TransactionsTable({
   onFilterChange,
 }: Props) {
   const { format } = useCurrency();
+  const { formatTransactionDate } = useUtcCalendarDateFormat();
   const onIntersect = useCallback(() => {
     if (hasNextPage && !isFetchingNextPage) fetchNextPage();
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
@@ -142,11 +144,7 @@ export function TransactionsTable({
           {rows.map((tx) => (
             <TableRow key={tx._id}>
               <TableCell className="text-xs text-muted-foreground">
-                {new Date(tx.date).toLocaleDateString("en-IN", {
-                  day: "numeric",
-                  month: "short",
-                  year: "numeric",
-                })}
+                {formatTransactionDate(tx.date)}
               </TableCell>
               <TableCell className="text-sm font-medium max-w-32 sm:max-w-48 truncate">
                 {tx.item}

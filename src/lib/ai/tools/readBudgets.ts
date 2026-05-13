@@ -4,17 +4,10 @@ import { connectDB } from "@/lib/db";
 import { Budget, Expense } from "@/models";
 import mongoose from "mongoose";
 import { logger } from "@/lib/logger";
+import { getUtcMonthRangeHalfOpen } from "@/lib/utcDates";
 
 interface ReadBudgetsParams {
   userId: string;
-}
-
-function getMonthRange() {
-  const now = new Date();
-  return {
-    start: new Date(now.getFullYear(), now.getMonth(), 1),
-    end: new Date(now.getFullYear(), now.getMonth() + 1, 1),
-  };
 }
 
 export const createReadBudgetsTool = ({ userId }: ReadBudgetsParams) =>
@@ -27,7 +20,7 @@ export const createReadBudgetsTool = ({ userId }: ReadBudgetsParams) =>
         await connectDB();
 
         const userObjectId = new mongoose.Types.ObjectId(userId);
-        const { start, end } = getMonthRange();
+        const { start, endExclusive: end } = getUtcMonthRangeHalfOpen();
 
         const [budgets, spendAgg] = await Promise.all([
           Budget.find({ userId: userObjectId }).lean(),

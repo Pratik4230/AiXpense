@@ -25,6 +25,7 @@ import {
 } from "@/services/budgets";
 import { useAppForm } from "./form-context";
 import { toast } from "sonner";
+import { useCurrency } from "@/hooks/useCurrency";
 
 interface Props {
   open: boolean;
@@ -40,6 +41,7 @@ export function BudgetDialog({
   disabledCategories = [],
 }: Props) {
   const isEdit = !!existing;
+  const { symbol } = useCurrency();
   const createMutation = useCreateBudget();
   const updateMutation = useUpdateBudget();
   const isPending = createMutation.isPending || updateMutation.isPending;
@@ -141,7 +143,7 @@ export function BudgetDialog({
           >
             {(field) => (
               <div className="space-y-1.5">
-                <Label htmlFor="budget-amount">Monthly limit (₹)</Label>
+                <Label htmlFor="budget-amount">Monthly limit ({symbol})</Label>
                 <Input
                   id="budget-amount"
                   type="number"

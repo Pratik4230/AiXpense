@@ -7,28 +7,24 @@ import mongoose from "mongoose";
 
 function getDateRange(range: string): { start: Date; end: Date } {
   const now = new Date();
-  const end = new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    now.getDate(),
-    23,
-    59,
-    59,
-  );
+  const y = now.getUTCFullYear();
+  const m = now.getUTCMonth();
+  const d = now.getUTCDate();
+  const end = new Date(Date.UTC(y, m, d, 23, 59, 59, 999));
   let start: Date;
 
   switch (range) {
     case "3m":
-      start = new Date(now.getFullYear(), now.getMonth() - 2, 1);
+      start = new Date(Date.UTC(y, m - 2, 1, 0, 0, 0, 0));
       break;
     case "6m":
-      start = new Date(now.getFullYear(), now.getMonth() - 5, 1);
+      start = new Date(Date.UTC(y, m - 5, 1, 0, 0, 0, 0));
       break;
     case "1y":
-      start = new Date(now.getFullYear(), 0, 1);
+      start = new Date(Date.UTC(y, 0, 1, 0, 0, 0, 0));
       break;
     default:
-      start = new Date(now.getFullYear(), now.getMonth(), 1);
+      start = new Date(Date.UTC(y, m, 1, 0, 0, 0, 0));
   }
 
   return { start, end };
@@ -42,11 +38,18 @@ function computeOverview(
   start: Date,
 ) {
   const prevEnd = new Date(start.getTime() - 1);
+  const monthDelta =
+    range === "1m" ? 1 : range === "3m" ? 3 : range === "6m" ? 6 : 12;
   const prevStart = new Date(
-    prevEnd.getFullYear(),
-    prevEnd.getMonth() -
-      (range === "1m" ? 1 : range === "3m" ? 3 : range === "6m" ? 6 : 12),
-    1,
+    Date.UTC(
+      prevEnd.getUTCFullYear(),
+      prevEnd.getUTCMonth() - monthDelta,
+      1,
+      0,
+      0,
+      0,
+      0,
+    ),
   );
 
   return Promise.all([

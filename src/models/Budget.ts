@@ -1,5 +1,6 @@
 import mongoose, { Schema, Document, Model } from "mongoose";
 import { CATEGORIES, type Category } from "@/constants/expense";
+import { DEFAULT_CURRENCY } from "@/constants/currency";
 
 export interface IBudget {
   userId: mongoose.Types.ObjectId;
@@ -32,7 +33,7 @@ const budgetSchema = new Schema<IBudgetDocument>(
     },
     currency: {
       type: String,
-      default: "INR",
+      default: DEFAULT_CURRENCY,
       required: true,
     },
   },

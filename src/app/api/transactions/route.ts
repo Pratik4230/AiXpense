@@ -33,11 +33,21 @@ export async function GET(req: Request) {
   if (categories.length > 0) match.category = { $in: categories };
 
   const dateFilter: Record<string, Date> = {};
-  if (from) dateFilter.$gte = new Date(from);
+  if (from) {
+    const f = from.trim();
+    dateFilter.$gte = /^\d{4}-\d{2}-\d{2}$/.test(f)
+      ? new Date(`${f}T00:00:00.000Z`)
+      : new Date(from);
+  }
   if (to) {
-    const toDate = new Date(to);
-    toDate.setHours(23, 59, 59, 999);
-    dateFilter.$lte = toDate;
+    const t = to.trim();
+    if (/^\d{4}-\d{2}-\d{2}$/.test(t)) {
+      const [y, mo, d] = t.split("-").map(Number);
+      dateFilter.$lte = new Date(Date.UTC(y, mo - 1, d, 23, 59, 59, 999));
+    } else {
+      const toDate = new Date(to);
+      if (!Number.isNaN(toDate.getTime())) dateFilter.$lte = toDate;
+    }
   }
   if (Object.keys(dateFilter).length > 0) match.date = dateFilter;
 

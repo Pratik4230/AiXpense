@@ -5,21 +5,16 @@ import { Budget, Expense } from "@/models";
 import { CATEGORIES } from "@/constants/expense";
 import mongoose from "mongoose";
 import { logger } from "@/lib/logger";
+import { getUtcMonthRangeHalfOpen } from "@/lib/utcDates";
 
 interface CreateUpdateBudgetParams {
   userId: string;
-}
-
-function getMonthRange() {
-  const now = new Date();
-  return {
-    start: new Date(now.getFullYear(), now.getMonth(), 1),
-    end: new Date(now.getFullYear(), now.getMonth() + 1, 1),
-  };
+  currency: string;
 }
 
 export const createCreateUpdateBudgetTool = ({
   userId,
+  currency,
 }: CreateUpdateBudgetParams) =>
   tool({
     description:
@@ -31,7 +26,9 @@ export const createCreateUpdateBudgetTool = ({
       amount: z
         .number()
         .positive()
-        .describe("The monthly budget limit amount in INR"),
+        .describe(
+          `The monthly budget limit in the user's account currency (${currency})`,
+        ),
     }),
     execute: async ({ category, amount }) => {
       try {
@@ -46,11 +43,11 @@ export const createCreateUpdateBudgetTool = ({
 
         const budget = await Budget.findOneAndUpdate(
           { userId: userObjectId, category },
-          { amount },
+          { amount, currency },
           { upsert: true, returnDocument: "after" },
         );
 
-        const { start, end } = getMonthRange();
+        const { start, endExclusive: end } = getUtcMonthRangeHalfOpen();
         const [agg] = await Expense.aggregate([
           {
             $match: {

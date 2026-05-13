@@ -13,6 +13,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { authClient } from "@/lib/authClient";
 import { toast } from "sonner";
+import { useUtcCalendarDateFormat } from "@/hooks/useUtcCalendarDateFormat";
 
 interface Session {
   id: string;
@@ -52,18 +53,16 @@ function parseUserAgent(ua: string | null) {
   };
 }
 
-function formatDate(iso: string) {
-  return new Date(iso).toLocaleDateString("en-IN", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    timeZone: "Asia/Kolkata",
-  });
-}
-
 export function SessionsCard({ sessions: initialSessions }: SessionsCardProps) {
+  const { locale } = useUtcCalendarDateFormat();
+  const formatDate = (iso: string) =>
+    new Date(iso).toLocaleDateString(locale, {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
   const [sessions, setSessions] = useState(initialSessions);
   const [revokingId, setRevokingId] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -100,6 +99,7 @@ export function SessionsCard({ sessions: initialSessions }: SessionsCardProps) {
             onRevoke={handleRevoke}
             isRevoking={revokingId === currentSession.id}
             isPending={isPending}
+            formatDate={formatDate}
           />
         )}
 
@@ -113,6 +113,7 @@ export function SessionsCard({ sessions: initialSessions }: SessionsCardProps) {
                 onRevoke={handleRevoke}
                 isRevoking={revokingId === s.id}
                 isPending={isPending}
+                formatDate={formatDate}
               />
             ))}
           </>
@@ -133,11 +134,13 @@ function SessionRow({
   onRevoke,
   isRevoking,
   isPending,
+  formatDate,
 }: {
   session: Session;
   onRevoke: (id: string) => void;
   isRevoking: boolean;
   isPending: boolean;
+  formatDate: (iso: string) => string;
 }) {
   const { device, browser, os } = parseUserAgent(session.userAgent);
   const isMobile = device === "Mobile";
