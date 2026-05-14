@@ -29,7 +29,8 @@ interface Props {
 export function BudgetCard({ budget }: Props) {
   const [editOpen, setEditOpen] = useState(false);
   const deleteMutation = useDeleteBudget();
-  const { format } = useCurrency();
+  const { format, code: profileCurrency } = useCurrency();
+  const budgetCurrency = budget.currency ?? profileCurrency;
 
   const raw = (budget.spent / budget.amount) * 100;
   const percent = Math.min(raw, 100);
@@ -110,8 +111,8 @@ export function BudgetCard({ budget }: Props) {
           />
         </div>
         <div className="flex justify-between text-sm text-muted-foreground">
-          <span>{format(budget.spent)} spent</span>
-          <span>{format(budget.amount)} limit</span>
+          <span>{format(budget.spent, budgetCurrency)} spent</span>
+          <span>{format(budget.amount, budgetCurrency)} limit</span>
         </div>
       </div>
 

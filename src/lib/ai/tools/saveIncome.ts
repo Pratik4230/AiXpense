@@ -77,6 +77,7 @@ export const createSaveIncomeTool = ({
             id: income._id.toString(),
             source: income.item,
             amount: income.amount,
+            currency: income.currency,
             category: income.category,
             subcategory: income.subcategory,
             tags: income.tags,

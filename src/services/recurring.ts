@@ -11,6 +11,8 @@ export interface RecurringPayment {
   _id: string;
   name: string;
   amount: number;
+  /** ISO 4217 code stored on the rule */
+  currency?: string;
   category: Category;
   type: ExpenseType;
   frequency: Frequency;

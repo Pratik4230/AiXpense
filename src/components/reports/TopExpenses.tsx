@@ -16,7 +16,7 @@ interface Props {
 }
 
 export function TopExpenses({ data, isLoading, mode }: Props) {
-  const { format } = useCurrency();
+  const { format, code: profileCurrency } = useCurrency();
   const { formatTransactionDate } = useUtcCalendarDateFormat();
   return (
     <Card className="border-border/60">
@@ -69,7 +69,7 @@ export function TopExpenses({ data, isLoading, mode }: Props) {
                   </div>
                 </div>
                 <span className="text-sm font-semibold shrink-0 ml-2">
-                  {format(e.amount)}
+                  {format(e.amount, e.currency ?? profileCurrency)}
                 </span>
               </div>
             ))}

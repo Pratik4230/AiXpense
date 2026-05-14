@@ -47,6 +47,7 @@ export async function GET() {
     category: b.category,
     amount: b.amount,
     spent: spendMap.get(b.category) ?? 0,
+    currency: b.currency,
   }));
 
   return NextResponse.json(result);

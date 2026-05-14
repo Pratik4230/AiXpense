@@ -128,6 +128,7 @@ export const createUpdateTransactionTool = ({
             id: transactionId,
             item: updated?.item,
             amount: updated?.amount,
+            currency: updated?.currency,
             category: updated?.category,
             subcategory: updated?.subcategory,
             type: updated?.type,

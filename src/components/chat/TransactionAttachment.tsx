@@ -11,6 +11,7 @@ export interface SelectedTransaction {
   item: string;
   amount: number;
   category: string;
+  currency?: string;
   action: "delete" | "edit";
 }
 
@@ -62,7 +63,7 @@ export function TransactionAttachment({
         </div>
         <div className="flex items-center gap-2 text-sm text-muted-foreground">
           <span className="flex items-center">
-            {format(transaction.amount)}
+            {format(transaction.amount, transaction.currency)}
           </span>
           <span>-</span>
           <span className="capitalize">{transaction.category}</span>

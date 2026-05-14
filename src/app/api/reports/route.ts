@@ -167,7 +167,7 @@ function computeTopExpenses(baseMatch: object) {
   return Expense.find({ ...baseMatch })
     .sort({ amount: -1 })
     .limit(8)
-    .select("item amount category date")
+    .select("item amount category date currency")
     .lean();
 }
 

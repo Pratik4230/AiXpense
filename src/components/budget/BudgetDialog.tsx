@@ -41,7 +41,7 @@ export function BudgetDialog({
   disabledCategories = [],
 }: Props) {
   const isEdit = !!existing;
-  const { symbol } = useCurrency();
+  const { code: profileCurrencyCode } = useCurrency();
   const createMutation = useCreateBudget();
   const updateMutation = useUpdateBudget();
   const isPending = createMutation.isPending || updateMutation.isPending;
@@ -143,7 +143,10 @@ export function BudgetDialog({
           >
             {(field) => (
               <div className="space-y-1.5">
-                <Label htmlFor="budget-amount">Monthly limit ({symbol})</Label>
+                <Label htmlFor="budget-amount">
+                  Monthly limit (
+                  {isEdit && existing ? existing.currency : profileCurrencyCode})
+                </Label>
                 <Input
                   id="budget-amount"
                   type="number"

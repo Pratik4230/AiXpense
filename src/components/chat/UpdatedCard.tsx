@@ -11,6 +11,7 @@ interface UpdatedCardProps {
   type: "expense" | "income";
   item: string;
   amount: number;
+  currency?: string;
   category: string;
   subcategory?: string;
   notes?: string;
@@ -19,12 +20,14 @@ interface UpdatedCardProps {
     item: string;
     amount: number;
     category: string;
+    currency?: string;
   }) => void;
   onDelete?: (data: {
     id: string;
     item: string;
     amount: number;
     category: string;
+    currency?: string;
   }) => void;
 }
 
@@ -33,6 +36,7 @@ export function UpdatedCard({
   type,
   item,
   amount,
+  currency,
   category,
   subcategory,
   notes,
@@ -48,13 +52,13 @@ export function UpdatedCard({
 
   const handleEdit = () => {
     if (id && onEdit) {
-      onEdit({ id, item, amount, category });
+      onEdit({ id, item, amount, category, currency });
     }
   };
 
   const handleDelete = () => {
     if (id && onDelete) {
-      onDelete({ id, item, amount, category });
+      onDelete({ id, item, amount, category, currency });
     }
   };
 
@@ -104,7 +108,7 @@ export function UpdatedCard({
             <span className="text-muted-foreground">Amount</span>
             <span className="font-medium flex items-center">
               {!isExpense && "+"}
-              {format(amount)}
+              {format(amount, currency)}
             </span>
           </div>
           <div className="flex justify-between items-center">

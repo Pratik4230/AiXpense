@@ -256,7 +256,12 @@ export function ChatView({
     }
 
     if (selectedTransaction) {
-      const prefix = `[ATTACHED_TRANSACTION: id=${selectedTransaction.id}, type=${selectedTransaction.type}, item=${selectedTransaction.item}, amount=${selectedTransaction.amount}, action=${selectedTransaction.action}]`;
+      const cur =
+        selectedTransaction.currency != null &&
+        selectedTransaction.currency !== ""
+          ? `, currency=${selectedTransaction.currency}`
+          : "";
+      const prefix = `[ATTACHED_TRANSACTION: id=${selectedTransaction.id}, type=${selectedTransaction.type}, item=${selectedTransaction.item}, amount=${selectedTransaction.amount}, action=${selectedTransaction.action}${cur}]`;
       const messageText =
         selectedTransaction.action === "delete"
           ? prefix
@@ -289,7 +294,13 @@ export function ChatView({
 
   const handleTransactionAction = useCallback(
     (
-      data: { id: string; item: string; amount: number; category: string },
+      data: {
+        id: string;
+        item: string;
+        amount: number;
+        category: string;
+        currency?: string;
+      },
       type: "expense" | "income",
       action: "edit" | "delete",
     ) => {
@@ -299,26 +310,46 @@ export function ChatView({
   );
 
   const handleTransactionEdit = useCallback(
-    (data: { id: string; item: string; amount: number; category: string }) =>
-      handleTransactionAction(data, "expense", "edit"),
+    (data: {
+      id: string;
+      item: string;
+      amount: number;
+      category: string;
+      currency?: string;
+    }) => handleTransactionAction(data, "expense", "edit"),
     [handleTransactionAction],
   );
 
   const handleTransactionDelete = useCallback(
-    (data: { id: string; item: string; amount: number; category: string }) =>
-      handleTransactionAction(data, "expense", "delete"),
+    (data: {
+      id: string;
+      item: string;
+      amount: number;
+      category: string;
+      currency?: string;
+    }) => handleTransactionAction(data, "expense", "delete"),
     [handleTransactionAction],
   );
 
   const handleIncomeEdit = useCallback(
-    (data: { id: string; item: string; amount: number; category: string }) =>
-      handleTransactionAction(data, "income", "edit"),
+    (data: {
+      id: string;
+      item: string;
+      amount: number;
+      category: string;
+      currency?: string;
+    }) => handleTransactionAction(data, "income", "edit"),
     [handleTransactionAction],
   );
 
   const handleIncomeDelete = useCallback(
-    (data: { id: string; item: string; amount: number; category: string }) =>
-      handleTransactionAction(data, "income", "delete"),
+    (data: {
+      id: string;
+      item: string;
+      amount: number;
+      category: string;
+      currency?: string;
+    }) => handleTransactionAction(data, "income", "delete"),
     [handleTransactionAction],
   );
 
@@ -426,6 +457,7 @@ export function ChatView({
                               id: string;
                               item: string;
                               amount: number;
+                              currency?: string;
                               category: string;
                               subcategory?: string;
                               tags?: string[];
@@ -466,6 +498,7 @@ export function ChatView({
                               id: string;
                               source: string;
                               amount: number;
+                              currency?: string;
                               category: string;
                               subcategory?: string;
                               tags?: string[];
@@ -537,6 +570,7 @@ export function ChatView({
                             item: string;
                             amount: number;
                             type: string;
+                            currency?: string;
                           };
                         };
                         if (output.success && output.deleted) {
@@ -551,6 +585,7 @@ export function ChatView({
                               type={output.deleted.type as "expense" | "income"}
                               item={output.deleted.item}
                               amount={output.deleted.amount}
+                              currency={output.deleted.currency}
                             />
                           );
                         }
@@ -578,6 +613,7 @@ export function ChatView({
                             id: string;
                             item: string;
                             amount: number;
+                            currency?: string;
                             category: string;
                             subcategory?: string;
                             type: string;
@@ -608,6 +644,7 @@ export function ChatView({
                               type={txType}
                               item={output.transaction.item}
                               amount={output.transaction.amount}
+                              currency={output.transaction.currency}
                               category={output.transaction.category}
                               subcategory={output.transaction.subcategory}
                               notes={output.transaction.notes}

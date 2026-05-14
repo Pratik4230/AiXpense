@@ -10,6 +10,7 @@ interface IncomeCardProps {
   id?: string;
   source: string;
   amount: number;
+  currency?: string;
   category: string;
   subcategory?: string;
   tags?: string[];
@@ -20,12 +21,14 @@ interface IncomeCardProps {
     item: string;
     amount: number;
     category: string;
+    currency?: string;
   }) => void;
   onDelete?: (data: {
     id: string;
     item: string;
     amount: number;
     category: string;
+    currency?: string;
   }) => void;
 }
 
@@ -33,6 +36,7 @@ export function IncomeCard({
   id,
   source,
   amount,
+  currency,
   category,
   subcategory,
   tags,
@@ -48,13 +52,13 @@ export function IncomeCard({
 
   const handleEdit = () => {
     if (id && onEdit) {
-      onEdit({ id, item: source, amount, category });
+      onEdit({ id, item: source, amount, category, currency });
     }
   };
 
   const handleDelete = () => {
     if (id && onDelete) {
-      onDelete({ id, item: source, amount, category });
+      onDelete({ id, item: source, amount, category, currency });
     }
   };
 
@@ -111,7 +115,7 @@ export function IncomeCard({
           <div className="flex justify-between items-center">
             <span className="text-muted-foreground">Amount</span>
             <span className="font-medium text-green-500">
-              +{format(amount)}
+              +{format(amount, currency)}
             </span>
           </div>
           <div className="flex justify-between items-center">

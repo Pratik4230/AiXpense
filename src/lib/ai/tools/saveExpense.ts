@@ -106,6 +106,7 @@ export const createSaveExpenseTool = ({
             id: expense._id.toString(),
             item: expense.item,
             amount: expense.amount,
+            currency: expense.currency,
             category: expense.category,
             subcategory: expense.subcategory,
             tags: expense.tags,

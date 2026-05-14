@@ -49,7 +49,13 @@ export const createDeleteTransactionTool = ({
 
         return {
           success: true,
-          deleted: { id: transactionId, item, amount, type },
+          deleted: {
+            id: transactionId,
+            item: transaction.item,
+            amount: transaction.amount,
+            type: transaction.type,
+            currency: transaction.currency,
+          },
         };
       } catch (e) {
         logger.error("tool_delete_fail", {

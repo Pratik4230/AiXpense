@@ -8,9 +8,10 @@ interface DeletedCardProps {
   type: "expense" | "income";
   item: string;
   amount: number;
+  currency?: string;
 }
 
-export function DeletedCard({ type, item, amount }: DeletedCardProps) {
+export function DeletedCard({ type, item, amount, currency }: DeletedCardProps) {
   const isExpense = type === "expense";
   const { format } = useCurrency();
 
@@ -35,7 +36,7 @@ export function DeletedCard({ type, item, amount }: DeletedCardProps) {
           <div className="flex justify-between items-center">
             <span className="text-muted-foreground">Amount</span>
             <span className="font-medium line-through text-muted-foreground">
-              {format(amount)}
+              {format(amount, currency)}
             </span>
           </div>
         </div>

@@ -55,7 +55,8 @@ export function RecurringCard({ rule, onEdit, onToggle, onDelete }: Props) {
 
             <div className="mt-2 flex items-center gap-4 text-sm text-muted-foreground flex-wrap">
               <span className="font-medium text-foreground text-base">
-                {rule.type === "expense" ? "-" : "+"}{format(rule.amount)}
+                {rule.type === "expense" ? "-" : "+"}
+                {format(rule.amount, rule.currency)}
               </span>
 
               <span className="flex items-center gap-1">

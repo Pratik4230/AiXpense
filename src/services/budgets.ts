@@ -7,6 +7,7 @@ export interface BudgetSummary {
   category: Category;
   amount: number;
   spent: number;
+  currency: string;
 }
 
 const BUDGETS_KEY = ["budgets"] as const;

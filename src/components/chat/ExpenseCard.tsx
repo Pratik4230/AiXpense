@@ -10,6 +10,8 @@ interface ExpenseCardProps {
   id?: string;
   item: string;
   amount: number;
+  /** ISO 4217 code stored on this transaction */
+  currency?: string;
   category: string;
   subcategory?: string;
   tags?: string[];
@@ -20,12 +22,14 @@ interface ExpenseCardProps {
     item: string;
     amount: number;
     category: string;
+    currency?: string;
   }) => void;
   onDelete?: (data: {
     id: string;
     item: string;
     amount: number;
     category: string;
+    currency?: string;
   }) => void;
 }
 
@@ -33,6 +37,7 @@ export function ExpenseCard({
   id,
   item,
   amount,
+  currency,
   category,
   subcategory,
   tags,
@@ -48,13 +53,13 @@ export function ExpenseCard({
 
   const handleEdit = () => {
     if (id && onEdit) {
-      onEdit({ id, item, amount, category });
+      onEdit({ id, item, amount, category, currency });
     }
   };
 
   const handleDelete = () => {
     if (id && onDelete) {
-      onDelete({ id, item, amount, category });
+      onDelete({ id, item, amount, category, currency });
     }
   };
 
@@ -111,7 +116,7 @@ export function ExpenseCard({
           <div className="flex justify-between items-center">
             <span className="text-muted-foreground">Amount</span>
             <span className="font-medium text-foreground">
-              {format(amount)}
+              {format(amount, currency)}
             </span>
           </div>
           <div className="flex justify-between items-center">
