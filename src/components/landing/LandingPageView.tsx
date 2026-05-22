@@ -92,13 +92,15 @@ export function LandingPageView() {
 
           <p className="text-base sm:text-xl text-muted-foreground mb-8 sm:mb-10 max-w-2xl mx-auto leading-relaxed">
             Just say{" "}
-            <span className="text-foreground font-medium">&quot;Zomato 450&quot;</span>{" "}
+            <span className="text-foreground font-medium">
+              &quot;Zomato 450&quot;
+            </span>{" "}
             or{" "}
             <span className="text-foreground font-medium">
-              &quot;petrol 800 aaj&quot; 
+              &quot;petrol 800 aaj&quot;
             </span>
-            -  AiXpense logs the amount, category, and date automatically. Works in
-            Hindi, Marathi, Hinglish, and 22+ Indian languages. No forms. No
+            - AiXpense logs the amount, category, and date automatically. Works
+            in Hindi, Marathi, Hinglish, and 22+ Indian languages. No forms. No
             spreadsheet. Ever.
           </p>
 
@@ -107,7 +109,7 @@ export function LandingPageView() {
               size="lg"
               className="h-12 px-8 rounded-full text-base sm:text-lg w-full sm:w-auto"
             >
-              Start free  no card needed
+              Start free no card needed
               <ArrowRight className="ml-2 size-5" />
             </SmartLink>
             <Button
@@ -136,7 +138,8 @@ export function LandingPageView() {
               How it works
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base px-2">
-              Three steps from &quot;I should track this&quot; to a clean ledger.
+              Three steps from &quot;I should track this&quot; to a clean
+              ledger.
             </p>
           </div>
 
@@ -187,8 +190,8 @@ export function LandingPageView() {
               </h3>
               <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
                 Search and filter anytime, set budgets with alerts, and on
-                Premium get coaching and report cards so patterns are obvious not
-                buried in a sheet.
+                Premium get coaching and report cards so patterns are obvious
+                not buried in a sheet.
               </p>
             </div>
           </div>
@@ -261,7 +264,7 @@ export function LandingPageView() {
             <FeatureCard
               icon={<Shield className="size-6 text-green-500" />}
               title="Your data stays yours"
-              description="We don&apos;t sell your financial data. Delete your account and data whenever you want."
+              description="We don't sell your financial data. Delete your account and data whenever you want."
               color="bg-green-500/10"
             />
           </div>
@@ -283,12 +286,15 @@ export function LandingPageView() {
               Ready to go unlimited?
             </h2>
             <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
-              The free tier gets you started. Premium gets you there faster 
+              The free tier gets you started. Premium gets you there faster
               unlimited AI conversations, receipt scanning, recurring
               automation, shareable report cards, and priority support.
             </p>
             <div className="pt-2 flex flex-col sm:flex-row gap-3 justify-center">
-              <Button className="rounded-full shadow-lg shadow-primary/20" asChild>
+              <Button
+                className="rounded-full shadow-lg shadow-primary/20"
+                asChild
+              >
                 <Link href="/premium">View Premium &amp; pricing</Link>
               </Button>
               <SmartLink variant="outline" className="rounded-full">
@@ -334,12 +340,17 @@ export function LandingPageView() {
                 {CURRENCIES.map((c) => (
                   <li key={c.code} className="min-w-0">
                     <span className="flex min-w-0 w-full items-start gap-2 rounded-lg border border-border/50 bg-background/80 px-2 py-2 text-xs sm:text-sm">
-                      <span className="text-base shrink-0 leading-none pt-0.5" aria-hidden>
+                      <span
+                        className="text-base shrink-0 leading-none pt-0.5"
+                        aria-hidden
+                      >
                         {c.flag}
                       </span>
                       <span className="min-w-0 flex-1 flex flex-col items-start gap-0.5 leading-tight text-left">
-                        <span className="font-semibold tabular-nums">{c.code}</span>
-                        <span className="text-[0.65rem] sm:text-xs text-muted-foreground break-words [overflow-wrap:anywhere]">
+                        <span className="font-semibold tabular-nums">
+                          {c.code}
+                        </span>
+                        <span className="text-[0.65rem] sm:text-xs text-muted-foreground wrap-anywhere">
                           {c.symbol} · {c.name}
                         </span>
                       </span>
@@ -424,7 +435,7 @@ export function LandingPageView() {
                 className="w-full rounded-full shadow-lg shadow-primary/20"
                 asChild
               >
-                <Link href="/premium">Buy Premium  monthly</Link>
+                <Link href="/premium">Buy Premium monthly</Link>
               </Button>
             </div>
 
@@ -459,26 +470,8 @@ export function LandingPageView() {
                 className="w-full rounded-full bg-amber-500 hover:bg-amber-500/90 text-white border-0 shadow-lg shadow-amber-500/20"
                 asChild
               >
-                <Link href="/premium">Buy Premium  yearly</Link>
+                <Link href="/premium">Buy Premium yearly</Link>
               </Button>
-            </div>
-          </div>
-
-          <div className="mt-10 max-w-3xl mx-auto rounded-2xl border border-orange-500/25 bg-orange-500/5 dark:bg-orange-950/20 px-4 py-5 sm:px-6 sm:py-6">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 text-left">
-              <p className="text-sm sm:text-base text-muted-foreground leading-relaxed">
-                <span className="font-medium text-foreground">On Android?</span>{" "}
-                In the closed beta app, hit a{" "}
-                <strong className="text-foreground">20-day IST streak</strong>{" "}
-                (≥3 AI chats each calendar day) for{" "}
-                <strong className="text-foreground">3 months Premium free</strong>
-                once per account. Streaks count only on Android.
-              </p>
-              <AndroidBetaDialog
-                triggerLabel="Join Android beta"
-                triggerVariant="outline"
-                triggerClassName="rounded-full shrink-0 border-orange-500/40 bg-background hover:bg-muted gap-2.5"
-              />
             </div>
           </div>
 
@@ -533,7 +526,12 @@ export function LandingPageView() {
               >
                 Open the app
               </SmartLink>
-              <Button variant="outline" size="lg" className="rounded-full h-12" asChild>
+              <Button
+                variant="outline"
+                size="lg"
+                className="rounded-full h-12"
+                asChild
+              >
                 <Link href="/premium">Compare Premium</Link>
               </Button>
             </div>

@@ -12,12 +12,11 @@ export default async function AiXpensePage() {
 
   const dbUser = await db.collection("user").findOne(
     { _id: new ObjectId(session.user.id) },
-    { projection: { isPremium: 1, bonusPremiumUntil: 1 } },
+    { projection: { isPremium: 1 } },
   );
 
   const isPremium = effectivePremium({
     isPremium: dbUser?.isPremium as boolean | undefined,
-    bonusPremiumUntil: dbUser?.bonusPremiumUntil as Date | undefined,
   });
 
   return <AiXpenseClient initialIsPremium={isPremium} />;

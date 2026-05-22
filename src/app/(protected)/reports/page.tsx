@@ -11,11 +11,10 @@ export default async function ReportsPage() {
   if (session?.user?.id) {
     const dbUser = await db.collection("user").findOne(
       { _id: new ObjectId(session.user.id) },
-      { projection: { isPremium: 1, bonusPremiumUntil: 1 } },
+      { projection: { isPremium: 1 } },
     );
     isPremium = effectivePremium({
       isPremium: dbUser?.isPremium as boolean | undefined,
-      bonusPremiumUntil: dbUser?.bonusPremiumUntil as Date | undefined,
     });
   }
 

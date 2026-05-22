@@ -24,7 +24,6 @@ export async function GET() {
           freeTrials: 1,
           freeTrialResetAt: 1,
           isPremium: 1,
-          bonusPremiumUntil: 1,
         },
       },
     );
@@ -35,7 +34,6 @@ export async function GET() {
 
   const premium = effectivePremium({
     isPremium: user.isPremium as boolean | undefined,
-    bonusPremiumUntil: user.bonusPremiumUntil as Date | undefined,
   });
 
   if (premium) {

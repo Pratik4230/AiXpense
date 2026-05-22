@@ -112,17 +112,9 @@ export function AndroidBetaDialog({
           </DialogTitle>
           <DialogDescription>
             AiXpense Android is in closed beta on Google Play. Share your email
-            and we will invite you. On the app, complete a{" "}
-            <strong>20-day streak</strong> (log in each IST day and send at
-            least <strong>3 chats</strong>) to unlock{" "}
-            <strong>3 months of premium free</strong>, only in the mobile app.
+            and we will invite you to try the native app experience.
           </DialogDescription>
         </DialogHeader>
-
-        <div className="rounded-lg border border-border bg-muted/40 px-3 py-2 text-sm">
-          Prefer the web app today? You can keep tracking here; install Android
-          when you are ready for the streak reward and native experience.
-        </div>
 
         {isSubmitted ? (
           <div className="rounded-lg border border-green-500/30 bg-green-500/10 p-3 text-sm text-green-700 dark:text-green-300">

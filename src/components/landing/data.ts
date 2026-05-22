@@ -35,8 +35,4 @@ export const LANDING_FAQS = [
     q: "Which currencies does AiXpense support?",
     a: "AiXpense supports dozens of account currencies (INR, USD, EUR, GBP, AED, SGD, and many more). Your ledger, budgets, and reports use the currency you choose. After sign-up, open Profile (Settings) to switch your account currency.",
   },
-  {
-    q: "How does the Android streak reward work?",
-    a: "In the Android closed beta app only: each India Standard Time (IST) calendar day, send at least 3 AI chats to qualify that day. Complete 20 qualified days in a row to unlock 3 months of Premium free. This reward is limited to once per account. Join the beta from the landing page to get a Play Store invite by email.",
-  },
 ] as const;

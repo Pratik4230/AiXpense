@@ -52,7 +52,7 @@ const softwareJsonLd = {
   alternateName: ["AiXpense", "AI Xpense", "AI Expense Tracker"],
   url: SITE_URL,
   description:
-    "AiXpense: stop losing track of spending—log with plain lines like Zomato 450 or petrol 800 aaj in Hindi, Marathi, Hinglish, English & 22+ Indian languages. No forms or spreadsheets. Free tier with 7 AI messages/day; Premium adds unlimited AI, receipt scan, recurring rules, reports. Android closed beta: 20 IST-day streak (3 chats/day) unlocks 3 months Premium once.",
+    "AiXpense: stop losing track of spending—log with plain lines like Zomato 450 or petrol 800 aaj in Hindi, Marathi, Hinglish, English & 22+ Indian languages. No forms or spreadsheets. Free tier with 7 AI messages/day; Premium adds unlimited AI, receipt scan, recurring rules, reports.",
   applicationCategory: "FinanceApplication",
   applicationSubCategory: "Expense Tracker",
   operatingSystem: "Web",
@@ -67,7 +67,6 @@ const softwareJsonLd = {
     "Spending analytics, charts, and shareable report cards (Premium)",
     "Recurring payment rules in the app (Premium)",
     "Unlimited AI conversations (Premium)",
-    "Android app: 20-day IST streak with 3 chats per day earns 3 months Premium (once per account, closed beta)",
   ],
   screenshot: `${SITE_URL}/og-image.png`,
   offers: [

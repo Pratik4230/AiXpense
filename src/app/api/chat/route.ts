@@ -22,7 +22,6 @@ import { logger } from "@/lib/logger";
 import { getISTMidnight } from "@/lib/ist";
 import { getCurrency } from "@/constants/currency";
 import { effectivePremium } from "@/lib/premium";
-import { applyMobileChatStreak, isMobileStreakClient } from "@/lib/streakMobile";
 import { resolveUserCurrencyCode } from "@/lib/userCurrency";
 import { formatUtcCalendarDateLong } from "@/lib/utcDates";
 
@@ -52,7 +51,6 @@ export async function POST(req: Request) {
         _id: new mongoose.Types.ObjectId(userId),
         $or: [
           { isPremium: true },
-          { bonusPremiumUntil: { $gt: now } },
           { freeTrials: { $gt: 0 } },
           { freeTrialResetAt: { $lt: todayISTMidnight } },
         ],
@@ -65,12 +63,6 @@ export async function POST(req: Request) {
                 if: {
                   $and: [
                     { $ne: ["$isPremium", true] },
-                    {
-                      $or: [
-                        { $eq: ["$bonusPremiumUntil", null] },
-                        { $lte: ["$bonusPremiumUntil", now] },
-                      ],
-                    },
                     { $lt: ["$freeTrialResetAt", todayISTMidnight] },
                   ],
                 },
@@ -80,17 +72,7 @@ export async function POST(req: Request) {
             },
             freeTrials: {
               $cond: {
-                if: {
-                  $or: [
-                    { $eq: ["$isPremium", true] },
-                    {
-                      $and: [
-                        { $ne: ["$bonusPremiumUntil", null] },
-                        { $gt: ["$bonusPremiumUntil", now] },
-                      ],
-                    },
-                  ],
-                },
+                if: { $eq: ["$isPremium", true] },
                 then: "$freeTrials",
                 else: {
                   $subtract: [
@@ -124,10 +106,6 @@ export async function POST(req: Request) {
 
   const { messages }: { messages: UIMessage[] } = await req.json();
 
-  if (isMobileStreakClient(req)) {
-    await applyMobileChatStreak(userId);
-  }
-
   const lastUserMessage = messages.filter((m) => m.role === "user").pop()
     ?.parts?.[0];
   const rawInput =
@@ -151,7 +129,6 @@ export async function POST(req: Request) {
           if (
             !effectivePremium({
               isPremium: dbUser.isPremium as boolean | undefined,
-              bonusPremiumUntil: dbUser.bonusPremiumUntil as Date | undefined,
             })
           ) {
             logger.warn("ocr_premium_required", { userId });
@@ -187,7 +164,6 @@ export async function POST(req: Request) {
     scanBill: createScanBillTool({
       isPremium: effectivePremium({
         isPremium: dbUser.isPremium as boolean | undefined,
-        bonusPremiumUntil: dbUser.bonusPremiumUntil as Date | undefined,
       }),
       currencyCode: userCurrency.code,
       currencySymbol: userCurrency.symbol,

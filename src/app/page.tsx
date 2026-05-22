@@ -9,7 +9,7 @@ export const dynamic = "force-static";
 export const metadata: Metadata = {
   title:
     "AiXpense — AI expense tracker India | Voice, text & bill scan",
-  description: `Stop losing track of where your money went: log with lines like "Zomato 450" in Hindi, Marathi, Hinglish & 22+ languages—no forms. Free: 7 AI chats/day. Premium: unlimited AI, receipt scan, recurring rules. ${CURRENCIES.length}+ currencies. Android beta streak: 3 months Premium once.`,
+  description: `Stop losing track of where your money went: log with lines like "Zomato 450" in Hindi, Marathi, Hinglish & 22+ languages—no forms. Free: 7 AI chats/day. Premium: unlimited AI, receipt scan, recurring rules. ${CURRENCIES.length}+ currencies.`,
   alternates: { canonical: SITE_URL },
   openGraph: {
     type: "website",
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
     url: SITE_URL,
     siteName: "AiXpense",
     title: "AiXpense — AI expense tracker for India",
-    description: `Plain-language expense logging—voice & text, budgets, ${CURRENCIES.length}+ currencies. Free tier + Premium. Android streak reward.`,
+    description: `Plain-language expense logging—voice & text, budgets, ${CURRENCIES.length}+ currencies. Free tier + Premium.`,
     images: [
       {
         url: "/og-image.png",

@@ -34,7 +34,6 @@ export default async function ProfilePage() {
           freeTrials: 1,
           freeTrialResetAt: 1,
           isPremium: 1,
-          bonusPremiumUntil: 1,
           currency: 1,
         },
       },
@@ -44,7 +43,6 @@ export default async function ProfilePage() {
 
   const isPremiumLive = effectivePremium({
     isPremium: (dbUser?.isPremium ?? user.isPremium) as boolean | undefined,
-    bonusPremiumUntil: dbUser?.bonusPremiumUntil as Date | undefined,
   });
   const lastReset = dbUser?.freeTrialResetAt ? new Date(dbUser.freeTrialResetAt) : new Date(0);
   const freeTrialsLive = isPremiumLive

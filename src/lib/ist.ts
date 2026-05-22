@@ -1,6 +1,6 @@
 const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
 
-/** IST calendar date as YYYY-MM-DD for streak / daily counters. */
+/** IST calendar date as YYYY-MM-DD for daily counters. */
 export function getISTDateKey(d = new Date()): string {
   const istNow = new Date(d.getTime() + IST_OFFSET_MS);
   const y = istNow.getUTCFullYear();
