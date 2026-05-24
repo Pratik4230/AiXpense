@@ -25,6 +25,7 @@ import {
   DeletedCard,
   ChatEmptyState,
   ChatInput,
+  ChatReceiptLightbox,
   ToolLoading,
   type SelectedTransaction,
 } from "@/components/chat";
@@ -74,6 +75,9 @@ export function ChatView({
   const [input, setInput] = useState("");
   const [selectedTransaction, setSelectedTransaction] =
     useState<SelectedTransaction | null>(null);
+  const [receiptPreviewUrl, setReceiptPreviewUrl] = useState<string | null>(
+    null,
+  );
   const [outdatedIds, setOutdatedIds] = useState<Set<string>>(new Set());
 
   const { optimisticDecrement, invalidateTrials } = useTrialActions();
@@ -355,6 +359,10 @@ export function ChatView({
 
   return (
     <>
+      <ChatReceiptLightbox
+        src={receiptPreviewUrl}
+        onClose={() => setReceiptPreviewUrl(null)}
+      />
       <Conversation className="flex-1">
         <ConversationContent className="px-4 sm:px-6 max-w-3xl mx-auto w-full pt-14">
           {chatMessages.length === 0 ? (
@@ -432,9 +440,15 @@ export function ChatView({
                       (part as any).mediaType?.startsWith("image/")
                     ) {
                       return (
-                        <div
+                        <button
                           key={`${message.id}-${index}`}
-                          className="mt-2 overflow-hidden rounded-xl border max-w-sm"
+                          type="button"
+                          onClick={() =>
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                            setReceiptPreviewUrl((part as any).url)
+                          }
+                          className="mt-2 block max-w-sm overflow-hidden rounded-xl border text-left cursor-zoom-in focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                          aria-label="View receipt full screen"
                         >
                           <Image
                             // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -445,7 +459,7 @@ export function ChatView({
                             priority
                             className="w-full h-auto object-cover"
                           />
-                        </div>
+                        </button>
                       );
                     }
 
