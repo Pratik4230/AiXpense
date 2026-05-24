@@ -16,7 +16,7 @@ import {
 } from "lucide-react";
 
 import { SmartLink, SmartTextLink } from "@/components/auth/SmartLink";
-import { AndroidBetaDialog } from "@/components/landing/AndroidBetaDialog";
+import { PlayStoreLink } from "@/components/landing/PlayStoreLink";
 import { LandingChatDemo } from "@/components/landing/LandingChatDemo";
 import { LandingFaq } from "@/components/landing/LandingFaq";
 import { LandingJsonLd } from "@/components/landing/LandingJsonLd";
@@ -61,10 +61,9 @@ export function LandingPageView() {
           </span>
         </Link>
         <div className="flex items-center gap-4">
-          <AndroidBetaDialog
-            triggerLabel="Android Closed Beta"
-            triggerVariant="outline"
-            triggerClassName="rounded-full hidden sm:inline-flex border-border/80 bg-background hover:bg-muted gap-2.5 px-4"
+          <PlayStoreLink
+            label="Android app"
+            className="hidden sm:inline-flex border-border/80 bg-background hover:bg-muted px-4"
           />
           <SmartTextLink className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors hidden sm:block">
             Login
@@ -75,13 +74,21 @@ export function LandingPageView() {
 
       <main className="container mx-auto px-4 relative z-10">
         <section className="py-14 sm:py-20 lg:py-28 text-center max-w-5xl mx-auto flex flex-col items-center">
-          <Badge
-            variant="outline"
-            className="mb-6 px-4 py-1.5 rounded-full border-primary/20 bg-primary/5 text-primary cursor-default"
-          >
-            <Zap className="size-3.5 mr-2 fill-primary" />
-            <span>AI assistant for expenses &amp; income</span>
-          </Badge>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 mb-6">
+            <Badge
+              variant="outline"
+              className="px-4 py-1.5 rounded-full border-primary/20 bg-primary/5 text-primary cursor-default"
+            >
+              <Zap className="size-3.5 mr-2 fill-primary" />
+              <span>AI assistant for expenses &amp; income</span>
+            </Badge>
+            <Badge
+              variant="outline"
+              className="px-4 py-1.5 rounded-full border-green-500/30 bg-green-500/10 text-green-700 dark:text-green-300 cursor-default"
+            >
+              <span>Now on Google Play for Android</span>
+            </Badge>
+          </div>
 
           <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight mb-6 sm:mb-8 leading-[1.15]">
             Stop losing track <br className="hidden sm:block" />
@@ -112,10 +119,15 @@ export function LandingPageView() {
               Start free no card needed
               <ArrowRight className="ml-2 size-5" />
             </SmartLink>
+            <PlayStoreLink
+              size="lg"
+              label="Get on Google Play"
+              className="h-12 px-8 text-base sm:text-lg border-border/80 bg-background hover:bg-muted w-full sm:w-auto"
+            />
             <Button
               variant="outline"
               size="lg"
-              className="h-12 px-8 rounded-full text-base sm:text-lg border-border/80 bg-background hover:bg-muted w-full sm:w-auto"
+              className="h-12 px-8 rounded-full text-base sm:text-lg border-border/80 bg-background hover:bg-muted w-full sm:w-auto hidden md:inline-flex"
               asChild
             >
               <a href="#chat-demo">
@@ -125,8 +137,11 @@ export function LandingPageView() {
             </Button>
           </div>
 
-          <p className="text-sm text-muted-foreground text-center max-w-md mt-5 leading-relaxed">
+          <p className="text-sm text-muted-foreground text-center max-w-lg mt-5 leading-relaxed">
             Log spending the way you already text one plain sentence at a time.
+            Use the web app or install{" "}
+            <span className="text-foreground font-medium">AiXpense for Android</span>{" "}
+            from Google Play.
           </p>
         </section>
 
@@ -524,8 +539,13 @@ export function LandingPageView() {
                 size="lg"
                 className="h-12 px-8 sm:px-10 rounded-full text-base sm:text-lg shadow-lg hover:shadow-xl transition-all"
               >
-                Open the app
+                Open the web app
               </SmartLink>
+              <PlayStoreLink
+                size="lg"
+                label="Download for Android"
+                className="h-12 px-8 sm:px-10 text-base sm:text-lg"
+              />
               <Button
                 variant="outline"
                 size="lg"

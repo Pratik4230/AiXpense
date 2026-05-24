@@ -17,7 +17,7 @@ export const LANDING_FAQS = [
   },
   {
     q: "Can I use it on my phone?",
-    a: "Yes. AiXpense is a web app that works on any device. Open it in your mobile browser and it feels like a native app. No download required.",
+    a: "Yes. Install AiXpense for Android from Google Play for voice input, bill scanning, and a native mobile experience—or use the web app in any mobile browser with the same account.",
   },
   {
     q: "What is the difference between the free and premium plans?",

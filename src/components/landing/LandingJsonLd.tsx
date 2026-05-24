@@ -2,6 +2,7 @@ import { CURRENCIES } from "@/constants/currency";
 import { SITE_URL } from "@/lib/site";
 
 import { LANDING_FAQS } from "./data";
+import { PLAY_STORE_URL } from "@/constants/play-store";
 
 const personJsonLd = {
   "@context": "https://schema.org",
@@ -55,7 +56,9 @@ const softwareJsonLd = {
     "AiXpense: stop losing track of spending—log with plain lines like Zomato 450 or petrol 800 aaj in Hindi, Marathi, Hinglish, English & 22+ Indian languages. No forms or spreadsheets. Free tier with 7 AI messages/day; Premium adds unlimited AI, receipt scan, recurring rules, reports.",
   applicationCategory: "FinanceApplication",
   applicationSubCategory: "Expense Tracker",
-  operatingSystem: "Web",
+  operatingSystem: ["Web", "Android"],
+  downloadUrl: PLAY_STORE_URL,
+  installUrl: PLAY_STORE_URL,
   inLanguage: ["en", "hi", "mr", "ta", "te", "bn", "gu", "kn", "ml", "pa"],
   featureList: [
     "Voice and text expense tracking in 22+ Indian languages",
