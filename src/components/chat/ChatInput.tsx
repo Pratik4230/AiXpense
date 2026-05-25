@@ -11,7 +11,13 @@ import {
   ScanLine,
   Lock,
 } from "lucide-react";
-import { useRef, useEffect, useState } from "react";
+import {
+  useRef,
+  useEffect,
+  useState,
+  forwardRef,
+  useImperativeHandle,
+} from "react";
 import Link from "next/link";
 import {
   TransactionAttachment,
@@ -25,6 +31,10 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+
+export type ChatInputHandle = {
+  openFilePicker: () => void;
+};
 
 interface ChatInputProps {
   value: string;
@@ -43,17 +53,25 @@ const isMobile = () =>
   typeof window !== "undefined" &&
   window.matchMedia("(pointer: coarse)").matches;
 
-export function ChatInput({
-  value,
-  onChange,
-  onSubmit,
-  isLoading,
-  isPremium,
-  selectedTransaction,
-  onClearTransaction,
-}: ChatInputProps) {
+export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(
+  function ChatInput(
+    {
+      value,
+      onChange,
+      onSubmit,
+      isLoading,
+      isPremium,
+      selectedTransaction,
+      onClearTransaction,
+    },
+    ref,
+  ) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useImperativeHandle(ref, () => ({
+    openFilePicker: () => fileInputRef.current?.click(),
+  }));
 
   const { status, transcript, startRecording, stopRecording, resetTranscript } =
     useSarvamSTT();
@@ -315,4 +333,5 @@ export function ChatInput({
       </div>
     </div>
   );
-}
+},
+);

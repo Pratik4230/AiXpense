@@ -102,9 +102,13 @@ function buildTrustedOrigins(): string[] {
     "http://localhost:8081",
     "exp://localhost:8081",
     "aixpensemobile://",
-    // Expo scheme used by the mobile client (`scheme: "aixpense"`).
+    // Expo deep-link schemes (must match `app.config.js` per APP_VARIANT).
     "aixpense://",
     "aixpense://*",
+    "aixpense-dev://",
+    "aixpense-dev://*",
+    "aixpense-preview://",
+    "aixpense-preview://*",
     "exp://**",
     "exp://*",
   );

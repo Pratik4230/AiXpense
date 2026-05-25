@@ -25,6 +25,7 @@ import {
   DeletedCard,
   ChatEmptyState,
   ChatInput,
+  type ChatInputHandle,
   ChatReceiptLightbox,
   ToolLoading,
   type SelectedTransaction,
@@ -78,6 +79,7 @@ export function ChatView({
   const [receiptPreviewUrl, setReceiptPreviewUrl] = useState<string | null>(
     null,
   );
+  const chatInputRef = useRef<ChatInputHandle>(null);
   const [outdatedIds, setOutdatedIds] = useState<Set<string>>(new Set());
 
   const { optimisticDecrement, invalidateTrials } = useTrialActions();
@@ -287,7 +289,7 @@ export function ChatView({
   };
 
   const handleSuggestionClick = (suggestion: string) => {
-    if (isLoading) return;
+    if (isLoading || isTrialsFetching) return;
     if (!isPremium && freeTrials <= 0) {
       onShowUpgradeDialog();
       return;
@@ -295,6 +297,19 @@ export function ChatView({
     optimisticDecrement();
     sendMessage({ text: suggestion });
   };
+
+  const handleScanBillClick = useCallback(
+    (suggestion: string) => {
+      if (isLoading || isTrialsFetching) return;
+      if (!isPremium) {
+        onShowUpgradeDialog();
+        return;
+      }
+      setInput(suggestion);
+      chatInputRef.current?.openFilePicker();
+    },
+    [isLoading, isTrialsFetching, isPremium, onShowUpgradeDialog],
+  );
 
   const handleTransactionAction = useCallback(
     (
@@ -368,7 +383,8 @@ export function ChatView({
           {chatMessages.length === 0 ? (
             <ChatEmptyState
               onSuggestionClick={handleSuggestionClick}
-              isLoading={isLoading}
+              onScanBillClick={handleScanBillClick}
+              disabled={isLoading || isTrialsFetching}
             />
           ) : (
             chatMessages.map((message) => (
@@ -703,6 +719,7 @@ export function ChatView({
       </Conversation>
 
       <ChatInput
+        ref={chatInputRef}
         value={input}
         onChange={setInput}
         onSubmit={handleSubmit}

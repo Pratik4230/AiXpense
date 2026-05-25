@@ -3,7 +3,7 @@ export { IncomeCard } from "./IncomeCard";
 export { UpdatedCard } from "./UpdatedCard";
 export { DeletedCard } from "./DeletedCard";
 export { ChatEmptyState } from "./ChatEmptyState";
-export { ChatInput } from "./ChatInput";
+export { ChatInput, type ChatInputHandle } from "./ChatInput";
 export { ChatReceiptLightbox } from "./ChatReceiptLightbox";
 export { ToolLoading } from "./ToolLoading";
 export { TransactionAttachment } from "./TransactionAttachment";
