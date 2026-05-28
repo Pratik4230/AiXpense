@@ -1,6 +1,6 @@
 import { tool } from "ai";
 import { z } from "zod";
-import { google } from "@ai-sdk/google";
+import { openai } from "@ai-sdk/openai";
 import { generateText } from "ai";
 import { logger } from "@/lib/logger";
 import { DEFAULT_CURRENCY, getCurrency } from "@/constants/currency";
@@ -50,28 +50,36 @@ export const createScanBillTool = ({
         };
       }
       try {
-        // Fetch the image from URL to pass to Gemini
         const res = await fetch(imageUrl);
         if (!res.ok) throw new Error("Failed to fetch image");
 
         const arrayBuffer = await res.arrayBuffer();
         const buffer = Buffer.from(arrayBuffer);
+        const mediaType =
+          res.headers.get("content-type")?.split(";")[0]?.trim() ??
+          "image/jpeg";
+
+        const documentPart =
+          mediaType === "application/pdf"
+            ? ({ type: "file" as const, data: buffer, mediaType })
+            : ({ type: "image" as const, image: buffer, mediaType });
 
         const { text } = await generateText({
-          model: google("gemini-3.1-flash-lite-preview"),
+          model: openai("gpt-5.4-mini"),
           system: buildExtractionPrompt(currencyCode, currencySymbol),
           maxOutputTokens: 1200,
           messages: [
             {
               role: "user",
-              content: [
-                {
-                  type: "image",
-                  image: buffer,
-                },
-              ],
+              content: [documentPart],
             },
           ],
+          providerOptions: {
+            openai: {
+              reasoningEffort: "medium",
+              store: false,
+            },
+          },
         });
 
         return {

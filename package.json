@@ -10,7 +10,6 @@
     "db:fix-subscription-indexes": "node --env-file=.env ./node_modules/tsx/dist/cli.mjs scripts/fix-subscription-indexes.ts"
   },
   "dependencies": {
-    "@ai-sdk/google": "^3.0.43",
     "@ai-sdk/openai": "^3.0.41",
     "@ai-sdk/react": "^3.0.118",
     "@base-ui/react": "^1.2.0",
