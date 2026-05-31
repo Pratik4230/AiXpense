@@ -150,8 +150,8 @@ export function PremiumCheckoutClient({
   return (
     <div className="min-h-[calc(100vh-4rem)] flex flex-col items-center justify-start py-10 md:py-14 pb-20 px-4 md:px-8 relative overflow-hidden">
       <div className="absolute inset-0 bg-background z-[-1]" />
-      <div className="absolute top-[-10%] right-[-5%] w-125 h-125 bg-amber-500/10 rounded-full blur-[120px] pointer-events-none" />
-      <div className="absolute bottom-[-10%] left-[-5%] w-125 h-125 bg-blue-500/5 rounded-full blur-[120px] pointer-events-none" />
+      <div className="absolute top-[-10%] right-[-5%] w-72 h-72 md:w-96 md:h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-[-10%] left-[-5%] w-72 h-72 md:w-96 md:h-96 bg-blue-500/5 rounded-full blur-3xl pointer-events-none" />
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-size-[24px_24px] z-[-1]" />
 
       <div className="max-w-5xl w-full space-y-10 md:space-y-12 relative z-10">

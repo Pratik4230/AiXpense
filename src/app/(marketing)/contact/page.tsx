@@ -3,6 +3,7 @@ import { Mail, Clock, MessageSquare, Smartphone } from "lucide-react";
 
 import LegalPageLayout from "@/components/legal/LegalPageLayout";
 import { LegalWebPageJsonLd } from "@/components/legal/LegalWebPageJsonLd";
+import { PlayStoreTextLink } from "@/components/landing/PlayStoreTextLink";
 import { SITE_URL, getSupportEmail } from "@/lib/site";
 
 export const dynamic = "force-static";
@@ -13,7 +14,7 @@ const CANONICAL = `${SITE_URL}${PAGE_PATH}`;
 export const metadata: Metadata = {
   title: "Contact Us",
   description:
-    "Contact AiXpense for billing, subscriptions, product support, or partnerships. Email the team; typical response within 48 business hours.",
+    "Contact AiXpense for billing, Android app (Google Play), subscriptions, or product support. Email the team; typical response within 48 business hours.",
   alternates: { canonical: CANONICAL },
   openGraph: {
     type: "website",
@@ -84,9 +85,11 @@ export default function ContactPage() {
             </div>
             <h3 className="text-lg font-semibold">Android App Support</h3>
             <p className="text-sm text-muted-foreground">
-              For issues specific to the Android app (voice input, camera
-              scanning, permissions, or Play Store billing), email us with your
-              device model and Android version for faster resolution.
+              For issues with the{" "}
+              <PlayStoreTextLink>AiXpense Android app on Google Play</PlayStoreTextLink>{" "}
+              (voice input, camera scanning, permissions, or Play Store billing),
+              email us with your device model and Android version for faster
+              resolution.
             </p>
           </div>
 

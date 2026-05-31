@@ -1,3 +1,5 @@
+import { PLAY_STORE_URL } from "@/constants/play-store";
+
 export const LANDING_FAQS = [
   {
     q: "Is AiXpense free to use?",
@@ -17,7 +19,7 @@ export const LANDING_FAQS = [
   },
   {
     q: "Can I use it on my phone?",
-    a: "Yes. Install AiXpense for Android from Google Play for voice input, bill scanning, and a native mobile experience—or use the web app in any mobile browser with the same account.",
+    a: `Yes. Install AiXpense for Android from Google Play (${PLAY_STORE_URL}) for voice input in 22+ Indian languages, bill scanning, and a native mobile experience—or use the web app in any mobile browser with the same account.`,
   },
   {
     q: "What is the difference between the free and premium plans?",

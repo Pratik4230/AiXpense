@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import LegalPageLayout from "@/components/legal/LegalPageLayout";
 import { LegalWebPageJsonLd } from "@/components/legal/LegalWebPageJsonLd";
+import { PlayStoreTextLink } from "@/components/landing/PlayStoreTextLink";
 import { SITE_URL, getSupportEmail } from "@/lib/site";
 
 export const dynamic = "force-static";
@@ -50,7 +51,8 @@ export default function ShippingPage() {
           AiXpense is a fully digital, cloud-based Software-as-a-Service (SaaS)
           application. There are no physical products, goods, or shipments
           involved. The Service is available on the web at aixpense.in and as a
-          mobile application on the Google Play Store.
+          mobile application on{" "}
+          <PlayStoreTextLink>Google Play</PlayStoreTextLink>.
         </p>
       </section>
 
@@ -68,7 +70,8 @@ export default function ShippingPage() {
           </li>
           <li>
             <strong>Free Tier (Android App):</strong> Immediate access upon
-            installing the app from the Google Play Store and signing in.
+            installing the app from{" "}
+            <PlayStoreTextLink>Google Play</PlayStoreTextLink> and signing in.
           </li>
           <li>
             <strong>Premium Subscription:</strong> Immediate access to all
@@ -87,8 +90,9 @@ export default function ShippingPage() {
             on desktop or mobile.
           </li>
           <li>
-            <strong>Android App:</strong> Download the AiXpense app from the
-            Google Play Store. Install on any Android device running Android 8.0
+            <strong>Android App:</strong> Download AiXpense from{" "}
+            <PlayStoreTextLink>Google Play</PlayStoreTextLink>. Install on any
+            Android device running Android 8.0
             (Oreo) or later.
           </li>
         </ul>

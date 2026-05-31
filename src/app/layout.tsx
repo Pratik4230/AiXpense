@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { ThemeProvider, QueryProvider } from "@/components/providers";
-import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/components/providers";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { getConfiguredPublicAppUrl } from "@/lib/publicAppUrl";
 import { SITE_URL } from "@/lib/site";
+import {
+  PLAY_STORE_PACKAGE,
+  PLAY_STORE_URL,
+} from "@/constants/play-store";
 import "./globals.css";
 
 const inter = Inter({
@@ -26,7 +29,7 @@ export const metadata: Metadata = {
     template: "%s | AiXpense - AI Expense Tracker",
   },
   description:
-    "Best AI expense tracker for India. Track daily expenses by voice, text, or bill scan in Hindi, Marathi, English & 22+ Indian languages. Free expense manager app with budget tracking, spending analytics & AI categorization. Just say 'Lunch 250' and AiXpense logs it instantly.",
+    "Best AI expense tracker for India — web app and Android app on Google Play. Track daily expenses by voice, text, or bill scan in Hindi, Marathi, English & 22+ Indian languages. Free expense manager with budgets, AI categorization & spending analytics.",
   keywords: [
     "expense tracker",
     "AI expense tracker",
@@ -37,6 +40,10 @@ export const metadata: Metadata = {
     "best expense tracker",
     "free expense tracker",
     "expense tracker India",
+    "expense tracker app India",
+    "android expense tracker",
+    "expense tracker Android app",
+    "Google Play expense tracker",
     "money tracker",
     "money manager",
     "spending tracker",
@@ -83,14 +90,28 @@ export const metadata: Metadata = {
   alternates: {
     canonical: metadataBaseUrl,
   },
+  appLinks: {
+    android: {
+      package: PLAY_STORE_PACKAGE,
+      url: PLAY_STORE_URL,
+      app_name: "AiXpense",
+    },
+    web: {
+      url: metadataBaseUrl,
+      should_fallback: true,
+    },
+  },
+  other: {
+    "google-play-app": `app-id=${PLAY_STORE_PACKAGE}`,
+  },
   openGraph: {
     type: "website",
     locale: "en_IN",
     url: metadataBaseUrl,
     siteName: "AiXpense",
-    title: "AiXpense - Best AI Expense Tracker App | Free for India",
+    title: "AiXpense - Best AI Expense Tracker App | Web & Android",
     description:
-      "Track daily expenses by voice or text. Say 'Lunch 250' in Hindi, Marathi or English. AI auto-categorizes, tags & logs expenses instantly. Free expense manager with budget tracking & analytics.",
+      "Track daily expenses by voice or text on web or Android. Say 'Lunch 250' in Hindi, Marathi or English. Download free on Google Play. AI auto-categorizes, tags & logs expenses instantly.",
     images: [
       {
         url: "/og-image.png",
@@ -105,9 +126,9 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     site: "@Pratik4230",
     creator: "@Pratik4230",
-    title: "AiXpense - Best AI Expense Tracker App | Voice & Text",
+    title: "AiXpense - Best AI Expense Tracker App | Web & Google Play",
     description:
-      "Free AI expense tracker for India. Track expenses by voice in Hindi, Marathi & 22+ languages. Auto-categorization, budget alerts & spending analytics.",
+      "Free AI expense tracker for India. Web app + Android on Google Play. Voice in Hindi, Marathi & 22+ languages. Auto-categorization, budget alerts & spending analytics.",
     images: ["/og-image.png"],
   },
   icons: {
@@ -140,14 +161,13 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <QueryProvider>{children}</QueryProvider>
+          {children}
           {process.env.NODE_ENV === "production" ? (
             <>
               <Analytics />
               <SpeedInsights />
             </>
           ) : null}
-          <Toaster />
         </ThemeProvider>
       </body>
     </html>

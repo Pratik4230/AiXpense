@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { ArrowLeft, Sparkles } from "lucide-react";
 
+import { PlayStoreTextLink } from "@/components/landing/PlayStoreTextLink";
+
 export default function LegalPageLayout({
   title,
   lastUpdated,
@@ -12,7 +14,7 @@ export default function LegalPageLayout({
 }) {
   return (
     <div className="min-h-screen bg-background relative">
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-80 bg-primary/10 blur-[120px] rounded-full opacity-40 pointer-events-none" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-3xl h-48 bg-primary/10 blur-3xl rounded-full opacity-40 pointer-events-none" />
 
       <header className="container mx-auto px-4 py-6 flex items-center justify-between relative z-10">
         <Link href="/" className="flex items-center gap-2 group">
@@ -85,6 +87,9 @@ export default function LegalPageLayout({
             >
               Contact
             </Link>
+            <PlayStoreTextLink className="text-muted-foreground hover:text-foreground transition-colors font-normal">
+              Android app
+            </PlayStoreTextLink>
           </div>
         </div>
       </footer>

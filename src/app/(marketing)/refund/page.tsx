@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import LegalPageLayout from "@/components/legal/LegalPageLayout";
 import { LegalWebPageJsonLd } from "@/components/legal/LegalWebPageJsonLd";
+import { PlayStoreTextLink } from "@/components/landing/PlayStoreTextLink";
 import { SITE_URL, getSupportEmail } from "@/lib/site";
 
 export const dynamic = "force-static";
@@ -157,13 +158,16 @@ export default function BillingAndCancellationPage() {
       <section>
         <h2 className="text-xl font-semibold mb-3">7. Google Play purchases</h2>
         <p>
-          If you buy Premium through the Google Play Store, Google&apos;s terms
+          If you buy Premium through{" "}
+          <PlayStoreTextLink>Google Play</PlayStoreTextLink>, Google&apos;s terms
           and refund windows apply in addition to this policy. Refund requests
           for Play-billed subscriptions must go through the Play Store where
           eligible. AiXpense&apos;s no-refund rule applies to direct web
           purchases on aixpense.in as described above.
         </p>
         <p className="mt-2">
+          <PlayStoreTextLink>AiXpense on Google Play</PlayStoreTextLink>
+          {" · "}
           <a
             href="https://play.google.com/about/play-terms/"
             target="_blank"

@@ -3,6 +3,9 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   compress: true,
   poweredByHeader: false,
+  experimental: {
+    optimizePackageImports: ["lucide-react", "recharts"],
+  },
   async redirects() {
     return [
       { source: "/blog", destination: "/", permanent: true },
@@ -15,6 +18,15 @@ const nextConfig: NextConfig = {
       {
         source: "/:path*",
         headers: [{ key: "ngrok-skip-browser-warning", value: "true" }],
+      },
+      {
+        source: "/(privacy|terms|refund|shipping|contact)",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=3600, stale-while-revalidate=86400",
+          },
+        ],
       },
     ];
   },

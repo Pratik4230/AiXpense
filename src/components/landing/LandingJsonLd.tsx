@@ -1,8 +1,12 @@
 import { CURRENCIES } from "@/constants/currency";
+import {
+  PLAY_STORE_APP_NAME,
+  PLAY_STORE_PACKAGE,
+  PLAY_STORE_URL,
+} from "@/constants/play-store";
 import { SITE_URL } from "@/lib/site";
 
 import { LANDING_FAQS } from "./data";
-import { PLAY_STORE_URL } from "@/constants/play-store";
 
 const personJsonLd = {
   "@context": "https://schema.org",
@@ -31,6 +35,7 @@ const organizationJsonLd = {
   sameAs: [
     "https://www.linkedin.com/in/pratikjadhav1438/",
     "https://x.com/Pratik4230",
+    PLAY_STORE_URL,
   ],
 };
 
@@ -39,11 +44,56 @@ const websiteJsonLd = {
   "@type": "WebSite",
   name: "AiXpense",
   url: SITE_URL,
+  inLanguage: "en-IN",
   publisher: {
     "@type": "Organization",
     name: "AiXpense",
     url: SITE_URL,
   },
+};
+
+const mobileAppJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "MobileApplication",
+  name: PLAY_STORE_APP_NAME,
+  alternateName: ["AiXpense", "AI Expense Tracker", "AiXpense Android"],
+  operatingSystem: "Android",
+  applicationCategory: "FinanceApplication",
+  applicationSubCategory: "Expense Tracker",
+  url: PLAY_STORE_URL,
+  downloadUrl: PLAY_STORE_URL,
+  installUrl: PLAY_STORE_URL,
+  identifier: PLAY_STORE_PACKAGE,
+  inLanguage: ["en", "hi", "mr", "ta", "te", "bn", "gu", "kn", "ml", "pa"],
+  description:
+    "AI expense tracker for India: voice input in 22+ Indian languages, bill scanning, budgets, and AI spending coach. Free tier with 7 AI messages per day.",
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "INR",
+    availability: "https://schema.org/InStock",
+  },
+  author: {
+    "@type": "Person",
+    name: "Pratik Jadhav",
+    url: "https://www.linkedin.com/in/pratikjadhav1438/",
+  },
+  publisher: {
+    "@type": "Organization",
+    name: "AiXpense",
+    url: SITE_URL,
+  },
+  featureList: [
+    "Voice expense tracking in 22+ Indian languages via Sarvam AI",
+    "Bill and receipt scanning with camera",
+    "AI chat for expenses and spending questions",
+    "Budgets with overspend alerts",
+    "Weekly and monthly AI spending coach reports",
+    "Category and merchant analytics",
+  ],
+  screenshot: `${SITE_URL}/og-image.png`,
+  contentRating: "Everyone",
+  countriesSupported: "IN",
 };
 
 const softwareJsonLd = {
@@ -114,6 +164,7 @@ const faqJsonLd = {
 
 const chunks = [
   softwareJsonLd,
+  mobileAppJsonLd,
   organizationJsonLd,
   websiteJsonLd,
   personJsonLd,
@@ -123,9 +174,9 @@ const chunks = [
 export function LandingJsonLd() {
   return (
     <>
-      {chunks.map((data) => (
+      {chunks.map((data, index) => (
         <script
-          key={(data as { "@type": string })["@type"]}
+          key={`${(data as { "@type": string })["@type"]}-${index}`}
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(data) }}
         />

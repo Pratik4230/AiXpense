@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import {
   CheckCircle2,
@@ -11,14 +12,14 @@ import {
   ScanLine,
   Shield,
   Sparkles,
+  Smartphone,
   Zap,
   ArrowRight,
 } from "lucide-react";
 
 import { SmartLink, SmartTextLink } from "@/components/auth/SmartLink";
 import { PlayStoreLink } from "@/components/landing/PlayStoreLink";
-import { LandingChatDemo } from "@/components/landing/LandingChatDemo";
-import { LandingFaq } from "@/components/landing/LandingFaq";
+import { PlayStoreTextLink } from "@/components/landing/PlayStoreTextLink";
 import { LandingJsonLd } from "@/components/landing/LandingJsonLd";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -29,6 +30,31 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { CURRENCIES } from "@/constants/currency";
+
+const LandingChatDemo = dynamic(
+  () =>
+    import("@/components/landing/LandingChatDemo").then(
+      (m) => m.LandingChatDemo,
+    ),
+  {
+    loading: () => (
+      <div className="w-full max-w-lg mx-auto h-80 rounded-2xl bg-muted/40 animate-pulse" />
+    ),
+  },
+);
+
+const LandingFaq = dynamic(
+  () => import("@/components/landing/LandingFaq").then((m) => m.LandingFaq),
+  {
+    loading: () => (
+      <div className="max-w-3xl mx-auto space-y-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <div key={i} className="h-14 rounded-lg bg-muted/40 animate-pulse" />
+        ))}
+      </div>
+    ),
+  },
+);
 
 const freeFeatures = [
   "7 AI messages per day",
@@ -140,8 +166,8 @@ export function LandingPageView() {
           <p className="text-sm text-muted-foreground text-center max-w-lg mt-5 leading-relaxed">
             Log spending the way you already text one plain sentence at a time.
             Use the web app or install{" "}
-            <span className="text-foreground font-medium">AiXpense for Android</span>{" "}
-            from Google Play.
+            <PlayStoreTextLink>AiXpense for Android on Google Play</PlayStoreTextLink>
+            .
           </p>
         </section>
 
@@ -282,6 +308,47 @@ export function LandingPageView() {
               description="We don't sell your financial data. Delete your account and data whenever you want."
               color="bg-green-500/10"
             />
+          </div>
+        </section>
+
+        <section
+          id="android-app"
+          aria-labelledby="android-app-heading"
+          className="py-16 sm:py-20 relative rounded-3xl border border-green-500/20 bg-green-500/5 px-4 sm:px-8 mb-8"
+        >
+          <div className="max-w-3xl mx-auto text-center space-y-5">
+            <div className="inline-flex items-center justify-center size-12 rounded-2xl bg-green-500/10 border border-green-500/20">
+              <Smartphone className="size-6 text-green-600 dark:text-green-400" />
+            </div>
+            <h2
+              id="android-app-heading"
+              className="text-2xl sm:text-4xl font-bold tracking-tight"
+            >
+              Download AiXpense on Google Play
+            </h2>
+            <p className="text-muted-foreground text-sm sm:text-base leading-relaxed max-w-2xl mx-auto">
+              Native Android app built for India: voice input in 22+ languages
+              (Hindi, Marathi, Tamil, Telugu &amp; more), camera bill scanning,
+              budgets, and AI spending coach. Same account as the web app.
+              Free tier with 7 AI messages per day.
+            </p>
+            <div className="pt-2 flex flex-col sm:flex-row gap-3 justify-center items-center">
+              <PlayStoreLink
+                size="lg"
+                label="Get it on Google Play"
+                className="h-12 px-8 text-base sm:text-lg"
+                showExternalIcon
+              />
+              <SmartLink variant="outline" className="rounded-full h-12 px-8">
+                Or use the web app
+              </SmartLink>
+            </div>
+            <p className="text-xs text-muted-foreground pt-2">
+              Also available at{" "}
+              <PlayStoreTextLink className="font-normal">
+                play.google.com/store/apps/details?id=com.aixpense.app
+              </PlayStoreTextLink>
+            </p>
           </div>
         </section>
 
@@ -604,6 +671,9 @@ export function LandingPageView() {
             >
               Contact Us
             </Link>
+            <PlayStoreTextLink className="text-muted-foreground hover:text-foreground transition-colors font-normal">
+              Google Play app
+            </PlayStoreTextLink>
           </div>
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
             <p className="text-sm text-muted-foreground">

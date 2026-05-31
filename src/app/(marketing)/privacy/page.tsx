@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import LegalPageLayout from "@/components/legal/LegalPageLayout";
 import { LegalWebPageJsonLd } from "@/components/legal/LegalWebPageJsonLd";
+import { PlayStoreTextLink } from "@/components/landing/PlayStoreTextLink";
 import { SITE_URL, getSupportEmail } from "@/lib/site";
 
 export const dynamic = "force-static";
@@ -12,7 +13,7 @@ const CANONICAL = `${SITE_URL}${PAGE_PATH}`;
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description:
-    "AiXpense privacy policy: data we collect (account, expenses, voice, images), how we use AI providers, retention, your rights under Indian law including the DPDP Act 2023, and contact for grievances.",
+    "AiXpense privacy policy for web and Android (Google Play): data we collect (account, expenses, voice, images), AI providers, retention, and your rights under India's DPDP Act 2023.",
   alternates: { canonical: CANONICAL },
   openGraph: {
     type: "article",
@@ -48,7 +49,8 @@ export default function PrivacyPage() {
           (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;), collects, uses,
           stores, and protects your personal data when you use our AI-powered
           expense tracking application, available on the web at aixpense.in and
-          as a mobile application on the Google Play Store. This policy complies
+          as a mobile application on{" "}
+          <PlayStoreTextLink>Google Play</PlayStoreTextLink>. This policy complies
           with the Information Technology Act, 2000, the IT (Reasonable Security
           Practices and Procedures and Sensitive Personal Data or Information)
           Rules, 2011, and the Digital Personal Data Protection Act, 2023 (DPDP
@@ -132,7 +134,8 @@ export default function PrivacyPage() {
           3. Device Permissions (Mobile App)
         </h2>
         <p>
-          The AiXpense mobile application (available on the Google Play Store)
+          The AiXpense mobile application (available on{" "}
+          <PlayStoreTextLink>Google Play</PlayStoreTextLink>)
           may request the following device permissions:
         </p>
         <div className="mt-3 space-y-3">

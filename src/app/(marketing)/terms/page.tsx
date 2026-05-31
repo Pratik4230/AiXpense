@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 
 import LegalPageLayout from "@/components/legal/LegalPageLayout";
 import { LegalWebPageJsonLd } from "@/components/legal/LegalWebPageJsonLd";
+import { PlayStoreTextLink } from "@/components/landing/PlayStoreTextLink";
 import { SITE_URL, getSupportEmail } from "@/lib/site";
 
 export const dynamic = "force-static";
@@ -46,8 +47,9 @@ export default function TermsPage() {
         <p>
           Welcome to AiXpense. These Terms &amp; Conditions (&quot;Terms&quot;)
           govern your use of the AiXpense web application, website at
-          aixpense.in, and mobile application on the Google Play Store
-          (collectively, the &quot;Service&quot;) operated by Pratik Jadhav
+          aixpense.in, and mobile application on{" "}
+          <PlayStoreTextLink>Google Play</PlayStoreTextLink> (collectively, the
+          &quot;Service&quot;) operated by Pratik Jadhav
           (&quot;we&quot;, &quot;us&quot;, &quot;our&quot;). By accessing or
           using the Service, you agree to be bound by these Terms. If you do not
           agree, you must not use the Service.
