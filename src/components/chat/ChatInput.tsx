@@ -53,6 +53,9 @@ const isMobile = () =>
   typeof window !== "undefined" &&
   window.matchMedia("(pointer: coarse)").matches;
 
+const MAX_INPUT_CHARS = 2000;
+
+
 export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(
   function ChatInput(
     {
@@ -153,6 +156,10 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(
     ? selectedTransaction.action === "delete" || value.trim()
     : value.trim();
 
+  const charsRemaining = MAX_INPUT_CHARS - value.length;
+  const showCharCount = value.length > 1800;
+
+
   const getPlaceholder = () => {
     if (isUploadingFile) return "Uploading bill...";
     if (uploadError) return "Upload failed. Try again or type manually";
@@ -199,7 +206,8 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(
             ref={textareaRef}
             value={value}
             onChange={(e) => {
-              onChange(e.target.value);
+              const next = e.target.value.slice(0, MAX_INPUT_CHARS);
+              onChange(next);
               e.target.style.height = "auto";
               e.target.style.height = `${Math.min(e.target.scrollHeight, 120)}px`;
             }}
@@ -288,6 +296,16 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(
                     : isUploadingFile
                       ? "Uploading..."
                       : "Transcribing..."}
+                </span>
+              )}
+              {showCharCount && !isRecording && !isProcessing && !isUploadingFile && (
+                <span
+                  className={cn(
+                    "text-xs tabular-nums",
+                    charsRemaining <= 100 ? "text-destructive" : "text-muted-foreground",
+                  )}
+                >
+                  {charsRemaining}
                 </span>
               )}
             </div>

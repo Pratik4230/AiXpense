@@ -13,6 +13,13 @@ export async function PATCH(req: Request) {
   if (!name?.trim())
     return NextResponse.json({ error: "Name is required" }, { status: 400 });
 
+  if (name.trim().length > 100)
+    return NextResponse.json(
+      { error: "Name must be 100 characters or fewer" },
+      { status: 400 },
+    );
+
+
   try {
     await auth.api.updateUser({
       headers: await headers(),

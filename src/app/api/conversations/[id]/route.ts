@@ -3,6 +3,14 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { connectDB } from "@/lib/db";
 import { Conversation, MAX_MESSAGES_PER_CONVERSATION } from "@/models";
+import type { IMessage } from "@/models/Conversation";
+import { z } from "zod";
+
+const patchConversationSchema = z.object({
+  title: z.string().max(200).optional(),
+  messages: z.array(z.unknown()).optional(),
+  appendMessages: z.array(z.unknown()).optional(),
+});
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -50,7 +58,11 @@ export async function PATCH(req: Request, { params }: RouteParams) {
 
   const { id } = await params;
   const body = await req.json();
-  const { title, messages, appendMessages } = body;
+  const parsed = patchConversationSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Invalid input" }, { status: 400 });
+  }
+  const { title, messages, appendMessages } = parsed.data;
 
   await connectDB();
 
@@ -130,7 +142,7 @@ export async function PATCH(req: Request, { params }: RouteParams) {
           { status: 400 },
         );
       }
-      conversation.messages = messages;
+      conversation.messages = messages as IMessage[];
       conversation.messageCount = messages.length;
     }
 

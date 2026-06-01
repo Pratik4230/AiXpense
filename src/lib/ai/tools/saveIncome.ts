@@ -21,17 +21,19 @@ export const createSaveIncomeTool = ({
   tool({
     description: "Save income (money received) to the database",
     inputSchema: z.object({
-      source: z.string().describe("Source of the income"),
+      source: z.string().max(200).describe("Source of the income"),
       amount: z
         .number()
         .describe(`The amount received in the user's account currency (${currency})`),
       category: z.enum(CATEGORIES).describe("Category of the income"),
       subcategory: z
         .string()
+        .max(100)
         .optional()
         .describe("More specific subcategory if mentioned"),
       tags: z
-        .array(z.string())
+        .array(z.string().max(50))
+        .max(10)
         .optional()
         .describe("Optional tags for the income"),
       date: z
@@ -42,10 +44,12 @@ export const createSaveIncomeTool = ({
         ),
       notes: z
         .string()
+        .max(2000)
         .optional()
         .describe("Additional details or breakdown of the income"),
       attachments: z
         .array(z.string())
+        .max(5)
         .optional()
         .describe("Array of image or document URLs associated with this transaction"),
     }),

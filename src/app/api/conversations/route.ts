@@ -3,6 +3,12 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { connectDB } from "@/lib/db";
 import { Conversation } from "@/models";
+import { z } from "zod";
+
+const createConversationSchema = z.object({
+  title: z.string().max(200).optional(),
+});
+
 
 export async function GET() {
   const session = await auth.api.getSession({
@@ -37,7 +43,11 @@ export async function POST(req: Request) {
   }
 
   const body = await req.json();
-  const { title } = body;
+  const parsed = createConversationSchema.safeParse(body);
+  if (!parsed.success) {
+    return NextResponse.json({ error: "Invalid input" }, { status: 400 });
+  }
+  const { title } = parsed.data;
 
   await connectDB();
 

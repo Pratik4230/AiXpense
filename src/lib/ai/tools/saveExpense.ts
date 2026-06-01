@@ -24,17 +24,19 @@ export const createSaveExpenseTool = ({
   tool({
     description: "Save an expense (money spent) to the database",
     inputSchema: z.object({
-      item: z.string().describe("What was purchased"),
+      item: z.string().max(200).describe("What was purchased"),
       amount: z
         .number()
         .describe(`The cost in the user's account currency (${currency})`),
       category: z.enum(CATEGORIES).describe("Category of the expense"),
       subcategory: z
         .string()
+        .max(100)
         .optional()
         .describe("More specific subcategory if mentioned"),
       tags: z
-        .array(z.string())
+        .array(z.string().max(50))
+        .max(10)
         .optional()
         .describe("Optional tags for the expense"),
       date: z
@@ -45,10 +47,12 @@ export const createSaveExpenseTool = ({
         ),
       notes: z
         .string()
+        .max(2000)
         .optional()
         .describe("Additional details or itemized breakdown of the expense (e.g. from receipt scans)"),
       attachments: z
         .array(z.string())
+        .max(5)
         .optional()
         .describe("Array of image or document URLs associated with this transaction"),
     }),

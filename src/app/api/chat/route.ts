@@ -106,10 +106,35 @@ export async function POST(req: Request) {
 
   const { messages }: { messages: UIMessage[] } = await req.json();
 
+  if (!Array.isArray(messages) || messages.length === 0) {
+    return new Response(JSON.stringify({ error: "Invalid messages" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
+  if (messages.length > 50) {
+    return new Response(JSON.stringify({ error: "Too many messages" }), {
+      status: 400,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+
   const lastUserMessage = messages.filter((m) => m.role === "user").pop()
     ?.parts?.[0];
-  const rawInput =
+  const rawInputFull =
     lastUserMessage && "text" in lastUserMessage ? lastUserMessage.text : "";
+
+  const MAX_INPUT_CHARS = 2000;
+  if (rawInputFull.length > MAX_INPUT_CHARS) {
+    logger.warn("chat_input_too_long", { userId, data: { length: rawInputFull.length } });
+    return new Response(
+      JSON.stringify({ error: "Message too long. Please keep it under 2000 characters." }),
+      { status: 400, headers: { "Content-Type": "application/json" } },
+    );
+  }
+
+  const rawInput = rawInputFull;
 
   const userCurrency = getCurrency(resolveUserCurrencyCode(dbUser.currency));
 
@@ -186,6 +211,7 @@ export async function POST(req: Request) {
       tools,
       ignoreIncompleteToolCalls: true,
     }),
+    maxOutputTokens: 1500,
     providerOptions: {
       openai: {
         reasoningEffort: "medium",

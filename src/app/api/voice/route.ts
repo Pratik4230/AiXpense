@@ -2,10 +2,17 @@ import { logger } from "@/lib/logger";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 
+const MAX_AUDIO_BYTES = 10 * 1024 * 1024; // 10 MB
+
 export async function POST(req: Request) {
   try {
     const session = await auth.api.getSession({ headers: await headers() });
     const userId = session?.user?.id;
+
+    if (!userId) {
+      logger.warn("voice_unauthorized", {});
+      return Response.json({ error: "Unauthorized" }, { status: 401 });
+    }
 
     const formData = await req.formData();
     const audio = formData.get("audio") as File;
@@ -14,6 +21,14 @@ export async function POST(req: Request) {
       return Response.json(
         { error: "No audio file received" },
         { status: 400 },
+      );
+    }
+
+    if (audio.size > MAX_AUDIO_BYTES) {
+      logger.warn("voice_audio_too_large", { userId, data: { sizeBytes: audio.size } });
+      return Response.json(
+        { error: "Audio file exceeds the 10 MB limit" },
+        { status: 413 },
       );
     }
 

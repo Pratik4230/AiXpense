@@ -37,7 +37,10 @@ export type LogEvent =
   | "tool_budget_delete_fail"
   | "tool_budget_read_fail"
   | "inngest_recurring_error"
-  | "inngest_recurring_complete";
+  | "inngest_recurring_complete"
+  | "voice_unauthorized"
+  | "voice_audio_too_large"
+  | "chat_input_too_long";
 
 export interface IAppLog extends Document {
   level: LogLevel;

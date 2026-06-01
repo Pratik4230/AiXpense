@@ -26,23 +26,24 @@ export const createUpdateTransactionTool = ({
         .describe("The _id of the transaction to update"),
       userInstruction: z
         .string()
+        .max(500)
         .describe(
           "The user's original instruction for the update, e.g. 'change amount to 500'",
         ),
       updates: z
         .object({
-          item: z.string().optional().describe("New item name"),
+          item: z.string().max(200).optional().describe("New item name"),
           amount: z.number().optional().describe("New amount in the user's account currency"),
           category: z.enum(CATEGORIES).optional().describe("New category"),
-          subcategory: z.string().optional().describe("New subcategory"),
+          subcategory: z.string().max(100).optional().describe("New subcategory"),
           date: z
             .string()
             .optional()
             .describe(
               "ISO date (YYYY-MM-DD or full ISO). Calendar dates stored as UTC midnight for that day.",
             ),
-          notes: z.string().optional().describe("New notes or breakdown"),
-          attachments: z.array(z.string()).optional().describe("New attachments URLs to add"),
+          notes: z.string().max(2000).optional().describe("New notes or breakdown"),
+          attachments: z.array(z.string()).max(5).optional().describe("New attachments URLs to add"),
         })
         .describe("Fields to update"),
     }),
