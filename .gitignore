@@ -12,6 +12,10 @@
 
 # testing
 /coverage
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
 
 # next.js
 /.next/
@@ -59,3 +63,5 @@ Geminiji.md
 image.md
 file.md
 file2.md
+
+playwright/.auth

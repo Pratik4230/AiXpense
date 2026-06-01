@@ -4,7 +4,6 @@ AI-powered expense tracker for India. Track income and expenses by just typing o
 
 Live at **[aixpense.in](https://aixpense.in)**
 
-
 ## What it does
 
 AiXpense is a chat-based personal finance app. You tell the AI what you spent and it handles everything else.
@@ -20,24 +19,23 @@ The AI extracts the item, amount, category, subcategory, tags, and date automati
 
 ## Features
 
-| Feature | Details |
-|---|---|
-| Natural language input | Type in English, Hindi, Marathi, Hinglish, or any of 22+ Indian languages |
-| Voice input | Powered by Sarvam AI's `saaras:v3` model. Speak and log instantly |
-| Bill scan | Snap a bill photo, AI extracts merchant and amount (coming soon) |
-| Smart categorization | Food, Transport, Rent, EMI, Subscriptions, Health and more. Inferred automatically |
-| Budget tracking | Set monthly budgets per category, get alerts when nearing the limit |
-| Analytics | Monthly trends, category-wise charts, spending insights |
-| Transaction history | Search, filter, edit, and delete past entries via chat |
-
+| Feature                | Details                                                                            |
+| ---------------------- | ---------------------------------------------------------------------------------- |
+| Natural language input | Type in English, Hindi, Marathi, Hinglish, or any of 22+ Indian languages          |
+| Voice input            | Powered by Sarvam AI's `saaras:v3` model. Speak and log instantly                  |
+| Bill scan              | Snap a bill photo, AI extracts merchant and amount (coming soon)                   |
+| Smart categorization   | Food, Transport, Rent, EMI, Subscriptions, Health and more. Inferred automatically |
+| Budget tracking        | Set monthly budgets per category, get alerts when nearing the limit                |
+| Analytics              | Monthly trends, category-wise charts, spending insights                            |
+| Transaction history    | Search, filter, edit, and delete past entries via chat                             |
 
 ## Pricing
 
-| Plan | Price | Limit |
-|---|---|---|
-| Free | ₹0 | 7 AI messages / day |
-| Premium Monthly | ₹499 / month | Unlimited |
-| Premium Yearly | ₹4,000 / year | Unlimited + 2 months free |
+| Plan            | Price         | Limit                     |
+| --------------- | ------------- | ------------------------- |
+| Free            | ₹0            | 7 AI messages / day       |
+| Premium Monthly | ₹499 / month  | Unlimited                 |
+| Premium Yearly  | ₹4,000 / year | Unlimited + 2 months free |
 
 Payments via Razorpay. Cancel anytime.
 
@@ -63,6 +61,17 @@ bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
+
+## E2E tests (Playwright)
+
+```bash
+bunx playwright install chromium
+# Add to .env:
+# E2E_TEST_EMAIL=...   (verified test user)
+# E2E_TEST_PASSWORD=...
+bun run test:e2e
+bun run test:e2e:ui   # visual debugger
+```
 
 ## Project Structure
 
