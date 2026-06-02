@@ -42,6 +42,12 @@ import {
 } from "@/services/conversations";
 import { useTrialActions } from "@/services/trials";
 import Image from "next/image";
+import { FileText } from "lucide-react";
+
+type ReceiptPreview = {
+  url: string;
+  mediaType: string;
+};
 
 interface ChatMessage {
   id: string;
@@ -76,7 +82,7 @@ export function ChatView({
   const [input, setInput] = useState("");
   const [selectedTransaction, setSelectedTransaction] =
     useState<SelectedTransaction | null>(null);
-  const [receiptPreviewUrl, setReceiptPreviewUrl] = useState<string | null>(
+  const [receiptPreview, setReceiptPreview] = useState<ReceiptPreview | null>(
     null,
   );
   const chatInputRef = useRef<ChatInputHandle>(null);
@@ -375,8 +381,9 @@ export function ChatView({
   return (
     <>
       <ChatReceiptLightbox
-        src={receiptPreviewUrl}
-        onClose={() => setReceiptPreviewUrl(null)}
+        src={receiptPreview?.url ?? null}
+        mediaType={receiptPreview?.mediaType ?? null}
+        onClose={() => setReceiptPreview(null)}
       />
       <Conversation className="flex-1">
         <ConversationContent className="px-4 sm:px-6 max-w-3xl mx-auto w-full pt-14">
@@ -460,8 +467,12 @@ export function ChatView({
                           key={`${message.id}-${index}`}
                           type="button"
                           onClick={() =>
-                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                            setReceiptPreviewUrl((part as any).url)
+                            setReceiptPreview({
+                              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                              url: (part as any).url,
+                              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                              mediaType: (part as any).mediaType,
+                            })
                           }
                           className="mt-2 block max-w-sm overflow-hidden rounded-xl border text-left cursor-zoom-in focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                           aria-label="View receipt full screen"
@@ -475,6 +486,32 @@ export function ChatView({
                             priority
                             className="w-full h-auto object-cover"
                           />
+                        </button>
+                      );
+                    }
+
+                    if (
+                      part.type === "file" &&
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      (part as any).mediaType === "application/pdf"
+                    ) {
+                      return (
+                        <button
+                          key={`${message.id}-${index}`}
+                          type="button"
+                          onClick={() =>
+                            setReceiptPreview({
+                              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                              url: (part as any).url,
+                              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                              mediaType: (part as any).mediaType,
+                            })
+                          }
+                          className="mt-2 inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm hover:bg-muted/40 transition-colors"
+                          aria-label="Preview uploaded PDF"
+                        >
+                          <FileText className="size-4" />
+                          <span>Preview uploaded PDF</span>
                         </button>
                       );
                     }

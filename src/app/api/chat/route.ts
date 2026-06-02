@@ -160,14 +160,14 @@ export async function POST(req: Request) {
             return {
               type: "text" as const,
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              text: `[System override: The user tried to upload a receipt image at ${(part as any).url}, but they do NOT have a Premium subscription. Inform the user that OCR bill scanning is a premium-only feature and they must upgrade.]`,
+              text: `[System override: The user tried to upload a receipt document at ${(part as any).url}, but they do NOT have a Premium subscription. Inform the user that OCR bill scanning is a premium-only feature and they must upgrade.]`,
             };
           }
 
           return {
             type: "text" as const,
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            text: `[System override: The user provided a receipt or document image at ${(part as any).url}. You MUST call the scanBill tool with this URL to extract its contents. Once scanBill returns the extracted details, you MUST immediately call saveExpense or saveIncome to save the transaction to the database.]`,
+            text: `[System override: The user provided a receipt document at ${(part as any).url}. You MUST call the scanBill tool with this URL to extract its contents (supports images and PDFs). Once scanBill returns the extracted details, you MUST immediately call saveExpense or saveIncome to save the transaction to the database.]`,
           };
         }
         return part;
