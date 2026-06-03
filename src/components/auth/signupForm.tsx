@@ -69,6 +69,7 @@ export function SignupForm() {
       // @ts-expect-error betterAuth additionalFields passed through signUp body
       currency,
       country: selectedCurrency.country,
+      signupPlatform: "web",
     });
 
     if (error) {

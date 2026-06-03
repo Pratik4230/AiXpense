@@ -37,6 +37,11 @@ import {
   onDodoSubscriptionUpdatedLike,
 } from "@/lib/dodo/webhookHandlers";
 import { DEFAULT_COUNTRY, DEFAULT_CURRENCY } from "@/constants/currency";
+import {
+  getClientPlatformFromContext,
+  resolveSignupPlatform,
+  updateUserLastActivePlatform,
+} from "@/lib/auth/clientPlatform.server";
 
 const dodoPaymentsPlugin =
   isDodoPaymentsConfigured() && dodoWebhookSecretConfigured()
@@ -183,6 +188,17 @@ export const auth = betterAuth({
         type: "string",
         defaultValue: DEFAULT_COUNTRY,
       },
+      signupPlatform: {
+        type: ["web", "android"] as const,
+        required: false,
+        defaultValue: "web",
+        input: true,
+      },
+      lastActivePlatform: {
+        type: ["web", "android"] as const,
+        required: false,
+        input: false,
+      },
     },
     deleteUser: {
       enabled: true,
@@ -208,13 +224,19 @@ export const auth = betterAuth({
   databaseHooks: {
     user: {
       create: {
-        before: async (user) => {
+        before: async (user, context) => {
           if (isDisposableEmail(user.email)) {
             throw new APIError("BAD_REQUEST", {
               message:
                 "This email domain is not allowed. Please use a valid email address.",
             });
           }
+
+          const signupPlatform = resolveSignupPlatform(
+            user as Record<string, unknown>,
+            context,
+          );
+          const userWithPlatform = { ...user, signupPlatform };
 
           await connectDB();
           const deleted = await DeletedEmail.findOne({
@@ -223,13 +245,17 @@ export const auth = betterAuth({
           if (deleted) {
             return {
               data: {
-                ...user,
+                ...userWithPlatform,
                 freeTrials: deleted.trialsRemaining,
               },
             };
           }
+          return { data: userWithPlatform };
         },
         after: async (user) => {
+          const signupPlatform =
+            (user as { signupPlatform?: "web" | "android" }).signupPlatform ??
+            "web";
           try {
             await inngest.send({
               name: "user/created",
@@ -237,11 +263,28 @@ export const auth = betterAuth({
                 userId: user.id,
                 email: user.email,
                 name: user.name,
+                signupPlatform,
               },
             });
           } catch (error) {
             console.error(
               "[Inngest] Failed to send user/created event:",
+              error,
+            );
+          }
+        },
+      },
+    },
+    session: {
+      create: {
+        after: async (session, context) => {
+          const platform = getClientPlatformFromContext(context);
+          if (!platform || !session?.userId) return;
+          try {
+            await updateUserLastActivePlatform(session.userId, platform);
+          } catch (error) {
+            console.error(
+              "[auth] Failed to update lastActivePlatform:",
               error,
             );
           }
