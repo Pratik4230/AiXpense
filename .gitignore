@@ -50,18 +50,10 @@ next-env.d.ts
 .agent
 .agents
 .claude
-AGENTS
-AGENTS.md
-INNGEST.md
-object.md
-OpenAI.md
-SEO.md
-TODO.md
-VOICE_INPUT.md
-scripts
-Geminiji.md
-image.md
-file.md
-file2.md
+
+
+
+
+
 
 playwright/.auth
