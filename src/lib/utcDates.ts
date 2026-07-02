@@ -12,6 +12,21 @@ export function getUtcMonthRangeHalfOpen(anchor: Date = new Date()) {
   };
 }
 
+export function getUtcYearRangeHalfOpen(anchor: Date = new Date()) {
+  const y = anchor.getUTCFullYear();
+  return {
+    start: new Date(Date.UTC(y, 0, 1, 0, 0, 0, 0)),
+    endExclusive: new Date(Date.UTC(y + 1, 0, 1, 0, 0, 0, 0)),
+  };
+}
+
+/** YYYY-MM key for grouping by UTC calendar month. */
+export function utcMonthKey(date: Date): string {
+  const y = date.getUTCFullYear();
+  const mo = String(date.getUTCMonth() + 1).padStart(2, "0");
+  return `${y}-${mo}`;
+}
+
 /** Inclusive end of UTC calendar month (last ms before next month). */
 export function getUtcMonthEndInclusive(anchor: Date = new Date()) {
   const { endExclusive } = getUtcMonthRangeHalfOpen(anchor);

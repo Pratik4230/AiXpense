@@ -394,34 +394,38 @@ export function ChatView({
               disabled={isLoading || isTrialsFetching}
             />
           ) : (
-            chatMessages.map((message) => (
+            chatMessages.map((message) => {
+              const reasoningParts =
+                message.parts?.filter((p) => p.type === "reasoning") ?? [];
+              const isReasoningStreaming = reasoningParts.some(
+                (p) => (p as { state?: string }).state === "streaming",
+              );
+              const reasoningText = reasoningParts
+                .map((p) => (p as { text?: string }).text || "")
+                .filter(Boolean)
+                .join("\n\n");
+
+              return (
               <Message
                 key={message.id}
                 from={message.role === "user" ? "user" : "assistant"}
                 isPremium={isPremium}
               >
                 <MessageContent>
+                  {reasoningParts.length > 0 && (
+                    <Reasoning
+                      isStreaming={isReasoningStreaming}
+                      defaultOpen={false}
+                    >
+                      <ReasoningTrigger />
+                      {reasoningText ? (
+                        <ReasoningContent>{reasoningText}</ReasoningContent>
+                      ) : null}
+                    </Reasoning>
+                  )}
                   {message.parts?.map((part, index) => {
                     if (part.type === "reasoning") {
-                      const isStreaming = part.state === "streaming";
-                      const reasoningPart = part as {
-                        type: "reasoning";
-                        state: "streaming" | "done";
-                        text?: string;
-                      };
-                      const reasoningText = reasoningPart.text || "";
-
-                      return (
-                        <Reasoning
-                          key={`${message.id}-${index}`}
-                          isStreaming={isStreaming}
-                        >
-                          <ReasoningTrigger />
-                          {reasoningText && (
-                            <ReasoningContent>{reasoningText}</ReasoningContent>
-                          )}
-                        </Reasoning>
-                      );
+                      return null;
                     }
 
                     if (part.type === "text") {
@@ -740,7 +744,8 @@ export function ChatView({
                   })}
                 </MessageContent>
               </Message>
-            ))
+            );
+            })
           )}
 
           {isLoading &&
