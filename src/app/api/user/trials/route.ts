@@ -2,7 +2,6 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { connectDB } from "@/lib/db";
 import mongoose from "mongoose";
-import { getISTMidnight } from "@/lib/ist";
 import { effectivePremium } from "@/lib/premium";
 
 export async function GET() {
@@ -13,8 +12,6 @@ export async function GET() {
 
   await connectDB();
 
-  const todayISTMidnight = getISTMidnight();
-
   const user = await mongoose.connection.db!
     .collection("user")
     .findOne(
@@ -22,7 +19,6 @@ export async function GET() {
       {
         projection: {
           freeTrials: 1,
-          freeTrialResetAt: 1,
           isPremium: 1,
         },
       },
@@ -40,12 +36,8 @@ export async function GET() {
     return Response.json({ freeTrials: null, isPremium: true });
   }
 
-  const lastReset = user.freeTrialResetAt
-    ? new Date(user.freeTrialResetAt)
-    : new Date(0);
-
-  const needsReset = lastReset < todayISTMidnight;
-  const freeTrials = needsReset ? 7 : (user.freeTrials ?? 0);
-
-  return Response.json({ freeTrials, isPremium: false });
+  return Response.json({
+    freeTrials: user.freeTrials ?? 0,
+    isPremium: false,
+  });
 }

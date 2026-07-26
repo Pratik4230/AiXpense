@@ -11,8 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Crown, AlertTriangle } from "lucide-react";
 import { MAX_MESSAGES_PER_CONVERSATION } from "@/constants/conversation";
-
-const FREE_DAILY_LIMIT = 7;
+import { FREE_LIFETIME_LIMIT } from "@/constants/trials";
 
 interface AiXpenseDialogsProps {
   showUpgradeDialog: boolean;
@@ -41,8 +40,8 @@ export function AiXpenseDialogs({
               Upgrade to Premium
             </DialogTitle>
             <DialogDescription>
-              You&apos;ve used all your free messages for today. Upgrade to
-              Premium for unlimited access — resets every day.
+              You&apos;ve used all {FREE_LIFETIME_LIMIT} free AI messages.
+              Upgrade to Premium for unlimited access.
             </DialogDescription>
           </DialogHeader>
           <div className="py-4">
@@ -50,7 +49,7 @@ export function AiXpenseDialogs({
               <div className="flex items-center justify-between text-sm">
                 <span>Free Plan</span>
                 <span className="text-muted-foreground">
-                  {FREE_DAILY_LIMIT} messages / day
+                  {FREE_LIFETIME_LIMIT} messages total
                 </span>
               </div>
               <div className="flex items-center justify-between font-semibold">

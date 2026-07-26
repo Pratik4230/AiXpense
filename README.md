@@ -33,7 +33,7 @@ The AI extracts the item, amount, category, subcategory, tags, and date automati
 
 | Plan            | Price         | Limit                     |
 | --------------- | ------------- | ------------------------- |
-| Free            | ₹0            | 7 AI messages / day       |
+| Free            | ₹0            | 7 AI messages (lifetime)  |
 | Premium Monthly | ₹499 / month  | Unlimited                 |
 | Premium Yearly  | ₹4,000 / year | Unlimited + 2 months free |
 
@@ -97,6 +97,6 @@ src/
 
 ## Free Trial System
 
-Free users get **7 AI messages per day**, resetting at midnight IST. The reset is handled atomically in the `/api/chat` route using a MongoDB aggregation pipeline. No cron job required. The UI shows an optimistic count immediately and confirms against the server after each response.
+Free users get **7 AI messages lifetime** (no daily reset). Quota is enforced atomically in the `/api/chat` route by decrementing `freeTrials` before the LLM runs. The UI shows an optimistic count immediately and confirms against the server after each response.
 
 Built by [Pratik Jadhav](https://linkedin.com/in/pratikjadhav1438) · [Twitter/X](https://x.com/Pratik4230)

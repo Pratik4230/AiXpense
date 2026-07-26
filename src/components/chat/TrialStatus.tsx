@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { FREE_LIFETIME_LIMIT } from "@/constants/trials";
 
 interface TrialStatusProps {
   isPremium: boolean;
@@ -34,8 +35,12 @@ export function TrialStatus({
       onClick={onUpgradeClick}
     >
       <Sparkles className="size-3" />
-      <span className="hidden sm:inline">{freeTrials} / 7 today</span>
-      <span className="sm:hidden">{freeTrials}/7</span>
+      <span className="hidden sm:inline">
+        {freeTrials} / {FREE_LIFETIME_LIMIT} left
+      </span>
+      <span className="sm:hidden">
+        {freeTrials}/{FREE_LIFETIME_LIMIT}
+      </span>
     </Badge>
   );
 }

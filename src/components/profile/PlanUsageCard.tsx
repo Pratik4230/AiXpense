@@ -23,6 +23,7 @@ import {
   getDodoBillingPortalUrl,
 } from "@/actions/subscription";
 import { useUtcCalendarDateFormat } from "@/hooks/useUtcCalendarDateFormat";
+import { FREE_LIFETIME_LIMIT } from "@/constants/trials";
 
 interface Subscription {
   status: string;
@@ -191,14 +192,16 @@ export function PlanUsageCard({
           <>
             <div className="flex items-center justify-between">
               <span className="text-sm text-muted-foreground">
-                Free messages today
+                Free messages remaining
               </span>
               <span className="text-sm font-medium">{freeTrials}</span>
             </div>
             <div className="w-full bg-muted rounded-full h-2">
               <div
                 className="bg-primary rounded-full h-2 transition-all"
-                style={{ width: `${(freeTrials / 7) * 100}%` }}
+                style={{
+                  width: `${(freeTrials / FREE_LIFETIME_LIMIT) * 100}%`,
+                }}
               />
             </div>
             <Link href="/premium">

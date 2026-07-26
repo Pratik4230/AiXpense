@@ -89,7 +89,8 @@ export default function BillingAndCancellationPage() {
       <section>
         <h2 className="text-xl font-semibold mb-3">3. Free tier</h2>
         <p>
-          AiXpense offers a free tier with limited AI interactions per day. The
+          AiXpense offers a free tier with a limited number of AI interactions
+          (lifetime, not per day). The
           free tier is available on web and the Android app, does not require
           payment, and can be used without a time limit. Use it to evaluate voice,
           chat, and core tracking before upgrading.

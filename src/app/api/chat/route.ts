@@ -19,7 +19,6 @@ import {
 import { connectDB } from "@/lib/db";
 import mongoose from "mongoose";
 import { logger } from "@/lib/logger";
-import { getISTMidnight } from "@/lib/ist";
 import { getCurrency } from "@/constants/currency";
 import { effectivePremium } from "@/lib/premium";
 import { resolveUserCurrencyCode } from "@/lib/userCurrency";
@@ -40,52 +39,25 @@ export async function POST(req: Request) {
   const userId = session.user.id;
 
   const now = new Date();
-  const todayISTMidnight = getISTMidnight();
 
   await connectDB();
 
+  // Lifetime free quota: decrement freeTrials until 0 (no daily reset).
   const dbUser = await mongoose.connection.db!
     .collection("user")
     .findOneAndUpdate(
       {
         _id: new mongoose.Types.ObjectId(userId),
-        $or: [
-          { isPremium: true },
-          { freeTrials: { $gt: 0 } },
-          { freeTrialResetAt: { $lt: todayISTMidnight } },
-        ],
+        $or: [{ isPremium: true }, { freeTrials: { $gt: 0 } }],
       },
       [
         {
           $set: {
-            freeTrialResetAt: {
-              $cond: {
-                if: {
-                  $and: [
-                    { $ne: ["$isPremium", true] },
-                    { $lt: ["$freeTrialResetAt", todayISTMidnight] },
-                  ],
-                },
-                then: todayISTMidnight,
-                else: "$freeTrialResetAt",
-              },
-            },
             freeTrials: {
               $cond: {
                 if: { $eq: ["$isPremium", true] },
                 then: "$freeTrials",
-                else: {
-                  $subtract: [
-                    {
-                      $cond: {
-                        if: { $lt: ["$freeTrialResetAt", todayISTMidnight] },
-                        then: 7,
-                        else: "$freeTrials",
-                      },
-                    },
-                    1,
-                  ],
-                },
+                else: { $subtract: ["$freeTrials", 1] },
               },
             },
           },
