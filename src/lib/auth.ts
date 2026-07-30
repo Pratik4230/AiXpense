@@ -177,10 +177,6 @@ export const auth = betterAuth({
         type: "number",
         defaultValue: FREE_LIFETIME_LIMIT,
       },
-      freeTrialResetAt: {
-        type: "date",
-        defaultValue: () => new Date(),
-      },
       currency: {
         type: "string",
         defaultValue: DEFAULT_CURRENCY,
