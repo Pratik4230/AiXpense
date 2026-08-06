@@ -151,14 +151,16 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable} h-full`}
+      className={`${inter.variable} dark h-full`}
+      style={{ colorScheme: "dark" }}
       suppressHydrationWarning
     >
       <body className="antialiased h-full">
         <ThemeProvider
           attribute="class"
+          forcedTheme="dark"
           defaultTheme="dark"
-          enableSystem
+          enableSystem={false}
           disableTransitionOnChange
         >
           {children}

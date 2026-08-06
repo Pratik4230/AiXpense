@@ -1,4 +1,5 @@
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
+import { VOICE_MAX_SECONDS } from "@/constants/voice";
 
 type Status = "idle" | "recording" | "processing" | "error";
 
@@ -8,6 +9,7 @@ const SILENCE_DURATION_MS = 1300;
 export function useSarvamSTT() {
   const [status, setStatus] = useState<Status>("idle");
   const [transcript, setTranscript] = useState<string>("");
+  const [secondsLeft, setSecondsLeft] = useState(VOICE_MAX_SECONDS);
 
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
@@ -15,8 +17,19 @@ export function useSarvamSTT() {
   const mimeTypeRef = useRef<string>("audio/webm");
   const audioContextRef = useRef<AudioContext | null>(null);
   const silenceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const maxDurationTimerRef = useRef<ReturnType<typeof setInterval> | null>(
+    null,
+  );
   const rafRef = useRef<number | null>(null);
   const speechDetectedRef = useRef(false);
+
+  const clearMaxDurationTimer = () => {
+    if (maxDurationTimerRef.current) {
+      clearInterval(maxDurationTimerRef.current);
+      maxDurationTimerRef.current = null;
+    }
+    setSecondsLeft(VOICE_MAX_SECONDS);
+  };
 
   const stopSilenceDetection = () => {
     if (rafRef.current) cancelAnimationFrame(rafRef.current);
@@ -88,6 +101,28 @@ export function useSarvamSTT() {
     }
   };
 
+  const stopRecording = useCallback(() => {
+    stopSilenceDetection();
+    clearMaxDurationTimer();
+    if (mediaRecorderRef.current?.state === "recording") {
+      mediaRecorderRef.current.stop();
+    }
+  }, []);
+
+  const startMaxDurationCountdown = (onExpire: () => void) => {
+    clearMaxDurationTimer();
+    setSecondsLeft(VOICE_MAX_SECONDS);
+    let left = VOICE_MAX_SECONDS;
+    maxDurationTimerRef.current = setInterval(() => {
+      left -= 1;
+      setSecondsLeft(Math.max(0, left));
+      if (left <= 0) {
+        clearMaxDurationTimer();
+        onExpire();
+      }
+    }, 1000);
+  };
+
   const startRecording = async (deviceId?: string) => {
     try {
       const audioConstraints: MediaTrackConstraints = {
@@ -118,6 +153,7 @@ export function useSarvamSTT() {
 
       mediaRecorder.onstop = () => {
         stopSilenceDetection();
+        clearMaxDurationTimer();
         sendAudio(chunksRef.current);
         streamRef.current?.getTracks().forEach((t) => t.stop());
       };
@@ -125,22 +161,30 @@ export function useSarvamSTT() {
       mediaRecorder.start();
       setStatus("recording");
 
-      startSilenceDetection(stream, () => {
+      const autoStop = () => {
         if (mediaRecorderRef.current?.state === "recording") {
+          stopSilenceDetection();
+          clearMaxDurationTimer();
           mediaRecorderRef.current.stop();
         }
-      });
+      };
+
+      startSilenceDetection(stream, autoStop);
+      startMaxDurationCountdown(autoStop);
     } catch {
+      clearMaxDurationTimer();
       setStatus("error");
     }
   };
 
-  const stopRecording = () => {
-    stopSilenceDetection();
-    mediaRecorderRef.current?.stop();
-  };
-
   const resetTranscript = () => setTranscript("");
 
-  return { status, transcript, startRecording, stopRecording, resetTranscript };
+  return {
+    status,
+    transcript,
+    secondsLeft,
+    startRecording,
+    stopRecording,
+    resetTranscript,
+  };
 }

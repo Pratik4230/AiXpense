@@ -13,7 +13,6 @@ import {
   MessagesSquare,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ModeToggle } from "@/components/ui/modeToggle";
 import { signOut } from "@/lib/authClient";
 import { ReportIssueDialog } from "@/components/report-issue/ReportIssueDialog";
 import {
@@ -107,10 +106,6 @@ export function Navbar({ user }: { user: NavbarUser | null }) {
           </div>
 
           <div className="flex items-center gap-2">
-            <div className="hidden sm:block">
-              <ModeToggle />
-            </div>
-
             {mounted && user && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -193,10 +188,6 @@ export function Navbar({ user }: { user: NavbarUser | null }) {
               })}
             </nav>
             <div className="pt-3 border-t border-border/50 space-y-2">
-              <div className="flex items-center justify-between px-1">
-                <span className="text-xs text-muted-foreground">Theme</span>
-                <ModeToggle />
-              </div>
               {mounted && user && (
                 <div className="grid grid-cols-2 gap-1">
                   <Link href="/profile" onClick={() => setMobileOpen(false)}>

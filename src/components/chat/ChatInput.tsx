@@ -6,7 +6,6 @@ import {
   SendHorizonal,
   Loader2,
   Mic,
-  Square,
   Camera,
   ScanLine,
   Lock,
@@ -76,7 +75,7 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(
     openFilePicker: () => fileInputRef.current?.click(),
   }));
 
-  const { status, transcript, startRecording, stopRecording, resetTranscript } =
+  const { status, transcript, secondsLeft, startRecording, stopRecording, resetTranscript } =
     useSarvamSTT();
 
   const [isUploadingFile, setIsUploadingFile] = useState(false);
@@ -314,20 +313,26 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(
               <Button
                 type="button"
                 size="icon"
-                variant={isRecording ? "destructive" : "ghost"}
+                variant={isRecording ? "ghost" : "ghost"}
                 onClick={() =>
                   isRecording ? stopRecording() : startRecording()
                 }
                 disabled={isLoading || isProcessing || isUploadingFile}
                 className={cn(
-                  "h-9 w-9 rounded-xl",
-                  isRecording && "animate-pulse",
+                  "relative h-9 w-9 rounded-xl overflow-hidden",
+                  isRecording && "hover:bg-transparent",
                 )}
               >
                 {isProcessing ? (
                   <Loader2 className="size-4 animate-spin" />
                 ) : isRecording ? (
-                  <Square className="size-4 fill-current" />
+                  <span
+                    aria-live="polite"
+                    aria-label={`${secondsLeft} seconds remaining`}
+                    className="absolute inset-0 flex items-center justify-center rounded-xl bg-red-500/12 text-[13px] font-semibold tabular-nums text-red-500"
+                  >
+                    {secondsLeft}
+                  </span>
                 ) : (
                   <Mic className="size-4" />
                 )}
