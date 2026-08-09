@@ -23,3 +23,9 @@ export {
   AndroidBetaSignup,
   type IAndroidBetaSignup,
 } from "./AndroidBetaSignup";
+export {
+  BroadcastCampaign,
+  type IBroadcastCampaign,
+  type IBroadcastCampaignDocument,
+  type BroadcastStatus,
+} from "./BroadcastCampaign";
