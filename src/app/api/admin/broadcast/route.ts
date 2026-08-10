@@ -49,7 +49,6 @@ export async function POST(req: Request) {
       status: "active",
       totalUsers: 0,
       sentCount: 0,
-      sentEmails: [],
     });
 
     await inngest.send({

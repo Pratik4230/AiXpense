@@ -9,6 +9,9 @@ export interface IBroadcastCampaign {
   status: BroadcastStatus;
   totalUsers: number;
   sentCount: number;
+  /** Cursor for verified-user pagination — avoids loading all users each run */
+  lastProcessedUserId?: string;
+  /** Legacy dedup list from pre-cursor campaigns */
   sentEmails: string[];
   createdAt: Date;
   updatedAt: Date;
@@ -31,6 +34,7 @@ const BroadcastCampaignSchema = new Schema<IBroadcastCampaignDocument>(
     },
     totalUsers: { type: Number, required: true, default: 0 },
     sentCount: { type: Number, required: true, default: 0 },
+    lastProcessedUserId: { type: String },
     sentEmails: { type: [String], default: [] },
   },
   { timestamps: true }

@@ -11,7 +11,8 @@
     "test:e2e:ui": "bun --env-file=.env playwright test --ui",
     "test:e2e:headed": "bun --env-file=.env playwright test --headed",
     "test:e2e:report": "playwright show-report",
-    "db:fix-subscription-indexes": "node --env-file=.env ./node_modules/tsx/dist/cli.mjs scripts/fix-subscription-indexes.ts"
+    "db:fix-subscription-indexes": "node --env-file=.env ./node_modules/tsx/dist/cli.mjs scripts/fix-subscription-indexes.ts",
+    "db:export-emails": "node scripts/export-verified-emails.mjs"
   },
   "dependencies": {
     "@ai-sdk/openai": "^3.0.41",
