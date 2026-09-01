@@ -42,6 +42,7 @@ import {
 } from "@/services/conversations";
 import { useTrialActions } from "@/services/trials";
 import Image from "next/image";
+import { FileText } from "lucide-react";
 import { parseChatErrorMessage } from "@/lib/ai/userFacingError";
 
 type ReceiptPreview = {
