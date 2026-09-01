@@ -1,6 +1,6 @@
 import { tool } from "ai";
 import { z } from "zod";
-import { openai } from "@ai-sdk/openai";
+import { receiptModel } from "@/lib/ai/models";
 import { generateText } from "ai";
 import { logger } from "@/lib/logger";
 import { DEFAULT_CURRENCY, getCurrency } from "@/constants/currency";
@@ -65,7 +65,7 @@ export const createScanBillTool = ({
             : ({ type: "image" as const, image: buffer, mediaType });
 
         const { text } = await generateText({
-          model: openai("gpt-5.4-mini"),
+          model: receiptModel(),
           system: buildExtractionPrompt(currencyCode, currencySymbol),
           maxOutputTokens: 1200,
           messages: [

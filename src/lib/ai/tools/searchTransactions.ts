@@ -1,5 +1,5 @@
 import { tool, generateText, Output } from "ai";
-import { openai } from "@ai-sdk/openai";
+import { chatModel } from "@/lib/ai/models";
 import { z } from "zod";
 import mongoose from "mongoose";
 import { connectDB } from "@/lib/db";
@@ -289,7 +289,7 @@ export const createSearchTransactionsTool = ({
       if (query && !filter && !aggregation) {
         try {
           const { output } = await generateText({
-            model: openai("gpt-5.4-mini"),
+            model: chatModel(),
             output: Output.json(),
             system: SPECIALIST_SYSTEM_PROMPT,
             prompt: `Anchor date (UTC calendar): ${todayUtc}

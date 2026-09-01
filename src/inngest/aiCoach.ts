@@ -4,7 +4,7 @@ import { db } from "@/lib/db";
 import { sendEmail } from "@/lib/email";
 import { coachInsightEmail } from "@/lib/email/templates";
 import { Expense, Insight } from "@/models";
-import { openai } from "@ai-sdk/openai";
+import { chatModel } from "@/lib/ai/models";
 import { generateText } from "ai";
 import mongoose from "mongoose";
 import { logger } from "@/lib/logger";
@@ -113,7 +113,7 @@ async function runCoachForPeriod(type: "weekly" | "monthly") {
     let usage: Awaited<ReturnType<typeof generateText>>["usage"];
     try {
       ({ text, usage } = await generateText({
-        model: openai("gpt-5.4-nano"),
+        model: chatModel(),
         providerOptions: {
           openai: {
             serviceTier: "flex",

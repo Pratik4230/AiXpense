@@ -1,5 +1,5 @@
 import { convertToModelMessages, streamText, UIMessage, stepCountIs } from "ai";
-import { openai } from "@ai-sdk/openai";
+import { chatModel } from "@/lib/ai/models";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { after } from "next/server";
@@ -195,7 +195,7 @@ export async function POST(req: Request) {
 
   try {
     const result = streamText({
-      model: openai("gpt-5.4-nano"),
+      model: chatModel(),
       system: SYSTEM_PROMPT(currentDateStr, userCurrency.code, userCurrency.symbol),
       messages: await convertToModelMessages(interceptedMessages, {
         tools,
