@@ -1,6 +1,7 @@
 import { logger } from "@/lib/logger";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { getUserFacingVoiceErrorMessage } from "@/lib/ai/userFacingError";
 
 const MAX_AUDIO_BYTES = 10 * 1024 * 1024; // 10 MB
 
@@ -52,13 +53,20 @@ export async function POST(req: Request) {
         error: `Sarvam ${response.status}: ${errBody.slice(0, 300)}`,
         data: { status: response.status },
       });
-      throw new Error(`Sarvam error: ${response.status}`);
+      const userMessage = getUserFacingVoiceErrorMessage(
+        response.status,
+        errBody,
+      );
+      return Response.json({ error: userMessage }, { status: 503 });
     }
 
     const data = await response.json();
     return Response.json({ transcript: data.transcript });
   } catch (error) {
     logger.error("voice_sarvam_fail", { error });
-    return Response.json({ error: "Transcription failed" }, { status: 500 });
+    return Response.json(
+      { error: getUserFacingVoiceErrorMessage() },
+      { status: 503 },
+    );
   }
 }

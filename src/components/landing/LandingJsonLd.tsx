@@ -66,7 +66,7 @@ const mobileAppJsonLd = {
   identifier: PLAY_STORE_PACKAGE,
   inLanguage: ["en", "hi", "mr", "ta", "te", "bn", "gu", "kn", "ml", "pa"],
   description:
-    "AI expense tracker for India: voice input in 22+ Indian languages, bill scanning, budgets, and AI spending coach. Free tier with 7 free AI messages (lifetime).",
+    "AI expense tracker for India: voice input in 22+ Indian languages, bill scanning, budgets, and AI spending coach. Free tier with 3 free AI messages (lifetime).",
   offers: {
     "@type": "Offer",
     price: "0",
@@ -103,7 +103,7 @@ const softwareJsonLd = {
   alternateName: ["AiXpense", "AI Xpense", "AI Expense Tracker"],
   url: SITE_URL,
   description:
-    "AiXpense: stop losing track of spending—log with plain lines like Zomato 450 or petrol 800 aaj in Hindi, Marathi, Hinglish, English & 22+ Indian languages. No forms or spreadsheets. Free tier with 7 AI messages lifetime; Premium adds unlimited AI, receipt scan, recurring rules, reports.",
+    "AiXpense: stop losing track of spending—log with plain lines like Zomato 450 or petrol 800 aaj in Hindi, Marathi, Hinglish, English & 22+ Indian languages. No forms or spreadsheets. Free tier with 3 AI messages lifetime; Premium adds unlimited AI, receipt scan, recurring rules, reports.",
   applicationCategory: "FinanceApplication",
   applicationSubCategory: "Expense Tracker",
   operatingSystem: ["Web", "Android"],
@@ -128,7 +128,7 @@ const softwareJsonLd = {
       price: "0",
       priceCurrency: "INR",
       name: "Free Plan",
-      description: "7 free AI messages (lifetime) with full expense tracking",
+      description: "3 free AI messages (lifetime) with full expense tracking",
     },
     {
       "@type": "Offer",

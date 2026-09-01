@@ -57,7 +57,7 @@ const LandingFaq = dynamic(
 );
 
 const freeFeatures = [
-  "7 free AI messages (lifetime)",
+  "3 free AI messages (lifetime)",
   "Voice input in 22+ Indian languages",
   "Expense & income tracking",
   "Search & filter transactions",
@@ -330,7 +330,7 @@ export function LandingPageView() {
               Native Android app built for India: voice input in 22+ languages
               (Hindi, Marathi, Tamil, Telugu &amp; more), camera bill scanning,
               budgets, and AI spending coach. Same account as the web app.
-              Free tier with 7 free AI messages (lifetime).
+              Free tier with 3 free AI messages (lifetime).
             </p>
             <div className="pt-2 flex flex-col sm:flex-row gap-3 justify-center items-center">
               <PlayStoreLink
@@ -450,7 +450,7 @@ export function LandingPageView() {
               Simple pricing
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base px-2">
-              Start free with 7 AI messages total. Upgrade on the web when you
+              Start free with 3 AI messages total. Upgrade on the web when you
               want unlimited help and scanning.
             </p>
           </div>
@@ -463,7 +463,7 @@ export function LandingPageView() {
                 </p>
                 <p className="text-4xl font-bold">₹0</p>
                 <p className="text-sm text-muted-foreground mt-1">
-                  7 free AI messages total
+                  3 free AI messages total
                 </p>
               </div>
               <ul className="space-y-3 text-sm flex-1">

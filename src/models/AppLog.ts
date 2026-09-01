@@ -4,6 +4,7 @@ export type LogLevel = "info" | "warn" | "error";
 
 export type LogEvent =
   | "chat_complete"
+  | "chat_ai_fail"
   | "chat_quota_exceeded"
   | "chat_unauthorized"
   | "ai_usage_record_fail"

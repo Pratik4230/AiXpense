@@ -22,7 +22,12 @@ import { logger } from "@/lib/logger";
 import { getCurrency } from "@/constants/currency";
 import { effectivePremium } from "@/lib/premium";
 import { resolveUserCurrencyCode } from "@/lib/userCurrency";
+import { FREE_LIFETIME_LIMIT } from "@/constants/trials";
 import { formatUtcCalendarDateLong } from "@/lib/utcDates";
+import {
+  getAiErrorHttpStatus,
+  getUserFacingAiErrorMessage,
+} from "@/lib/ai/userFacingError";
 
 export const maxDuration = 30;
 
@@ -41,6 +46,18 @@ export async function POST(req: Request) {
   const now = new Date();
 
   await connectDB();
+
+  const userObjectId = new mongoose.Types.ObjectId(userId);
+
+  // Cap legacy accounts that still have a balance above the current limit.
+  await mongoose.connection.db!.collection("user").updateOne(
+    {
+      _id: userObjectId,
+      isPremium: { $ne: true },
+      freeTrials: { $gt: FREE_LIFETIME_LIMIT },
+    },
+    { $set: { freeTrials: FREE_LIFETIME_LIMIT } },
+  );
 
   // Lifetime free quota: decrement freeTrials until 0 (no daily reset).
   const dbUser = await mongoose.connection.db!
@@ -176,43 +193,69 @@ export async function POST(req: Request) {
     }),
   };
 
-  const result = streamText({
-    model: openai("gpt-5.4-nano"),
-    system: SYSTEM_PROMPT(currentDateStr, userCurrency.code, userCurrency.symbol),
-    messages: await convertToModelMessages(interceptedMessages, {
-      tools,
-      ignoreIncompleteToolCalls: true,
-    }),
-    maxOutputTokens: 1500,
-    providerOptions: {
-      openai: {
-        reasoningEffort: "medium",
-        textVerbosity: "low",
-        user: userId,
-        safetyIdentifier: userId,
-        maxToolCalls: 5,
-        truncation: "auto",
-        store: false,
+  try {
+    const result = streamText({
+      model: openai("gpt-5.4-nano"),
+      system: SYSTEM_PROMPT(currentDateStr, userCurrency.code, userCurrency.symbol),
+      messages: await convertToModelMessages(interceptedMessages, {
+        tools,
+        ignoreIncompleteToolCalls: true,
+      }),
+      maxOutputTokens: 1500,
+      providerOptions: {
+        openai: {
+          reasoningEffort: "medium",
+          textVerbosity: "low",
+          user: userId,
+          safetyIdentifier: userId,
+          maxToolCalls: 5,
+          truncation: "auto",
+          store: false,
+        },
       },
-    },
-    tools,
-    stopWhen: stepCountIs(5),
-  });
-
-  const response = result.toUIMessageStreamResponse({ sendReasoning: true });
-
-  after(async () => {
-    const usage = await result.usage;
-    const metadata = await result.providerMetadata;
-    const cachedTokens = (metadata?.openai?.cachedPromptTokens as number) ?? 0;
-    const promptTokens = usage.inputTokens ?? 0;
-    const completionTokens = usage.outputTokens ?? 0;
-
-    logger.info("chat_complete", {
-      userId,
-      data: { promptTokens, completionTokens, cachedTokens },
+      tools,
+      stopWhen: stepCountIs(5),
     });
-  });
 
-  return response;
+    const response = result.toUIMessageStreamResponse({
+      sendReasoning: true,
+      onError: (error) => getUserFacingAiErrorMessage(error),
+    });
+
+    after(async () => {
+      try {
+        const usage = await result.usage;
+        const metadata = await result.providerMetadata;
+        const cachedTokens = (metadata?.openai?.cachedPromptTokens as number) ?? 0;
+        const promptTokens = usage.inputTokens ?? 0;
+        const completionTokens = usage.outputTokens ?? 0;
+
+        logger.info("chat_complete", {
+          userId,
+          data: { promptTokens, completionTokens, cachedTokens },
+        });
+      } catch (error) {
+        logger.error("chat_ai_fail", {
+          userId,
+          error: error instanceof Error ? error.message : String(error),
+        });
+      }
+    });
+
+    return response;
+  } catch (error) {
+    const userMessage = getUserFacingAiErrorMessage(error);
+    const status = getAiErrorHttpStatus(error);
+
+    logger.error("chat_ai_fail", {
+      userId,
+      error: error instanceof Error ? error.message : String(error),
+      data: { status, userMessage },
+    });
+
+    return new Response(JSON.stringify({ error: userMessage }), {
+      status,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
 }

@@ -3,7 +3,7 @@ import { PLAY_STORE_URL } from "@/constants/play-store";
 export const LANDING_FAQS = [
   {
     q: "Is AiXpense free to use?",
-    a: "Yes. The free plan gives you 7 AI messages in total (lifetime) with full expense tracking, categorization, and search. No credit card needed to start.",
+    a: "Yes. The free plan gives you 3 AI messages in total (lifetime) with full expense tracking, categorization, and search. No credit card needed to start.",
   },
   {
     q: "Does it work in Hindi, Marathi, or Hinglish?",
@@ -23,7 +23,7 @@ export const LANDING_FAQS = [
   },
   {
     q: "What is the difference between the free and premium plans?",
-    a: "The free plan includes 7 AI messages in total (lifetime). Premium unlocks unlimited AI conversations, deeper spending insights and charts, shareable report cards, recurring payment tracking in the app, and AI receipt and bill scanning—plus priority support.",
+    a: "The free plan includes 3 AI messages in total (lifetime). Premium unlocks unlimited AI conversations, deeper spending insights and charts, shareable report cards, recurring payment tracking in the app, and AI receipt and bill scanning—plus priority support.",
   },
   {
     q: "Do I need to log every expense manually?",

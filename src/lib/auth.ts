@@ -37,7 +37,7 @@ import {
   onDodoSubscriptionUpdatedLike,
 } from "@/lib/dodo/webhookHandlers";
 import { DEFAULT_COUNTRY, DEFAULT_CURRENCY } from "@/constants/currency";
-import { FREE_LIFETIME_LIMIT } from "@/constants/trials";
+import { FREE_LIFETIME_LIMIT, normalizeFreeTrials } from "@/constants/trials";
 import {
   getClientPlatformFromContext,
   resolveSignupPlatform,
@@ -243,7 +243,7 @@ export const auth = betterAuth({
             return {
               data: {
                 ...userWithPlatform,
-                freeTrials: deleted.trialsRemaining,
+                freeTrials: normalizeFreeTrials(deleted.trialsRemaining),
               },
             };
           }

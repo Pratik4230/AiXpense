@@ -1,14 +1,17 @@
-import { baseLayout } from "./base";
+import { baseLayout, heading, mutedParagraph, paragraph } from "./base";
 
-const BRAND_COLOR = "#b45309";
+const TEXT = "#1a1a1a";
+const MUTED = "#555555";
+const BORDER = "#e5e5e5";
+const SOFT_BG = "#fafafa";
 
 function otpBlock(otp: string) {
   return `
     <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="margin: 24px 0;">
       <tr>
         <td align="center">
-          <div style="display: inline-block; background-color: #fafafa; border: 2px dashed #e4e4e7; border-radius: 12px; padding: 20px 40px;">
-            <span style="font-size: 32px; font-weight: 700; letter-spacing: 8px; color: ${BRAND_COLOR}; font-family: 'Courier New', monospace;">${otp}</span>
+          <div style="display: inline-block; background-color: ${SOFT_BG}; border: 1px solid ${BORDER}; border-radius: 8px; padding: 20px 32px;">
+            <span style="font-size: 32px; font-weight: 700; letter-spacing: 6px; color: ${TEXT}; font-family: 'Courier New', monospace;">${otp}</span>
           </div>
         </td>
       </tr>
@@ -34,16 +37,12 @@ export function otpEmail(
   };
 
   const html = baseLayout(`
-    <h2 style="margin: 0 0 8px; font-size: 20px; font-weight: 700; color: #18181b;">${titles[type]}</h2>
-    <p style="margin: 0 0 4px; font-size: 14px; color: #71717a; line-height: 1.7;">
-      ${descriptions[type]}
-    </p>
+    ${heading(titles[type])}
+    ${paragraph(descriptions[type])}
     ${otpBlock(otp)}
-    <p style="margin: 0 0 4px; font-size: 13px; color: #71717a; line-height: 1.7; text-align: center;">
-      This code expires in 5 minutes.
-    </p>
-    <div style="margin-top: 24px; padding: 16px; background-color: #fafafa; border-radius: 8px; border-left: 3px solid #e4e4e7;">
-      <p style="margin: 0; font-size: 13px; color: #a1a1aa; line-height: 1.6;">
+    ${mutedParagraph("This code expires in 5 minutes.")}
+    <div style="margin-top: 8px; padding: 14px 16px; background-color: ${SOFT_BG}; border: 1px solid ${BORDER}; border-radius: 8px;">
+      <p style="margin: 0; font-size: 13px; color: ${MUTED}; line-height: 1.6;">
         If you didn't request this code, you can safely ignore this email.
       </p>
     </div>

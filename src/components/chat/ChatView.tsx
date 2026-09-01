@@ -42,7 +42,7 @@ import {
 } from "@/services/conversations";
 import { useTrialActions } from "@/services/trials";
 import Image from "next/image";
-import { FileText } from "lucide-react";
+import { parseChatErrorMessage } from "@/lib/ai/userFacingError";
 
 type ReceiptPreview = {
   url: string;
@@ -189,14 +189,16 @@ export function ChatView({
     messages: initialMessages as any,
     transport: new DefaultChatTransport({ api: "/api/chat" }),
     onError: (error) => {
+      const message = parseChatErrorMessage(error.message);
       if (
-        error.message.includes("No free trials remaining") ||
+        message.includes("No free trials remaining") ||
+        message.includes("Upgrade to premium") ||
         error.message.includes("403")
       ) {
         onShowUpgradeDialog();
-      } else {
-        toast.error("Something went wrong. Please try again.");
+        return;
       }
+      toast.error(message);
     },
   });
 

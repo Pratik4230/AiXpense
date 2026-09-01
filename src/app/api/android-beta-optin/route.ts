@@ -2,6 +2,13 @@ import { z } from "zod";
 import { sendEmail } from "@/lib/email";
 import { connectDB } from "@/lib/db";
 import { AndroidBetaSignup } from "@/models";
+import {
+  baseLayout,
+  heading,
+  infoBox,
+  infoRowLast,
+  paragraph,
+} from "@/lib/email/templates/base";
 
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL;
 
@@ -43,17 +50,11 @@ export async function POST(req: Request) {
   await sendEmail({
     to: ADMIN_EMAIL,
     subject: `[AiXpense] Android Closed Beta Opt-In`,
-    html: `
-      <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #111827;">
-        <h2 style="margin-bottom: 8px;">New Android Closed Beta Opt-In</h2>
-        <p style="margin: 0 0 12px;">
-          Someone requested access to the AiXpense Android closed beta.
-        </p>
-        <p style="margin: 0;">
-          <strong>Email:</strong> ${email}
-        </p>
-      </div>
-    `,
+    html: baseLayout(`
+      ${heading("New Android closed beta opt-in")}
+      ${paragraph("Someone requested access to the AiXpense Android closed beta.")}
+      ${infoBox(infoRowLast("Email", email))}
+    `),
     text: `New Android Closed Beta Opt-In\nEmail: ${email}`,
   });
 

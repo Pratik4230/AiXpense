@@ -2,6 +2,7 @@ import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { connectDB } from "@/lib/db";
 import mongoose from "mongoose";
+import { FREE_LIFETIME_LIMIT, normalizeFreeTrials } from "@/constants/trials";
 import { effectivePremium } from "@/lib/premium";
 
 export async function GET() {
@@ -36,8 +37,18 @@ export async function GET() {
     return Response.json({ freeTrials: null, isPremium: true });
   }
 
+  const rawTrials = user.freeTrials ?? 0;
+  const freeTrials = normalizeFreeTrials(rawTrials);
+
+  if (freeTrials !== rawTrials) {
+    await mongoose.connection.db!.collection("user").updateOne(
+      { _id: new mongoose.Types.ObjectId(session.user.id) },
+      { $set: { freeTrials } },
+    );
+  }
+
   return Response.json({
-    freeTrials: user.freeTrials ?? 0,
+    freeTrials,
     isPremium: false,
   });
 }

@@ -1,5 +1,7 @@
 import { useCallback, useRef, useState } from "react";
 import { VOICE_MAX_SECONDS } from "@/constants/voice";
+import { VOICE_UNAVAILABLE_MESSAGE } from "@/lib/ai/userFacingError";
+import { toast } from "sonner";
 
 type Status = "idle" | "recording" | "processing" | "error";
 
@@ -92,12 +94,19 @@ export function useSarvamSTT() {
       });
 
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error);
+      if (!res.ok) {
+        throw new Error(
+          typeof data.error === "string" ? data.error : VOICE_UNAVAILABLE_MESSAGE,
+        );
+      }
 
       setTranscript(data.transcript ?? "");
       setStatus("idle");
-    } catch {
+    } catch (error) {
       setStatus("error");
+      toast.error(
+        error instanceof Error ? error.message : VOICE_UNAVAILABLE_MESSAGE,
+      );
     }
   };
 
