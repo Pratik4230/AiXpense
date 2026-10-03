@@ -409,125 +409,126 @@ export function ChatView({
                 .join("\n\n");
 
               return (
-              <Message
-                key={message.id}
-                from={message.role === "user" ? "user" : "assistant"}
-                isPremium={isPremium}
-              >
-                <MessageContent>
-                  {reasoningParts.length > 0 && (
-                    <Reasoning
-                      isStreaming={isReasoningStreaming}
-                      defaultOpen={false}
-                    >
-                      <ReasoningTrigger />
-                      {reasoningText ? (
-                        <ReasoningContent>{reasoningText}</ReasoningContent>
-                      ) : null}
-                    </Reasoning>
-                  )}
-                  {message.parts?.map((part, index) => {
-                    if (part.type === "reasoning") {
-                      return null;
-                    }
-
-                    if (part.type === "text") {
-                      let displayText = part.text;
-                      if (
-                        message.role === "user" &&
-                        displayText.includes("[ATTACHED_TRANSACTION:")
-                      ) {
-                        const actionMatch = displayText.match(/action=(\w+)/);
-                        const itemMatch = displayText.match(/item=([^,\]]+)/);
-                        const amountMatch = displayText.match(/amount=(\d+)/);
-                        const action = actionMatch?.[1];
-                        const itemName = itemMatch?.[1];
-                        const amount = amountMatch?.[1];
-                        const userText = displayText
-                          .split("]")
-                          .slice(1)
-                          .join("]")
-                          .trim();
-
-                        if (action === "delete") {
-                          displayText = `Delete: ${itemName} (${symbol}${amount})`;
-                        } else {
-                          displayText = userText
-                            ? `Edit ${itemName}: ${userText}`
-                            : `Edit: ${itemName} (${symbol}${amount})`;
-                        }
+                <Message
+                  key={message.id}
+                  from={message.role === "user" ? "user" : "assistant"}
+                  isPremium={isPremium}
+                >
+                  <MessageContent>
+                    {reasoningParts.length > 0 && (
+                      <Reasoning
+                        isStreaming={isReasoningStreaming}
+                        defaultOpen={false}
+                      >
+                        <ReasoningTrigger />
+                        {reasoningText ? (
+                          <ReasoningContent>{reasoningText}</ReasoningContent>
+                        ) : null}
+                      </Reasoning>
+                    )}
+                    {message.parts?.map((part, index) => {
+                      if (part.type === "reasoning") {
+                        return null;
                       }
-                      return (
-                        <MessageResponse key={`${message.id}-${index}`}>
-                          {displayText}
-                        </MessageResponse>
-                      );
-                    }
 
-                    if (
-                      part.type === "file" &&
-                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                      (part as any).mediaType?.startsWith("image/")
-                    ) {
-                      return (
-                        <button
-                          key={`${message.id}-${index}`}
-                          type="button"
-                          onClick={() =>
-                            setReceiptPreview({
-                              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                              url: (part as any).url,
-                              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                              mediaType: (part as any).mediaType,
-                            })
+                      if (part.type === "text") {
+                        let displayText = part.text;
+                        if (
+                          message.role === "user" &&
+                          displayText.includes("[ATTACHED_TRANSACTION:")
+                        ) {
+                          const actionMatch = displayText.match(/action=(\w+)/);
+                          const itemMatch = displayText.match(/item=([^,\]]+)/);
+                          const amountMatch = displayText.match(/amount=(\d+)/);
+                          const action = actionMatch?.[1];
+                          const itemName = itemMatch?.[1];
+                          const amount = amountMatch?.[1];
+                          const userText = displayText
+                            .split("]")
+                            .slice(1)
+                            .join("]")
+                            .trim();
+
+                          if (action === "delete") {
+                            displayText = `Delete: ${itemName} (${symbol}${amount})`;
+                          } else {
+                            displayText = userText
+                              ? `Edit ${itemName}: ${userText}`
+                              : `Edit: ${itemName} (${symbol}${amount})`;
                           }
-                          className="mt-2 block max-w-sm overflow-hidden rounded-xl border text-left cursor-zoom-in focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                          aria-label="View receipt full screen"
-                        >
-                          <Image
-                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                            src={(part as any).url}
-                            alt="Uploaded receipt"
-                            width={400}
-                            height={400}
-                            priority
-                            className="w-full h-auto object-cover"
-                          />
-                        </button>
-                      );
-                    }
+                        }
+                        return (
+                          <MessageResponse key={`${message.id}-${index}`}>
+                            {displayText}
+                          </MessageResponse>
+                        );
+                      }
 
-                    if (
-                      part.type === "file" &&
-                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                      (part as any).mediaType === "application/pdf"
-                    ) {
-                      return (
-                        <button
-                          key={`${message.id}-${index}`}
-                          type="button"
-                          onClick={() =>
-                            setReceiptPreview({
+                      if (
+                        part.type === "file" &&
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        (part as any).mediaType?.startsWith("image/")
+                      ) {
+                        return (
+                          <button
+                            key={`${message.id}-${index}`}
+                            type="button"
+                            onClick={() =>
+                              setReceiptPreview({
+                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                url: (part as any).url,
+                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                mediaType: (part as any).mediaType,
+                              })
+                            }
+                            className="mt-2 block max-w-sm overflow-hidden rounded-xl border text-left cursor-zoom-in focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            aria-label="View receipt full screen"
+                          >
+                            <Image
                               // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                              url: (part as any).url,
-                              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                              mediaType: (part as any).mediaType,
-                            })
-                          }
-                          className="mt-2 inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm hover:bg-muted/40 transition-colors"
-                          aria-label="Preview uploaded PDF"
-                        >
-                          <FileText className="size-4" />
-                          <span>Preview uploaded PDF</span>
-                        </button>
-                      );
-                    }
+                              src={(part as any).url}
+                              alt="Uploaded receipt"
+                              width={400}
+                              height={400}
+                              priority
+                              className="w-full h-auto object-cover"
+                            />
+                          </button>
+                        );
+                      }
 
-                    if (part.type === "tool-saveExpense") {
-                      if (part.state === "output-available" && part.output) {
-                        const expense = (
-                          part.output as {
-                            expense: {
+                      if (
+                        part.type === "file" &&
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        (part as any).mediaType === "application/pdf"
+                      ) {
+                        return (
+                          <button
+                            key={`${message.id}-${index}`}
+                            type="button"
+                            onClick={() =>
+                              setReceiptPreview({
+                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                url: (part as any).url,
+                                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                                mediaType: (part as any).mediaType,
+                              })
+                            }
+                            className="mt-2 inline-flex items-center gap-2 rounded-xl border px-3 py-2 text-sm hover:bg-muted/40 transition-colors"
+                            aria-label="Preview uploaded PDF"
+                          >
+                            <FileText className="size-4" />
+                            <span>Preview uploaded PDF</span>
+                          </button>
+                        );
+                      }
+
+                      if (part.type === "tool-saveExpense") {
+                        if (part.state === "output-available" && part.output) {
+                          const output = part.output as {
+                            success: boolean;
+                            error?: string;
+                            expense?: {
                               id: string;
                               item: string;
                               amount: number;
@@ -537,38 +538,51 @@ export function ChatView({
                               tags?: string[];
                               notes?: string;
                             };
+                          };
+
+                          if (!output.success || !output.expense) {
+                            return (
+                              <div
+                                key={`${message.id}-${index}`}
+                                className="text-red-500 text-sm"
+                              >
+                                {output.error || "Failed to save expense."}
+                              </div>
+                            );
                           }
-                        ).expense;
 
-                        return (
-                          <ExpenseCard
-                            key={`${message.id}-${index}`}
-                            {...expense}
-                            isOutdated={outdatedIds.has(expense.id)}
-                            onEdit={handleTransactionEdit}
-                            onDelete={handleTransactionDelete}
-                          />
-                        );
+                          const expense = output.expense;
+
+                          return (
+                            <ExpenseCard
+                              key={`${message.id}-${index}`}
+                              {...expense}
+                              isOutdated={outdatedIds.has(expense.id)}
+                              onEdit={handleTransactionEdit}
+                              onDelete={handleTransactionDelete}
+                            />
+                          );
+                        }
+
+                        if (
+                          part.state === "input-streaming" ||
+                          part.state === "input-available"
+                        ) {
+                          return (
+                            <ToolLoading
+                              key={`${message.id}-${index}`}
+                              type="expense"
+                            />
+                          );
+                        }
                       }
 
-                      if (
-                        part.state === "input-streaming" ||
-                        part.state === "input-available"
-                      ) {
-                        return (
-                          <ToolLoading
-                            key={`${message.id}-${index}`}
-                            type="expense"
-                          />
-                        );
-                      }
-                    }
-
-                    if (part.type === "tool-saveIncome") {
-                      if (part.state === "output-available" && part.output) {
-                        const income = (
-                          part.output as {
-                            income: {
+                      if (part.type === "tool-saveIncome") {
+                        if (part.state === "output-available" && part.output) {
+                          const output = part.output as {
+                            success: boolean;
+                            error?: string;
+                            income?: {
                               id: string;
                               source: string;
                               amount: number;
@@ -578,176 +592,190 @@ export function ChatView({
                               tags?: string[];
                               notes?: string;
                             };
-                          }
-                        ).income;
-
-                        return (
-                          <IncomeCard
-                            key={`${message.id}-${index}`}
-                            {...income}
-                            isOutdated={outdatedIds.has(income.id)}
-                            onEdit={handleIncomeEdit}
-                            onDelete={handleIncomeDelete}
-                          />
-                        );
-                      }
-
-                      if (part.state === "output-error") {
-                        return (
-                          <div
-                            key={`${message.id}-${index}`}
-                            className="text-red-500 text-sm"
-                          >
-                            Error saving income:{" "}
-                            {part.errorText || "Unknown error"}
-                          </div>
-                        );
-                      }
-
-                      if (
-                        part.state === "input-streaming" ||
-                        part.state === "input-available"
-                      ) {
-                        return (
-                          <ToolLoading
-                            key={`${message.id}-${index}`}
-                            type="income"
-                          />
-                        );
-                      }
-                    }
-
-                    if (part.type === "tool-searchTransactions") {
-                      if (part.state === "output-available" && part.output) {
-                        return null;
-                      }
-
-                      if (
-                        part.state === "input-streaming" ||
-                        part.state === "input-available"
-                      ) {
-                        return (
-                          <ToolLoading
-                            key={`${message.id}-${index}`}
-                            type="thinking"
-                          />
-                        );
-                      }
-                    }
-
-                    if (part.type === "tool-deleteTransaction") {
-                      if (part.state === "output-available" && part.output) {
-                        const output = part.output as {
-                          success: boolean;
-                          deleted?: {
-                            id: string;
-                            item: string;
-                            amount: number;
-                            type: string;
-                            currency?: string;
                           };
-                        };
-                        if (output.success && output.deleted) {
-                          if (!outdatedIds.has(output.deleted.id)) {
-                            setOutdatedIds((prev) =>
-                              new Set(prev).add(output.deleted!.id),
+
+                          if (!output.success || !output.income) {
+                            return (
+                              <div
+                                key={`${message.id}-${index}`}
+                                className="text-red-500 text-sm"
+                              >
+                                {output.error || "Failed to save income."}
+                              </div>
                             );
                           }
+
+                          const income = output.income;
+
                           return (
-                            <DeletedCard
+                            <IncomeCard
                               key={`${message.id}-${index}`}
-                              type={output.deleted.type as "expense" | "income"}
-                              item={output.deleted.item}
-                              amount={output.deleted.amount}
-                              currency={output.deleted.currency}
+                              {...income}
+                              isOutdated={outdatedIds.has(income.id)}
+                              onEdit={handleIncomeEdit}
+                              onDelete={handleIncomeDelete}
                             />
                           );
                         }
-                        return null;
-                      }
 
-                      if (
-                        part.state === "input-streaming" ||
-                        part.state === "input-available"
-                      ) {
-                        return (
-                          <ToolLoading
-                            key={`${message.id}-${index}`}
-                            type="thinking"
-                          />
-                        );
-                      }
-                    }
-
-                    if (part.type === "tool-updateTransaction") {
-                      if (part.state === "output-available" && part.output) {
-                        const output = part.output as {
-                          success: boolean;
-                          transaction?: {
-                            id: string;
-                            item: string;
-                            amount: number;
-                            currency?: string;
-                            category: string;
-                            subcategory?: string;
-                            type: string;
-                            notes?: string;
-                          };
-                        };
-                        if (output.success && output.transaction) {
-                          if (!outdatedIds.has(output.transaction.id)) {
-                            setOutdatedIds((prev) =>
-                              new Set(prev).add(output.transaction!.id),
-                            );
-                          }
-                          const txType = output.transaction.type as
-                            | "expense"
-                            | "income";
-                          const editHandler =
-                            txType === "expense"
-                              ? handleTransactionEdit
-                              : handleIncomeEdit;
-                          const deleteHandler =
-                            txType === "expense"
-                              ? handleTransactionDelete
-                              : handleIncomeDelete;
+                        if (part.state === "output-error") {
                           return (
-                            <UpdatedCard
+                            <div
                               key={`${message.id}-${index}`}
-                              id={output.transaction.id}
-                              type={txType}
-                              item={output.transaction.item}
-                              amount={output.transaction.amount}
-                              currency={output.transaction.currency}
-                              category={output.transaction.category}
-                              subcategory={output.transaction.subcategory}
-                              notes={output.transaction.notes}
-                              onEdit={editHandler}
-                              onDelete={deleteHandler}
+                              className="text-red-500 text-sm"
+                            >
+                              Error saving income:{" "}
+                              {part.errorText || "Unknown error"}
+                            </div>
+                          );
+                        }
+
+                        if (
+                          part.state === "input-streaming" ||
+                          part.state === "input-available"
+                        ) {
+                          return (
+                            <ToolLoading
+                              key={`${message.id}-${index}`}
+                              type="income"
                             />
                           );
                         }
-                        return null;
                       }
 
-                      if (
-                        part.state === "input-streaming" ||
-                        part.state === "input-available"
-                      ) {
-                        return (
-                          <ToolLoading
-                            key={`${message.id}-${index}`}
-                            type="thinking"
-                          />
-                        );
-                      }
-                    }
+                      if (part.type === "tool-searchTransactions") {
+                        if (part.state === "output-available" && part.output) {
+                          return null;
+                        }
 
-                    return null;
-                  })}
-                </MessageContent>
-              </Message>
-            );
+                        if (
+                          part.state === "input-streaming" ||
+                          part.state === "input-available"
+                        ) {
+                          return (
+                            <ToolLoading
+                              key={`${message.id}-${index}`}
+                              type="thinking"
+                            />
+                          );
+                        }
+                      }
+
+                      if (part.type === "tool-deleteTransaction") {
+                        if (part.state === "output-available" && part.output) {
+                          const output = part.output as {
+                            success: boolean;
+                            deleted?: {
+                              id: string;
+                              item: string;
+                              amount: number;
+                              type: string;
+                              currency?: string;
+                            };
+                          };
+                          if (output.success && output.deleted) {
+                            if (!outdatedIds.has(output.deleted.id)) {
+                              setOutdatedIds((prev) =>
+                                new Set(prev).add(output.deleted!.id),
+                              );
+                            }
+                            return (
+                              <DeletedCard
+                                key={`${message.id}-${index}`}
+                                type={
+                                  output.deleted.type as "expense" | "income"
+                                }
+                                item={output.deleted.item}
+                                amount={output.deleted.amount}
+                                currency={output.deleted.currency}
+                              />
+                            );
+                          }
+                          return null;
+                        }
+
+                        if (
+                          part.state === "input-streaming" ||
+                          part.state === "input-available"
+                        ) {
+                          return (
+                            <ToolLoading
+                              key={`${message.id}-${index}`}
+                              type="thinking"
+                            />
+                          );
+                        }
+                      }
+
+                      if (part.type === "tool-updateTransaction") {
+                        if (part.state === "output-available" && part.output) {
+                          const output = part.output as {
+                            success: boolean;
+                            transaction?: {
+                              id: string;
+                              item: string;
+                              amount: number;
+                              currency?: string;
+                              category: string;
+                              subcategory?: string;
+                              type: string;
+                              notes?: string;
+                            };
+                          };
+                          if (output.success && output.transaction) {
+                            if (!outdatedIds.has(output.transaction.id)) {
+                              setOutdatedIds((prev) =>
+                                new Set(prev).add(output.transaction!.id),
+                              );
+                            }
+                            const txType = output.transaction.type as
+                              | "expense"
+                              | "income";
+                            const editHandler =
+                              txType === "expense"
+                                ? handleTransactionEdit
+                                : handleIncomeEdit;
+                            const deleteHandler =
+                              txType === "expense"
+                                ? handleTransactionDelete
+                                : handleIncomeDelete;
+                            return (
+                              <UpdatedCard
+                                key={`${message.id}-${index}`}
+                                id={output.transaction.id}
+                                type={txType}
+                                item={output.transaction.item}
+                                amount={output.transaction.amount}
+                                currency={output.transaction.currency}
+                                category={output.transaction.category}
+                                subcategory={output.transaction.subcategory}
+                                notes={output.transaction.notes}
+                                onEdit={editHandler}
+                                onDelete={deleteHandler}
+                              />
+                            );
+                          }
+                          return null;
+                        }
+
+                        if (
+                          part.state === "input-streaming" ||
+                          part.state === "input-available"
+                        ) {
+                          return (
+                            <ToolLoading
+                              key={`${message.id}-${index}`}
+                              type="thinking"
+                            />
+                          );
+                        }
+                      }
+
+                      return null;
+                    })}
+                  </MessageContent>
+                </Message>
+              );
             })
           )}
 

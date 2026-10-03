@@ -13,7 +13,10 @@ export async function GET(req: Request) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { searchParams } = new URL(req.url);
-  const page = Math.max(1, parseInt(searchParams.get("page") ?? "1"));
+  const requestedPage = Number(searchParams.get("page") ?? "1");
+  const page = Number.isInteger(requestedPage)
+    ? Math.max(1, requestedPage)
+    : 1;
   const type = searchParams.get("type") ?? "all";
   const categories =
     searchParams.get("category")?.split(",").filter(Boolean) ?? [];
@@ -35,25 +38,48 @@ export async function GET(req: Request) {
   const dateFilter: Record<string, Date> = {};
   if (from) {
     const f = from.trim();
-    dateFilter.$gte = /^\d{4}-\d{2}-\d{2}$/.test(f)
+    const parsedFrom = /^\d{4}-\d{2}-\d{2}$/.test(f)
       ? new Date(`${f}T00:00:00.000Z`)
       : new Date(from);
+    if (Number.isNaN(parsedFrom.getTime())) {
+      return NextResponse.json({ error: "Invalid from date" }, { status: 400 });
+    }
+    dateFilter.$gte = parsedFrom;
   }
   if (to) {
     const t = to.trim();
     if (/^\d{4}-\d{2}-\d{2}$/.test(t)) {
       const [y, mo, d] = t.split("-").map(Number);
-      dateFilter.$lte = new Date(Date.UTC(y, mo - 1, d, 23, 59, 59, 999));
+      const parsedTo = new Date(Date.UTC(y, mo - 1, d, 23, 59, 59, 999));
+      if (Number.isNaN(parsedTo.getTime())) {
+        return NextResponse.json({ error: "Invalid to date" }, { status: 400 });
+      }
+      dateFilter.$lte = parsedTo;
     } else {
       const toDate = new Date(to);
-      if (!Number.isNaN(toDate.getTime())) dateFilter.$lte = toDate;
+      if (Number.isNaN(toDate.getTime())) {
+        return NextResponse.json({ error: "Invalid to date" }, { status: 400 });
+      }
+      dateFilter.$lte = toDate;
     }
   }
   if (Object.keys(dateFilter).length > 0) match.date = dateFilter;
 
   const amountFilter: Record<string, number> = {};
-  if (minAmount) amountFilter.$gte = parseFloat(minAmount);
-  if (maxAmount) amountFilter.$lte = parseFloat(maxAmount);
+  if (minAmount) {
+    const value = Number(minAmount);
+    if (!Number.isFinite(value)) {
+      return NextResponse.json({ error: "Invalid minimum amount" }, { status: 400 });
+    }
+    amountFilter.$gte = value;
+  }
+  if (maxAmount) {
+    const value = Number(maxAmount);
+    if (!Number.isFinite(value)) {
+      return NextResponse.json({ error: "Invalid maximum amount" }, { status: 400 });
+    }
+    amountFilter.$lte = value;
+  }
   if (Object.keys(amountFilter).length > 0) match.amount = amountFilter;
 
   const sortKey = ["date", "amount", "category"].includes(sort) ? sort : "date";

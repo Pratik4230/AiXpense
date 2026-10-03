@@ -1,4 +1,5 @@
 export const CATEGORIES = [
+  // Expenses
   "food",
   "groceries",
   "transport",
@@ -6,22 +7,36 @@ export const CATEGORIES = [
   "entertainment",
   "subscriptions",
   "bills",
+  "utilities",
   "rent",
-  "emi",
+  "home",
   "health",
   "education",
   "personal",
+  "family",
   "travel",
+  "insurance",
+  "taxes",
+  "emi",
+  "debt",
+  "fees",
+  "charity",
+
+  // Financial
+  "investment",
+  "savings",
+
+  // Income
   "salary",
   "bonus",
   "freelance",
   "business",
-  "investment",
   "interest",
   "cashback",
   "rental",
   "refund",
   "gift",
+
   "other",
 ] as const;
 

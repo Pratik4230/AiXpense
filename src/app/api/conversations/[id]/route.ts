@@ -72,7 +72,9 @@ export async function PATCH(req: Request, { params }: RouteParams) {
         _id: id,
         userId: session.user.id,
         isDeleted: false,
-        messageCount: { $lt: MAX_MESSAGES_PER_CONVERSATION },
+        messageCount: {
+          $lte: MAX_MESSAGES_PER_CONVERSATION - appendMessages.length,
+        },
       },
       {
         $push: { messages: { $each: appendMessages } },
