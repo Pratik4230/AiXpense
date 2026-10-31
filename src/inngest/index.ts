@@ -5,6 +5,7 @@ import { cleanupUnverified } from "./cleanupUnverified";
 import { broadcastEmailFunction } from "./broadcastEmail";
 import { processRecurringPayments } from "./recurringPayments";
 import { targetedEmailFunction } from "./targetedEmail";
+import { jobApplicationEmailFunction } from "./jobApplicationEmail";
 
 export const functions = [
   onboardingDrip,
@@ -14,5 +15,6 @@ export const functions = [
   broadcastEmailFunction,
   targetedEmailFunction,
   processRecurringPayments,
+  jobApplicationEmailFunction,
 ];
 export { inngest };

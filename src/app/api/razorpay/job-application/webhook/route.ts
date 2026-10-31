@@ -2,6 +2,7 @@ import crypto from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 
 import { connectDB } from "@/lib/db";
+import { inngest } from "@/inngest/client";
 import { JobApplication } from "@/models";
 
 function signaturesMatch(expected: string, received: string) {
@@ -32,10 +33,19 @@ export async function POST(request: NextRequest) {
 
     await connectDB();
     if (event.event === "payment.captured") {
-      await JobApplication.updateOne(
+      const result = await JobApplication.updateOne(
         { "payment.orderId": orderId },
         { $set: { "payment.status": "paid", "payment.paymentId": payment.id, "payment.paidAt": new Date() } },
       );
+      if (result.matchedCount) {
+        const application = await JobApplication.findOne({ "payment.orderId": orderId });
+        if (application) {
+          await inngest.send({
+            name: "careers/job-application-paid",
+            data: { applicationId: application.id },
+          });
+        }
+      }
     } else if (event.event === "payment.failed") {
       await JobApplication.updateOne(
         { "payment.orderId": orderId, "payment.status": { $ne: "paid" } },

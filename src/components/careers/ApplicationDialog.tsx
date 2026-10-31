@@ -20,11 +20,17 @@ type ApplicationDialogProps = {
   roleSkills: string[];
 };
 
+type ApplicationConfirmation = {
+  applicationId: string;
+  paymentId: string;
+};
+
 const inputClassName = "h-11 rounded-xl bg-background";
 
 export function ApplicationDialog({ roleId, roleTitle, roleSkills }: ApplicationDialogProps) {
   const [open, setOpen] = React.useState(false);
   const [submitted, setSubmitted] = React.useState(false);
+  const [confirmation, setConfirmation] = React.useState<ApplicationConfirmation | null>(null);
   const [submitting, setSubmitting] = React.useState(false);
   const [formError, setFormError] = React.useState<string | null>(null);
   const [copyWarning, setCopyWarning] = React.useState<string | null>(null);
@@ -54,7 +60,11 @@ export function ApplicationDialog({ roleId, roleTitle, roleSkills }: Application
 
   const handleOpenChange = (nextOpen: boolean) => {
     setOpen(nextOpen);
-    if (nextOpen) setSubmitted(false);
+    if (nextOpen) {
+      setSubmitted(false);
+      setConfirmation(null);
+      setFormError(null);
+    }
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -109,6 +119,7 @@ export function ApplicationDialog({ roleId, roleTitle, roleSkills }: Application
             });
             const verificationData = await verificationResponse.json();
             if (!verificationResponse.ok) throw new Error(verificationData.error || "Payment verification failed");
+            setConfirmation(verificationData);
             setSubmitted(true);
           } catch (error) {
             setFormError(error instanceof Error ? error.message : "Payment verification failed");
@@ -147,9 +158,8 @@ export function ApplicationDialog({ roleId, roleTitle, roleSkills }: Application
           <div className="rounded-2xl border border-emerald-500/25 bg-emerald-500/10 p-6 text-center">
             <CheckCircle2 className="mx-auto size-10 text-emerald-600" />
             <h3 className="mt-4 text-lg font-semibold">Application form complete</h3>
-            <p className="mt-2 text-sm leading-6 text-muted-foreground">
-              Your answers are ready for the secure ₹100 application payment step. After payment confirmation, the application can be sent for review.
-            </p>
+            <p className="mt-2 text-sm leading-6 text-muted-foreground">Your payment was captured and your application is now pending review. A confirmation email is being sent to you, and our team has been notified.</p>
+            {confirmation && <div className="mt-5 rounded-xl border border-border/70 bg-background/70 p-4 text-left text-sm"><p><span className="font-medium">Application ID:</span> {confirmation.applicationId}</p><p className="mt-2"><span className="font-medium">Payment ID:</span> {confirmation.paymentId}</p><p className="mt-3 text-xs leading-5 text-muted-foreground">Your confirmation emails are queued securely for delivery.</p></div>}
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-8">

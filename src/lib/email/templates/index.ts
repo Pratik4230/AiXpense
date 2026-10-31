@@ -7,3 +7,4 @@ export { coachInsightEmail } from "./coachInsight";
 export { issueStatusUpdateEmail } from "./issueStatusUpdate";
 export { broadcastEmail } from "./broadcast";
 export { targetedEmail } from "./targeted";
+export * from "./jobApplication";

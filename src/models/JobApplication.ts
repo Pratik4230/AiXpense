@@ -56,6 +56,8 @@ export interface IJobApplication {
   selectedAt?: Date;
   joinedAt?: Date;
   rejectedAt?: Date;
+  candidateNotifiedAt?: Date;
+  adminNotifiedAt?: Date;
   adminNotes?: string;
   createdAt: Date;
   updatedAt: Date;
@@ -117,6 +119,8 @@ const jobApplicationSchema = new Schema<IJobApplicationDocument>(
     selectedAt: { type: Date },
     joinedAt: { type: Date },
     rejectedAt: { type: Date },
+    candidateNotifiedAt: { type: Date },
+    adminNotifiedAt: { type: Date },
     adminNotes: { type: String, trim: true },
   },
   { timestamps: true },

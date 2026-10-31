@@ -2,6 +2,7 @@ import crypto from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 
 import { connectDB } from "@/lib/db";
+import { inngest } from "@/inngest/client";
 import { razorpay } from "@/lib/razorpay/client";
 import { JobApplication } from "@/models";
 
@@ -33,6 +34,11 @@ export async function POST(request: NextRequest) {
     }
 
     await connectDB();
+    const application = await JobApplication.findOne({ _id: applicationId, "payment.orderId": razorpayOrderId });
+    if (!application) {
+      return NextResponse.json({ error: "Application payment order not found" }, { status: 404 });
+    }
+
     const result = await JobApplication.updateOne(
       { _id: applicationId, "payment.orderId": razorpayOrderId },
       {
@@ -44,11 +50,14 @@ export async function POST(request: NextRequest) {
       },
     );
 
-    if (!result.matchedCount) {
-      return NextResponse.json({ error: "Application payment order not found" }, { status: 404 });
-    }
+    if (!result.matchedCount) return NextResponse.json({ error: "Application payment order not found" }, { status: 404 });
 
-    return NextResponse.json({ ok: true });
+    await inngest.send({
+      name: "careers/job-application-paid",
+      data: { applicationId },
+    });
+
+    return NextResponse.json({ ok: true, applicationId, paymentId: razorpayPaymentId });
   } catch (error) {
     console.error("[job-application-payment-verify]", error);
     return NextResponse.json({ error: "Unable to verify payment" }, { status: 500 });
