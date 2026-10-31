@@ -128,7 +128,7 @@ const jobApplicationSchema = new Schema<IJobApplicationDocument>(
     expiresAt: {
       type: Date,
       required: true,
-      default: () => new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      default: () => new Date(Date.now() + 15 * 24 * 60 * 60 * 1000),
     },
   },
   { timestamps: true },
@@ -136,6 +136,8 @@ const jobApplicationSchema = new Schema<IJobApplicationDocument>(
 
 jobApplicationSchema.index({ roleId: 1, status: 1, createdAt: -1 });
 jobApplicationSchema.index({ email: 1, createdAt: -1 });
+jobApplicationSchema.index({ email: 1, roleId: 1, "payment.status": 1, createdAt: -1 });
+jobApplicationSchema.index({ requestFingerprint: 1, createdAt: -1 });
 jobApplicationSchema.index({ "payment.status": 1, createdAt: -1 });
 jobApplicationSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 

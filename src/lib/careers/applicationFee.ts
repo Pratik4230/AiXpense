@@ -1,5 +1,6 @@
 import "server-only";
 
+import { getSessionCookie } from "better-auth/cookies";
 import { auth } from "@/lib/auth";
 
 const DEFAULT_PUBLIC_FEE_PAISE = 10000;
@@ -17,8 +18,10 @@ function readFee(name: string, fallback: number) {
 }
 
 export async function getCareerApplicationFee(requestHeaders: Headers) {
-  const session = await auth.api.getSession({ headers: requestHeaders });
   const adminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+  const session = adminEmail && getSessionCookie(requestHeaders)
+    ? await auth.api.getSession({ headers: requestHeaders })
+    : null;
   const isAdmin = Boolean(adminEmail && session?.user.email?.trim().toLowerCase() === adminEmail);
 
   return {

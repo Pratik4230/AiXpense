@@ -66,18 +66,38 @@ export async function POST(request: NextRequest) {
     await connectDB();
     const connectedAt = performance.now();
     const fingerprint = requestFingerprint(request);
-    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+    const fifteenDaysAgo = new Date(Date.now() - 15 * 24 * 60 * 60 * 1000);
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
-    const [{ amountInPaise }, duplicateApplication, recentEmailAttempts, recentFingerprintAttempts] = await Promise.all([
-      getCareerApplicationFee(request.headers),
-      JobApplication.exists({ email, roleId: role.id, createdAt: { $gte: thirtyDaysAgo } }),
-      JobApplication.countDocuments({ email, createdAt: { $gte: oneHourAgo } }),
-      JobApplication.countDocuments({ requestFingerprint: fingerprint, createdAt: { $gte: oneHourAgo } }),
+    let feeDuration = 0;
+    let queryDuration = 0;
+    const feePromise = (async () => {
+      const started = performance.now();
+      try {
+        return await getCareerApplicationFee(request.headers);
+      } finally {
+        feeDuration = Math.round(performance.now() - started);
+      }
+    })();
+    const checksPromise = (async () => {
+      const started = performance.now();
+      try {
+        return await Promise.all([
+          JobApplication.exists({ email, roleId: role.id, "payment.status": "paid", createdAt: { $gte: fifteenDaysAgo } }),
+          JobApplication.countDocuments({ email, createdAt: { $gte: oneHourAgo } }),
+          JobApplication.countDocuments({ requestFingerprint: fingerprint, createdAt: { $gte: oneHourAgo } }),
+        ]);
+      } finally {
+        queryDuration = Math.round(performance.now() - started);
+      }
+    })();
+    const [{ amountInPaise }, [duplicateApplication, recentEmailAttempts, recentFingerprintAttempts]] = await Promise.all([
+      feePromise,
+      checksPromise,
     ]);
     const checkedAt = performance.now();
 
     if (duplicateApplication) {
-      return NextResponse.json({ error: "You have already applied for this role recently. You can apply again after 30 days." }, { status: 409 });
+      return NextResponse.json({ error: "You have already paid for an application to this role. You can apply again after 15 days." }, { status: 409 });
     }
 
     if (recentEmailAttempts >= 3 || recentFingerprintAttempts >= 5) {
@@ -124,6 +144,8 @@ export async function POST(request: NextRequest) {
     const timings = {
       connect: Math.round(connectedAt - startedAt),
       checks: Math.round(checkedAt - connectedAt),
+      fee: feeDuration,
+      queries: queryDuration,
       razorpay: Math.round(orderedAt - checkedAt),
       save: Math.round(savedAt - orderedAt),
       total: Math.round(savedAt - startedAt),
@@ -138,7 +160,7 @@ export async function POST(request: NextRequest) {
       keyId: process.env.RAZORPAY_KEY_ID,
     }, {
       headers: {
-        "Server-Timing": `db;dur=${timings.connect}, checks;dur=${timings.checks}, razorpay;dur=${timings.razorpay}, save;dur=${timings.save}`,
+        "Server-Timing": `db;dur=${timings.connect}, checks;dur=${timings.checks}, fee;dur=${timings.fee}, queries;dur=${timings.queries}, razorpay;dur=${timings.razorpay}, save;dur=${timings.save}`,
       },
     });
   } catch (error) {
