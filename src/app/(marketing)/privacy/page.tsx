@@ -127,6 +127,16 @@ export default function PrivacyPage() {
           third-party payment processor. We only store transaction references,
           plan details, and subscription status.
         </p>
+
+        <h3 className="text-lg font-medium mt-4 mb-2">
+          2.7 Job Application Data
+        </h3>
+        <p>
+          If you apply for a role at AiXpense, we collect the details you submit in the application form, including your name, email, phone number, location, experience, resume link, GitHub link, availability, expected salary, role-specific answers, and required consent confirmations. We also store Razorpay order and payment references. This information is used for recruitment, application review, payment reconciliation, candidate communication, and fraud or abuse prevention.
+        </p>
+        <p className="mt-2">
+          Job application data is accessible only to authorized AiXpense administrators and relevant hiring personnel. We do not send candidate application answers to OpenAI or other AI providers for automated evaluation.
+        </p>
       </section>
 
       <section>

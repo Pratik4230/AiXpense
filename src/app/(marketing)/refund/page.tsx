@@ -86,6 +86,21 @@ export default function BillingAndCancellationPage() {
         </p>
       </section>
 
+      <section id="job-application-fee">
+        <h2 className="text-xl font-semibold mb-3">Job application fee</h2>
+        <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-5">
+          <p className="font-medium text-foreground">
+            The AiXpense job application fee is ₹100 and is non-refundable after a successful payment.
+          </p>
+        </div>
+        <p className="mt-3">
+          This one-time fee helps reduce automated, duplicate, and low-effort applications. It does not guarantee an interview, selection, employment, or a response from AiXpense. The fee remains non-refundable if an application is rejected, the role is closed, or the candidate chooses not to continue.
+        </p>
+        <p className="mt-3">
+          If a payment fails or is not captured by Razorpay, the application fee is not considered paid. Payment status is determined through Razorpay verification and webhooks.
+        </p>
+      </section>
+
       <section>
         <h2 className="text-xl font-semibold mb-3">3. Free tier</h2>
         <p>

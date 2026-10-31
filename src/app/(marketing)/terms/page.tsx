@@ -173,6 +173,23 @@ export default function TermsPage() {
         </p>
       </section>
 
+      <section id="job-applications">
+        <h2 className="text-xl font-semibold mb-3">8. Job Applications</h2>
+        <p>
+          AiXpense may collect applications for roles listed on the Careers page. Candidates must provide truthful information, submit work or links they are allowed to share, and answer role-specific questions in their own words.
+        </p>
+        <ul className="list-disc pl-6 mt-2 space-y-1">
+          <li>Applications may be reviewed by AiXpense team members for hiring purposes.</li>
+          <li>Submitting an application does not guarantee an interview, selection, offer, or employment.</li>
+          <li>The ₹100 application fee is a one-time, non-refundable payment after successful capture.</li>
+          <li>Automated, duplicate, misleading, or abusive submissions may be rejected.</li>
+          <li>We may contact candidates using the details submitted in the application.</li>
+        </ul>
+        <p className="mt-3">
+          Payment processing is handled by Razorpay. AiXpense stores application and payment references needed to review the application, manage the hiring process, and respond to payment-related questions.
+        </p>
+      </section>
+
       <section>
         <h2 className="text-xl font-semibold mb-3">
           8. Recurring Payments Feature
