@@ -22,7 +22,6 @@ import { logger } from "@/lib/logger";
 import { getCurrency } from "@/constants/currency";
 import { effectivePremium } from "@/lib/premium";
 import { resolveUserCurrencyCode } from "@/lib/userCurrency";
-import { FREE_LIFETIME_LIMIT } from "@/constants/trials";
 import { formatUtcCalendarDateLong } from "@/lib/utcDates";
 import {
   getAiErrorHttpStatus,
@@ -103,45 +102,16 @@ export async function POST(req: Request) {
 
   const userObjectId = new mongoose.Types.ObjectId(userId);
 
-  // Cap legacy accounts that still have a balance above the current limit.
-  await mongoose.connection.db!.collection("user").updateOne(
-    {
-      _id: userObjectId,
-      isPremium: { $ne: true },
-      freeTrials: { $gt: FREE_LIFETIME_LIMIT },
-    },
-    { $set: { freeTrials: FREE_LIFETIME_LIMIT } },
-  );
-
-  // Lifetime free quota: decrement freeTrials until 0 (no daily reset).
-  const dbUser = await mongoose.connection
-    .db!.collection("user")
-    .findOneAndUpdate(
-      {
-        _id: userObjectId,
-        $or: [{ isPremium: true }, { freeTrials: { $gt: 0 } }],
-      },
-      [
-        {
-          $set: {
-            freeTrials: {
-              $cond: {
-                if: { $eq: ["$isPremium", true] },
-                then: "$freeTrials",
-                else: { $subtract: ["$freeTrials", 1] },
-              },
-            },
-          },
-        },
-      ],
-      { returnDocument: "before" },
-    );
+  const dbUser = await mongoose.connection.db!.collection("user").findOne({
+    _id: userObjectId,
+    isPremium: true,
+  });
 
   if (!dbUser) {
     logger.warn("chat_quota_exceeded", { userId });
     return new Response(
       JSON.stringify({
-        error: "No free trials remaining. Upgrade to premium.",
+        error: "A Premium subscription is required to use AiXpense. Upgrade to continue.",
       }),
       { status: 403, headers: { "Content-Type": "application/json" } },
     );

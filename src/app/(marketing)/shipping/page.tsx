@@ -65,16 +65,11 @@ export default function ShippingPage() {
         </p>
         <ul className="list-disc pl-6 mt-3 space-y-2">
           <li>
-            <strong>Free Tier (Web):</strong> Immediate access upon account
-            creation. No payment required.
+            <strong>Premium (Web):</strong> Immediate access after successful
+            subscription payment and account sign-in.
           </li>
           <li>
-            <strong>Free Tier (Android App):</strong> Immediate access upon
-            installing the app from{" "}
-            <PlayStoreTextLink>Google Play</PlayStoreTextLink> and signing in.
-          </li>
-          <li>
-            <strong>Premium Subscription:</strong> Immediate access to all
+            <strong>Premium (Android App):</strong> Immediate access to all
             Premium features upon successful payment confirmation from Razorpay
             or Google Play.
           </li>

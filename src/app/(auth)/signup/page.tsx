@@ -5,7 +5,7 @@ import Image from "next/image";
 export const metadata: Metadata = {
   title: "Sign Up",
   description:
-    "Create a free AiXpense account and start tracking expenses with AI in seconds.",
+    "Create an AiXpense account and choose a Premium plan to start tracking expenses with AI.",
   alternates: { canonical: "https://aixpense.in/signup" },
   robots: { index: false, follow: false },
 };

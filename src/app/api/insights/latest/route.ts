@@ -4,12 +4,14 @@ import { headers } from "next/headers";
 import { connectDB } from "@/lib/db";
 import { Insight } from "@/models";
 import mongoose from "mongoose";
+import { hasPremiumAccess, premiumRequiredResponse } from "@/lib/premium";
 
 export async function GET() {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session?.user?.id) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
+  if (!(await hasPremiumAccess(session.user.id))) return premiumRequiredResponse();
 
   await connectDB();
 

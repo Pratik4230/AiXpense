@@ -18,7 +18,6 @@ import {
   Budget,
   Conversation,
   Subscription,
-  DeletedEmail,
   Insight,
 } from "@/models";
 import { isDisposableEmail } from "@/lib/auth/blockedDomains";
@@ -37,7 +36,6 @@ import {
   onDodoSubscriptionUpdatedLike,
 } from "@/lib/dodo/webhookHandlers";
 import { DEFAULT_COUNTRY, DEFAULT_CURRENCY } from "@/constants/currency";
-import { FREE_LIFETIME_LIMIT, normalizeFreeTrials } from "@/constants/trials";
 import {
   getClientPlatformFromContext,
   resolveSignupPlatform,
@@ -173,10 +171,6 @@ export const auth = betterAuth({
         type: "boolean",
         defaultValue: false,
       },
-      freeTrials: {
-        type: "number",
-        defaultValue: FREE_LIFETIME_LIMIT,
-      },
       currency: {
         type: "string",
         defaultValue: DEFAULT_CURRENCY,
@@ -201,14 +195,8 @@ export const auth = betterAuth({
       enabled: true,
       afterDelete: async (user) => {
         await connectDB();
-        const u = user as { freeTrials?: number };
         const userObjectId = new mongoose.Types.ObjectId(user.id);
         await Promise.all([
-          DeletedEmail.findOneAndUpdate(
-            { email: user.email.toLowerCase() },
-            { trialsRemaining: u.freeTrials ?? 0, deletedAt: new Date() },
-            { upsert: true },
-          ),
           Expense.deleteMany({ userId: userObjectId }),
           Budget.deleteMany({ userId: userObjectId }),
           Conversation.deleteMany({ userId: userObjectId }),
@@ -236,17 +224,6 @@ export const auth = betterAuth({
           const userWithPlatform = { ...user, signupPlatform };
 
           await connectDB();
-          const deleted = await DeletedEmail.findOne({
-            email: user.email.toLowerCase(),
-          });
-          if (deleted) {
-            return {
-              data: {
-                ...userWithPlatform,
-                freeTrials: normalizeFreeTrials(deleted.trialsRemaining),
-              },
-            };
-          }
           return { data: userWithPlatform };
         },
         after: async (user) => {

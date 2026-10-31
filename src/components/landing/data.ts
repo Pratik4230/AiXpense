@@ -2,8 +2,8 @@ import { PLAY_STORE_URL } from "@/constants/play-store";
 
 export const LANDING_FAQS = [
   {
-    q: "Is AiXpense free to use?",
-    a: "Yes. The free plan gives you 3 AI messages in total (lifetime) with full expense tracking, categorization, and search. No credit card needed to start.",
+    q: "Does AiXpense require a subscription?",
+    a: "Yes. An active Premium subscription is required to use AiXpense features. Choose a monthly or yearly plan from the secure checkout before using the app.",
   },
   {
     q: "Does it work in Hindi, Marathi, or Hinglish?",
@@ -22,8 +22,8 @@ export const LANDING_FAQS = [
     a: `Yes. Install AiXpense for Android from Google Play (${PLAY_STORE_URL}) for voice input in 22+ Indian languages, bill scanning, and a native mobile experience - or use the web app in any mobile browser with the same account.`,
   },
   {
-    q: "What is the difference between the free and premium plans?",
-    a: "The free plan includes 3 AI messages in total (lifetime). Premium unlocks unlimited AI conversations, deeper spending insights and charts, shareable report cards, recurring payment tracking in the app, and AI receipt and bill scanning - plus priority support.",
+    q: "What does Premium include?",
+    a: "Premium includes unlimited AI conversations, spending insights and charts, shareable report cards, recurring payment tracking, AI receipt and bill scanning, and priority support.",
   },
   {
     q: "Do I need to log every expense manually?",

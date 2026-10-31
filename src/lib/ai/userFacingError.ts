@@ -150,10 +150,7 @@ export function parseChatErrorMessage(raw: string): string {
   if (!trimmed) return AI_GENERIC_FAILURE_MESSAGE;
 
   const lower = trimmed.toLowerCase();
-  if (
-    lower.includes("no free trials remaining") ||
-    lower.includes("upgrade to premium")
-  ) {
+  if (lower.includes("premium subscription") || lower.includes("upgrade to premium")) {
     return trimmed;
   }
 

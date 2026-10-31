@@ -303,7 +303,7 @@ export function PremiumCheckoutClient({
               >
                 {useInternationalCheckout
                   ? "Best rate when you pay annually. Renews each year until you cancel."
-                  : "Save 33% (4 months free)"}
+                  : "Save 33% compared with monthly billing"}
               </CardDescription>
             </CardHeader>
 

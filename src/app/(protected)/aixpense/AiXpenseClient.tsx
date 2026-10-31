@@ -2,11 +2,10 @@
 
 import { useState, useMemo, useSyncExternalStore, lazy, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { TrialStatus } from "@/components/chat/TrialStatus";
 import { ChatViewSkeleton } from "@/components/chat/ChatViewSkeleton";
 import { SidebarTrigger } from "@/components/chat";
 import { useConversation } from "@/services/conversations";
-import { useTrials } from "@/services/trials";
+import { useEntitlement } from "@/services/entitlement";
 
 const ChatView = lazy(() =>
   import("@/components/chat/ChatView").then((m) => ({ default: m.ChatView })),
@@ -39,10 +38,9 @@ export function AiXpenseClient() {
   const { data: conversationData, isLoading: isConversationLoading } =
     useConversation(conversationId);
 
-  const { data: trialsData, isFetching: isTrialsFetching } = useTrials(true);
+  const { data: entitlement, isFetching: isEntitlementFetching } = useEntitlement(true);
 
-  const isPremium = trialsData?.isPremium ?? false;
-  const displayTrials = trialsData?.freeTrials ?? 0;
+  const isPremium = entitlement?.isPremium ?? false;
 
   const initialMessages = useMemo(() => {
     if (!conversationData?.messages) return [];
@@ -115,8 +113,7 @@ export function AiXpenseClient() {
               initialMessages={initialMessages}
               messageCount={conversationData?.messageCount || 0}
               isPremium={isPremium}
-              freeTrials={displayTrials}
-              isTrialsFetching={isTrialsFetching}
+              isEntitlementFetching={isEntitlementFetching}
               onShowUpgradeDialog={() => setShowUpgradeDialog(true)}
               onShowLimitDialog={() => setShowLimitDialog(true)}
               onConversationCreated={handleConversationCreated}
@@ -130,11 +127,9 @@ export function AiXpenseClient() {
 
         <div className="absolute top-4 right-4 z-10">
           {mounted && (
-            <TrialStatus
-              isPremium={isPremium}
-              freeTrials={displayTrials}
-              onUpgradeClick={() => router.push("/premium")}
-            />
+            <button type="button" onClick={() => router.push("/premium")} className={`rounded-full border px-3 py-1.5 text-xs font-semibold ${isPremium ? "border-amber-500/40 bg-amber-500/10 text-amber-500" : "border-primary/30 bg-primary/10 text-primary"}`}>
+              {isPremium ? "Premium" : "Premium required"}
+            </button>
           )}
         </div>
 

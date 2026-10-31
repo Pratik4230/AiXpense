@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     template: "%s | AiXpense - AI Expense Tracker",
   },
   description:
-    "Best AI expense tracker for India  -  web app and Android app on Google Play. Track daily expenses by voice, text, or bill scan in Hindi, Marathi, English & 22+ Indian languages. Free expense manager with budgets, AI categorization & spending analytics.",
+    "AI expense tracker for India on web and Android. Track daily expenses by voice, text, or bill scan in Hindi, Marathi, English & 22+ Indian languages with Premium budgets, AI categorization & spending analytics.",
   keywords: [
     "expense tracker",
     "AI expense tracker",
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
     "daily expense tracker",
     "expense tracker app",
     "best expense tracker",
-    "free expense tracker",
+    "paid AI expense tracker",
     "expense tracker India",
     "expense tracker app India",
     "android expense tracker",
@@ -111,7 +111,7 @@ export const metadata: Metadata = {
     siteName: "AiXpense",
     title: "AiXpense - Best AI Expense Tracker App | Web & Android",
     description:
-      "Track daily expenses by voice or text on web or Android. Say 'Lunch 250' in Hindi, Marathi or English. Download free on Google Play. AI auto-categorizes, tags & logs expenses instantly.",
+      "Track daily expenses by voice or text on web or Android. Say 'Lunch 250' in Hindi, Marathi or English. Choose Premium on Google Play or web. AI auto-categorizes, tags & logs expenses instantly.",
     images: [
       {
         url: "/og-image.png",
@@ -128,7 +128,7 @@ export const metadata: Metadata = {
     creator: "@Pratik4230",
     title: "AiXpense - Best AI Expense Tracker App | Web & Google Play",
     description:
-      "Free AI expense tracker for India. Web app + Android on Google Play. Voice in Hindi, Marathi & 22+ languages. Auto-categorization, budget alerts & spending analytics.",
+      "Premium AI expense tracker for India. Web app + Android on Google Play. Voice in Hindi, Marathi & 22+ languages. Auto-categorization, budget alerts & spending analytics.",
     images: ["/og-image.png"],
   },
   icons: {

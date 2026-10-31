@@ -13,7 +13,7 @@ const CANONICAL = `${SITE_URL}${PAGE_PATH}`;
 export const metadata: Metadata = {
   title: "Billing, payments & cancellation (no refunds)",
   description:
-    "How AiXpense Premium billing works on web and Android: completed subscription payments are not refunded, how to cancel, auto-renewal, Play Store purchases, and free tier.",
+    "How AiXpense Premium billing works on web and Android: completed subscription payments are not refunded, how to cancel, auto-renewal, and Play Store purchases.",
   alternates: { canonical: CANONICAL },
   openGraph: {
     type: "article",
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     card: "summary",
     title: "AiXpense billing & cancellation",
     description:
-      "Subscription terms: no refunds on completed payments; cancel before renewal; free tier available.",
+      "Subscription terms: no refunds on completed payments; cancel before renewal; Premium access is required.",
   },
 };
 
@@ -79,11 +79,6 @@ export default function BillingAndCancellationPage() {
             No refunds will be given for failure to cancel before auto-renewal
           </li>
         </ul>
-        <p className="mt-3">
-          We encourage you to use the free tier first - including voice input,
-          basic tracking, and (where available) trial limits - to confirm the
-          Service fits you before paying.
-        </p>
       </section>
 
       <section id="job-application-fee">
@@ -102,19 +97,8 @@ export default function BillingAndCancellationPage() {
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold mb-3">3. Free tier</h2>
-        <p>
-          AiXpense offers a free tier with a limited number of AI interactions
-          (lifetime, not per day). The
-          free tier is available on web and the Android app, does not require
-          payment, and can be used without a time limit. Use it to evaluate voice,
-          chat, and core tracking before upgrading.
-        </p>
-      </section>
-
-      <section>
         <h2 className="text-xl font-semibold mb-3">
-          4. Premium subscription plans (India, INR via Razorpay)
+          3. Premium subscription plans (India, INR via Razorpay)
         </h2>
         <p className="mb-2 text-muted-foreground text-sm">
           In-app expense tracking uses your selected account currency. The prices
@@ -138,7 +122,7 @@ export default function BillingAndCancellationPage() {
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold mb-3">5. Cancellation</h2>
+        <h2 className="text-xl font-semibold mb-3">4. Cancellation</h2>
         <ul className="list-disc pl-6 space-y-2">
           <li>
             You may cancel Premium at any time from your account settings on
@@ -150,9 +134,9 @@ export default function BillingAndCancellationPage() {
             unless you resubscribe.
           </li>
           <li>
-            When the paid period ends, your account returns to the free tier.
-            Your data (expenses, budgets, recurring rules, conversations, etc.)
-            remains available subject to the Terms and Privacy Policy.
+            When the paid period ends, Premium features become unavailable until
+            you resubscribe. Your data remains subject to the Terms and Privacy
+            Policy.
           </li>
           <li>
             No refunds or credits are issued for any unused time left in the

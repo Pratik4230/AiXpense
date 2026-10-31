@@ -11,7 +11,7 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
   title:
     "AiXpense  -  AI expense tracker India | Android app, voice & bill scan",
-  description: `AI expense tracker for India on web and Google Play. Log "Zomato 450" in Hindi, Marathi, Hinglish & 22+ languages - voice, text, or receipt scan. Free: 3 AI chats lifetime. Download Android: ${PLAY_STORE_URL.replace("https://", "")}. Premium: unlimited AI & budgets. ${CURRENCIES.length}+ currencies.`,
+  description: `Paid AI expense tracker for India on web and Google Play. Log "Zomato 450" in Hindi, Marathi, Hinglish & 22+ languages using voice, text, or receipt scan. Premium includes unlimited AI and budgets. Download Android: ${PLAY_STORE_URL.replace("https://", "")}. ${CURRENCIES.length}+ currencies.`,
   alternates: { canonical: SITE_URL },
   openGraph: {
     type: "website",
@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     url: SITE_URL,
     siteName: "AiXpense",
     title: "AiXpense  -  AI expense tracker for India | Web & Android",
-    description: `Voice & text expense logging on web or Android (Google Play). Budgets, ${CURRENCIES.length}+ currencies. Free tier + Premium.`,
+    description: `Voice and text expense logging on web or Android (Google Play). Premium includes budgets, AI insights, receipt scanning, and ${CURRENCIES.length}+ currencies.`,
     images: [
       {
         url: "/og-image.png",

@@ -2,6 +2,7 @@ import { logger } from "@/lib/logger";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { getUserFacingVoiceErrorMessage } from "@/lib/ai/userFacingError";
+import { hasPremiumAccess, premiumRequiredResponse } from "@/lib/premium";
 
 const MAX_AUDIO_BYTES = 10 * 1024 * 1024; // 10 MB
 
@@ -14,6 +15,7 @@ export async function POST(req: Request) {
       logger.warn("voice_unauthorized", {});
       return Response.json({ error: "Unauthorized" }, { status: 401 });
     }
+    if (!(await hasPremiumAccess(userId))) return premiumRequiredResponse();
 
     const formData = await req.formData();
     const audio = formData.get("audio") as File;

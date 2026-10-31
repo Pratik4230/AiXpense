@@ -29,7 +29,6 @@ export default async function ProfilePage() {
       { _id: new ObjectId(user.id) },
       {
         projection: {
-          freeTrials: 1,
           isPremium: 1,
           currency: 1,
         },
@@ -41,7 +40,6 @@ export default async function ProfilePage() {
   const isPremiumLive = effectivePremium({
     isPremium: (dbUser?.isPremium ?? user.isPremium) as boolean | undefined,
   });
-  const freeTrialsLive = isPremiumLive ? 0 : (dbUser?.freeTrials ?? 0);
 
   return (
     <div className="container mx-auto max-w-2xl px-4 py-5 sm:py-8 space-y-6">
@@ -56,7 +54,6 @@ export default async function ProfilePage() {
       <ProfileInfoCard name={user.name} email={user.email} />
       <PlanUsageCard
         isPremium={isPremiumLive}
-        freeTrials={freeTrialsLive}
         subscription={subscription}
       />
       <MyReportsCard />

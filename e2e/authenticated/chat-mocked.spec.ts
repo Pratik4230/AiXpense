@@ -5,11 +5,11 @@ test.describe("Chat (mocked API)", () => {
     page,
   }) => {
     let chatMockHit = false;
-    await page.route("**/api/user/trials", async (route) => {
+    await page.route("**/api/user/entitlement", async (route) => {
       await route.fulfill({
         status: 200,
         contentType: "application/json",
-        body: JSON.stringify({ freeTrials: 99, isPremium: true }),
+        body: JSON.stringify({ isPremium: true }),
       });
     });
 

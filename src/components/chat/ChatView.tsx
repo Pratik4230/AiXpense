@@ -40,7 +40,6 @@ import {
   useCreateConversation,
   useAppendMessages,
 } from "@/services/conversations";
-import { useTrialActions } from "@/services/trials";
 import Image from "next/image";
 import { FileText } from "lucide-react";
 import { parseChatErrorMessage } from "@/lib/ai/userFacingError";
@@ -61,8 +60,7 @@ interface ChatViewProps {
   initialMessages: ChatMessage[];
   messageCount: number;
   isPremium: boolean;
-  freeTrials: number;
-  isTrialsFetching: boolean;
+  isEntitlementFetching: boolean;
   onShowUpgradeDialog: () => void;
   onShowLimitDialog: () => void;
   onConversationCreated: (id: string) => void;
@@ -73,8 +71,7 @@ export function ChatView({
   initialMessages,
   messageCount,
   isPremium,
-  freeTrials,
-  isTrialsFetching,
+  isEntitlementFetching,
   onShowUpgradeDialog,
   onShowLimitDialog,
   onConversationCreated,
@@ -88,8 +85,6 @@ export function ChatView({
   );
   const chatInputRef = useRef<ChatInputHandle>(null);
   const [outdatedIds, setOutdatedIds] = useState<Set<string>>(new Set());
-
-  const { optimisticDecrement, invalidateTrials } = useTrialActions();
 
   const conversationIdRef = useRef(conversationId);
   const pendingSaveRef = useRef(false);
@@ -192,7 +187,7 @@ export function ChatView({
     onError: (error) => {
       const message = parseChatErrorMessage(error.message);
       if (
-        message.includes("No free trials remaining") ||
+        message.includes("Premium subscription") ||
         message.includes("Upgrade to premium") ||
         error.message.includes("403")
       ) {
@@ -214,8 +209,6 @@ export function ChatView({
       chatMessages[chatMessages.length - 1]?.role === "assistant"
     ) {
       saveMessages(chatMessages);
-      if (!isPremium) invalidateTrials();
-
       const currentCount = chatMessages.length;
       for (const threshold of MESSAGE_WARNING_THRESHOLDS) {
         if (
@@ -243,7 +236,8 @@ export function ChatView({
     attachedFiles?: { url: string; mediaType: string }[],
   ) => {
     e.preventDefault();
-    if (!isPremium && freeTrials <= 0) {
+    if (isEntitlementFetching) return;
+    if (!isPremium) {
       onShowUpgradeDialog();
       return;
     }
@@ -254,7 +248,6 @@ export function ChatView({
     }
 
     if (attachedFiles && attachedFiles.length > 0) {
-      optimisticDecrement();
       sendMessage({
         role: "user",
         parts: [
@@ -283,7 +276,6 @@ export function ChatView({
           : `${prefix} ${input}`.trim();
 
       if (selectedTransaction.action === "delete" || input.trim()) {
-        optimisticDecrement();
         sendMessage({ text: messageText });
         setInput("");
         setSelectedTransaction(null);
@@ -291,25 +283,23 @@ export function ChatView({
       return;
     }
 
-    if (!input.trim() || isLoading || isTrialsFetching) return;
-    optimisticDecrement();
+    if (!input.trim() || isLoading || isEntitlementFetching) return;
     sendMessage({ text: input });
     setInput("");
   };
 
   const handleSuggestionClick = (suggestion: string) => {
-    if (isLoading || isTrialsFetching) return;
-    if (!isPremium && freeTrials <= 0) {
+    if (isLoading || isEntitlementFetching) return;
+    if (!isPremium) {
       onShowUpgradeDialog();
       return;
     }
-    optimisticDecrement();
     sendMessage({ text: suggestion });
   };
 
   const handleScanBillClick = useCallback(
     (suggestion: string) => {
-      if (isLoading || isTrialsFetching) return;
+      if (isLoading || isEntitlementFetching) return;
       if (!isPremium) {
         onShowUpgradeDialog();
         return;
@@ -317,7 +307,7 @@ export function ChatView({
       setInput(suggestion);
       chatInputRef.current?.openFilePicker();
     },
-    [isLoading, isTrialsFetching, isPremium, onShowUpgradeDialog],
+    [isLoading, isEntitlementFetching, isPremium, onShowUpgradeDialog],
   );
 
   const handleTransactionAction = useCallback(
@@ -394,7 +384,7 @@ export function ChatView({
             <ChatEmptyState
               onSuggestionClick={handleSuggestionClick}
               onScanBillClick={handleScanBillClick}
-              disabled={isLoading || isTrialsFetching}
+              disabled={isLoading || isEntitlementFetching}
             />
           ) : (
             chatMessages.map((message) => {

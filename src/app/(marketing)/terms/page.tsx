@@ -140,12 +140,12 @@ export default function TermsPage() {
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold mb-3">6. Free &amp; Premium Plans</h2>
+        <h2 className="text-xl font-semibold mb-3">6. Premium Plans</h2>
         <p>
-          AiXpense offers a free tier with limited AI interactions and a Premium
-          subscription with unlimited access. Expense and budget amounts in the
-          app use the currency you choose in account settings. Premium
-          subscription pricing for India (Razorpay checkout) is:
+          AiXpense is a paid product. An active Premium subscription is required
+          for app access. Expense and budget amounts in the app use the currency
+          you choose in account settings. Premium subscription pricing for India
+          (Razorpay checkout) is:
         </p>
         <ul className="list-disc pl-6 mt-2 space-y-1">
           <li>Monthly: ₹499/month</li>

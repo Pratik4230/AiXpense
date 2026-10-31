@@ -23,7 +23,6 @@ import {
   getDodoBillingPortalUrl,
 } from "@/actions/subscription";
 import { useUtcCalendarDateFormat } from "@/hooks/useUtcCalendarDateFormat";
-import { FREE_LIFETIME_LIMIT } from "@/constants/trials";
 
 interface Subscription {
   status: string;
@@ -35,13 +34,11 @@ interface Subscription {
 
 interface PlanUsageCardProps {
   isPremium: boolean;
-  freeTrials: number;
   subscription: Subscription | null;
 }
 
 export function PlanUsageCard({
   isPremium,
-  freeTrials,
   subscription,
 }: PlanUsageCardProps) {
   const [loading, setLoading] = useState(false);
@@ -100,7 +97,7 @@ export function PlanUsageCard({
                 Premium
               </>
             ) : (
-              "Free"
+              "No active plan"
             )}
           </Badge>
         </div>
@@ -159,8 +156,8 @@ export function PlanUsageCard({
                         <AlertDialogDescription>
                           You will keep premium access until{" "}
                           <strong>{periodEndDate}</strong>. After that, your
-                          account reverts to the free plan. This action cannot be
-                          undone.
+                          account access ends until you choose a new plan. This
+                          action cannot be undone.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
@@ -188,30 +185,7 @@ export function PlanUsageCard({
           </>
         )}
 
-        {!isPremium && (
-          <>
-            <div className="flex items-center justify-between">
-              <span className="text-sm text-muted-foreground">
-                Free messages remaining
-              </span>
-              <span className="text-sm font-medium">{freeTrials}</span>
-            </div>
-            <div className="w-full bg-muted rounded-full h-2">
-              <div
-                className="bg-primary rounded-full h-2 transition-all"
-                style={{
-                  width: `${(freeTrials / FREE_LIFETIME_LIMIT) * 100}%`,
-                }}
-              />
-            </div>
-            <Link href="/premium">
-              <Button className="w-full gap-2" variant="outline">
-                <Sparkles className="size-4" />
-                Upgrade to Premium
-              </Button>
-            </Link>
-          </>
-        )}
+        {!isPremium && <Link href="/premium"><Button className="w-full gap-2" variant="outline"><Sparkles className="size-4" />Choose a Premium plan</Button></Link>}
       </CardContent>
     </Card>
   );
