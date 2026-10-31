@@ -75,7 +75,7 @@ const subscriptionSchema = new mongoose.Schema<ISubscription>(
   },
 );
 
-/** Unique only when the id is a real string — avoids E11000 on many docs with `razorpaySubscriptionId: null`. */
+/** Unique only when the id is a real string  -  avoids E11000 on many docs with `razorpaySubscriptionId: null`. */
 subscriptionSchema.index(
   { razorpaySubscriptionId: 1 },
   {

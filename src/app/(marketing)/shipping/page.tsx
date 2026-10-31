@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     siteName: "AiXpense",
     title: "Shipping & Delivery | AiXpense",
     description:
-      "AiXpense is a digital SaaS product—no parcels. Service access is immediate after registration or successful payment.",
+      "AiXpense is a digital SaaS product - no parcels. Service access is immediate after registration or successful payment.",
   },
   twitter: {
     card: "summary",

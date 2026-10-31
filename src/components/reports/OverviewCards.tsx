@@ -72,7 +72,7 @@ export function OverviewCards({ data, isLoading, mode }: Props) {
       label: isExpense ? "Top Category" : "Top Source",
       value: data?.topCategory
         ? data.topCategory.charAt(0).toUpperCase() + data.topCategory.slice(1)
-        : "—",
+        : " - ",
       icon: Tag,
       sub: (
         <span className="text-xs text-muted-foreground">

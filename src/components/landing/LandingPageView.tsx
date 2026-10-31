@@ -1,745 +1,88 @@
 import type { ReactNode } from "react";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import Link from "next/link";
 import {
+  ArrowRight,
+  Check,
   CheckCircle2,
-  ExternalLink,
   Globe2,
-  Mail,
+  LockKeyhole,
   MessageSquare,
   PieChart,
   Repeat2,
   ScanLine,
   Shield,
-  Sparkles,
   Smartphone,
+  Sparkles,
+  TrendingUp,
+  WalletCards,
   Zap,
-  ArrowRight,
 } from "lucide-react";
 
 import { SmartLink, SmartTextLink } from "@/components/auth/SmartLink";
+import { AnimatedLanguageHeadline } from "@/components/landing/AnimatedLanguageHeadline";
+import { LandingFaq } from "@/components/landing/LandingFaq";
+import { LandingJsonLd } from "@/components/landing/LandingJsonLd";
 import { PlayStoreLink } from "@/components/landing/PlayStoreLink";
 import { PlayStoreTextLink } from "@/components/landing/PlayStoreTextLink";
-import { LandingJsonLd } from "@/components/landing/LandingJsonLd";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { CURRENCIES } from "@/constants/currency";
 
 const LandingChatDemo = dynamic(
-  () =>
-    import("@/components/landing/LandingChatDemo").then(
-      (m) => m.LandingChatDemo,
-    ),
-  {
-    loading: () => (
-      <div className="w-full max-w-lg mx-auto h-80 rounded-2xl bg-muted/40 animate-pulse" />
-    ),
-  },
+  () => import("@/components/landing/LandingChatDemo").then((m) => m.LandingChatDemo),
+  { loading: () => <div className="h-80 w-full animate-pulse rounded-3xl bg-muted/40" /> },
 );
 
-const LandingFaq = dynamic(
-  () => import("@/components/landing/LandingFaq").then((m) => m.LandingFaq),
-  {
-    loading: () => (
-      <div className="max-w-3xl mx-auto space-y-4">
-        {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="h-14 rounded-lg bg-muted/40 animate-pulse" />
-        ))}
-      </div>
-    ),
-  },
-);
+const freeFeatures = ["3 free AI messages (lifetime)", "Voice input in 22+ Indian languages", "Expense & income tracking", "Search & filter transactions"] as const;
+const premiumFeatures = ["Everything in Free", "Unlimited AI conversations", "Spending insights, charts & breakdowns", "AI bill & receipt scanning", "Recurring payment rules in the app", "Priority support"] as const;
 
-const freeFeatures = [
-  "3 free AI messages (lifetime)",
-  "Voice input in 22+ Indian languages",
-  "Expense & income tracking",
-  "Search & filter transactions",
-] as const;
+const featureCards = [
+  { icon: <MessageSquare className="size-5" />, title: "Talk naturally", description: "Type or say “Zomato 450” in English, Hindi, Marathi, Hinglish and 22+ Indian languages.", color: "text-blue-500", bg: "bg-blue-500/10" },
+  { icon: <ScanLine className="size-5" />, title: "Scan a receipt", description: "Take a picture of a bill and let AiXpense pull out the useful details for you.", color: "text-amber-500", bg: "bg-amber-500/10", badge: "Premium" },
+  { icon: <PieChart className="size-5" />, title: "See patterns early", description: "Budgets, reports and trends turn a messy transaction history into a clear next step.", color: "text-violet-500", bg: "bg-violet-500/10" },
+  { icon: <Repeat2 className="size-5" />, title: "Automate the routine", description: "Keep rent, subscriptions and EMIs from getting lost with recurring payment rules.", color: "text-orange-500", bg: "bg-orange-500/10", badge: "Premium" },
+  { icon: <TrendingUp className="size-5" />, title: "Learn from your history", description: "Premium insights surface weekly nudges and monthly patterns worth paying attention to.", color: "text-sky-500", bg: "bg-sky-500/10", badge: "Premium" },
+  { icon: <LockKeyhole className="size-5" />, title: "Stay in control", description: "Your financial data is not sold. Delete your account and data whenever you want.", color: "text-emerald-500", bg: "bg-emerald-500/10" },
+];
 
-const premiumFeatures = [
-  "Everything in Free",
-  "Unlimited AI conversations",
-  "Spending insights, charts & breakdowns",
-  "AI bill & receipt scanning",
-  "Recurring payment rules in the app",
-  "Priority support",
-] as const;
+function SectionIntro({ eyebrow, title, description }: { eyebrow: string; title: string; description: string }) {
+  return <div className="mx-auto mb-10 max-w-2xl text-center sm:mb-14"><p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-primary">{eyebrow}</p><h2 className="text-3xl font-bold tracking-tight sm:text-4xl">{title}</h2><p className="mt-4 text-sm leading-7 text-muted-foreground sm:text-base">{description}</p></div>;
+}
 
-export function LandingPageView() {
+function FeatureCard({ icon, title, description, color, bg, badge }: (typeof featureCards)[number]) {
+  return <Card className="group h-full rounded-2xl border-border/70 bg-card/80 shadow-none transition-all duration-200 hover:-translate-y-1 hover:border-primary/25 hover:shadow-lg hover:shadow-primary/5"><CardHeader className="h-full p-6 sm:p-7"><div className="flex items-start justify-between gap-3"><div className={`flex size-10 items-center justify-center rounded-xl ${bg} ${color}`}>{icon}</div>{badge && <span className="rounded-full border border-primary/20 bg-primary/5 px-2.5 py-1 text-[11px] font-semibold text-primary">{badge}</span>}</div><CardTitle className="pt-4 text-lg tracking-tight">{title}</CardTitle><CardDescription className="pt-1 text-sm leading-6">{description}</CardDescription></CardHeader></Card>;
+}
+
+function PricingCard({ title, price, suffix, description, features, action, note, featured, accent }: { title: string; price: string; suffix: string; description: string; features: readonly string[]; action: ReactNode; note: string; featured?: boolean; accent?: boolean }) {
+  const border = featured ? "border-2 border-primary/50 bg-linear-to-b from-primary/10 to-background shadow-xl shadow-primary/10" : accent ? "border-2 border-amber-500/35 bg-linear-to-b from-amber-500/10 to-background" : "border border-border/70 bg-card";
+  return <div className={`relative flex flex-col rounded-2xl p-6 sm:p-7 ${border}`}>{featured && <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-1 text-[11px] font-bold text-primary-foreground">MOST POPULAR</span>}{accent && <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-amber-500 px-3 py-1 text-[11px] font-bold text-white">BEST VALUE</span>}<p className="text-sm font-semibold text-muted-foreground">{title}</p><div className="mt-3 flex items-end gap-1"><span className="text-4xl font-bold tracking-tight">{price}</span><span className="mb-1 text-sm text-muted-foreground">{suffix}</span></div><p className="mt-2 min-h-10 text-sm text-muted-foreground">{description}</p><ul className="mt-6 flex-1 space-y-3 text-sm">{features.map((feature) => <li key={feature} className="flex items-start gap-2"><CheckCircle2 className={`mt-0.5 size-4 shrink-0 ${accent ? "text-amber-500" : featured ? "text-primary" : "text-emerald-500"}`} />{feature}</li>)}</ul><div className="mt-7">{action}<p className="mt-3 text-center text-xs text-muted-foreground">{note}</p></div></div>;
+}
+
+export function LandingPageView({ verifiedUserCount }: { verifiedUserCount?: number | null }) {
   return (
-    <div className="min-h-screen bg-background relative overflow-hidden selection:bg-primary/20">
+    <div className="min-h-screen overflow-hidden bg-background text-foreground selection:bg-primary/20">
       <LandingJsonLd />
-
-      <header className="container mx-auto px-4 py-6 flex items-center justify-between relative z-10">
-        <Link href="/" className="flex items-center gap-2 group">
-          <div className="bg-primary/10 p-2 rounded-lg group-hover:bg-primary/20 transition-colors">
-            <Sparkles className="size-5 text-primary" />
-          </div>
-          <span className="text-2xl font-bold bg-linear-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">
-            AiXpense
-          </span>
-        </Link>
-        <div className="flex items-center gap-4">
-          <PlayStoreLink
-            label="Android app"
-            className="hidden sm:inline-flex border-border/80 bg-background hover:bg-muted px-4"
-          />
-          <SmartTextLink className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors hidden sm:block">
-            Login
-          </SmartTextLink>
-          <SmartLink className="rounded-full px-6">Get Started</SmartLink>
-        </div>
-      </header>
-
-      <main className="container mx-auto px-4 relative z-10">
-        <section className="py-14 sm:py-20 lg:py-28 text-center max-w-5xl mx-auto flex flex-col items-center">
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-3 mb-6">
-            <Badge
-              variant="outline"
-              className="px-4 py-1.5 rounded-full border-primary/20 bg-primary/5 text-primary cursor-default"
-            >
-              <Zap className="size-3.5 mr-2 fill-primary" />
-              <span>AI assistant for expenses &amp; income</span>
-            </Badge>
-            <Badge
-              variant="outline"
-              className="px-4 py-1.5 rounded-full border-green-500/30 bg-green-500/10 text-green-700 dark:text-green-300 cursor-default"
-            >
-              <span>Now on Google Play for Android</span>
-            </Badge>
-          </div>
-
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold tracking-tight mb-6 sm:mb-8 leading-[1.15]">
-            Stop losing track <br className="hidden sm:block" />
-            <span className="bg-linear-to-r from-primary via-orange-400 to-amber-300 bg-clip-text text-transparent">
-              of where your money went
-            </span>
-          </h1>
-
-          <p className="text-base sm:text-xl text-muted-foreground mb-8 sm:mb-10 max-w-2xl mx-auto leading-relaxed">
-            Just say{" "}
-            <span className="text-foreground font-medium">
-              &quot;Zomato 450&quot;
-            </span>{" "}
-            or{" "}
-            <span className="text-foreground font-medium">
-              &quot;petrol 800 aaj&quot;
-            </span>
-            - AiXpense logs the amount, category, and date automatically. Works
-            in Hindi, Marathi, Hinglish, and 22+ Indian languages. No forms. No
-            spreadsheet. Ever.
-          </p>
-
-          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 w-full sm:w-auto items-center justify-center">
-            <SmartLink
-              size="lg"
-              className="h-12 px-8 rounded-full text-base sm:text-lg w-full sm:w-auto"
-            >
-              Start free no card needed
-              <ArrowRight className="ml-2 size-5" />
-            </SmartLink>
-            <PlayStoreLink
-              size="lg"
-              label="Get on Google Play"
-              className="h-12 px-8 text-base sm:text-lg border-border/80 bg-background hover:bg-muted w-full sm:w-auto"
-            />
-            <Button
-              variant="outline"
-              size="lg"
-              className="h-12 px-8 rounded-full text-base sm:text-lg border-border/80 bg-background hover:bg-muted w-full sm:w-auto hidden md:inline-flex"
-              asChild
-            >
-              <a href="#chat-demo">
-                Watch it work
-                <ArrowRight className="ml-2 size-5" />
-              </a>
-            </Button>
-          </div>
-
-          <p className="text-sm text-muted-foreground text-center max-w-lg mt-5 leading-relaxed">
-            Log spending the way you already text one plain sentence at a time.
-            Use the web app or install{" "}
-            <PlayStoreTextLink>AiXpense for Android on Google Play</PlayStoreTextLink>
-            .
-          </p>
-        </section>
-
-        <LandingChatDemo />
-
-        <section className="py-16 sm:py-24 lg:py-32 relative">
-          <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-2xl sm:text-4xl font-bold mb-4">
-              How it works
-            </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base px-2">
-              Three steps from &quot;I should track this&quot; to a clean
-              ledger.
-            </p>
-          </div>
-
-          <div className="grid gap-4 sm:gap-8 sm:grid-cols-3 max-w-6xl mx-auto">
-            <div className="relative flex flex-col items-start p-6 sm:p-8 rounded-2xl border border-border/50 bg-card">
-              <div className="size-12 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center mb-5 sm:mb-6 text-primary font-bold text-xl">
-                1
-              </div>
-              <h3 className="text-lg sm:text-xl font-semibold mb-3">
-                Say or type what happened
-              </h3>
-              <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
-                Examples:{" "}
-                <span className="text-foreground font-medium">
-                  &quot;Zomato dinner 450&quot;
-                </span>
-                ,{" "}
-                <span className="text-foreground font-medium">
-                  &quot;petrol 800 today&quot;
-                </span>
-                . No rigid fields just a sentence.
-              </p>
-            </div>
-
-            <div className="relative flex flex-col items-start p-6 sm:p-8 rounded-2xl border border-border/50 bg-card/30 backdrop-blur-sm">
-              <div className="size-12 rounded-xl bg-orange-500/10 border border-orange-500/20 flex items-center justify-center mb-5 sm:mb-6 text-orange-400 font-bold text-xl">
-                2
-              </div>
-              <h3 className="text-lg sm:text-xl font-semibold mb-3">
-                AI structures it for you
-              </h3>
-              <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
-                Amount, merchant, category, tags, and date are inferred
-                automatically including income like{" "}
-                <span className="text-foreground font-medium">
-                  &quot;received salary 50000&quot;
-                </span>
-                .
-              </p>
-            </div>
-
-            <div className="relative flex flex-col items-start p-6 sm:p-8 rounded-2xl border border-border/50 bg-card/30 backdrop-blur-sm">
-              <div className="size-12 rounded-xl bg-green-500/10 border border-green-500/20 flex items-center justify-center mb-5 sm:mb-6 text-green-400 font-bold text-xl">
-                3
-              </div>
-              <h3 className="text-lg sm:text-xl font-semibold mb-3">
-                See your money clearly
-              </h3>
-              <p className="text-muted-foreground leading-relaxed text-sm sm:text-base">
-                Search and filter anytime, set budgets with alerts, and on
-                Premium get coaching and report cards so patterns are obvious
-                not buried in a sheet.
-              </p>
-            </div>
-          </div>
-        </section>
-
-        <section className="py-16 sm:py-24 lg:py-32 relative">
-          <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-2xl sm:text-4xl font-bold mb-4">
-              Everything you need. Nothing you don&apos;t.
-            </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base px-2">
-              One workspace for voice, chat, budgets, and insights without
-              building your own system in Notes or Sheets.
-            </p>
-          </div>
-
-          <div className="grid gap-4 sm:gap-6 sm:grid-cols-2 lg:grid-cols-3 max-w-6xl mx-auto">
-            <FeatureCard
-              icon={<MessageSquare className="size-6 text-blue-500" />}
-              title="Speak it, done"
-              description="Hindi, Marathi, Hinglish, English, and 22+ Indian languages typed or spoken. One line is enough."
-              color="bg-blue-500/10"
-              footer={
-                <a
-                  href="https://www.linkedin.com/feed/update/urn:li:ugcPost:7437362498141593600/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors"
-                >
-                  Watch voice demo
-                  <ExternalLink className="size-3.5" />
-                </a>
-              }
-            />
-            <FeatureCard
-              icon={<ScanLine className="size-6 text-amber-500" />}
-              title="Snap a bill, skip the typing"
-              description="AI reads totals and line items from a receipt photo in chat you confirm and save in seconds (Premium)."
-              color="bg-amber-500/10"
-              badge="Premium"
-              footer={
-                <SmartLink
-                  variant="outline"
-                  size="sm"
-                  className="rounded-full gap-2 w-full sm:w-auto"
-                >
-                  Try AiXpense free
-                  <ArrowRight className="size-3.5" />
-                </SmartLink>
-              }
-            />
-            <FeatureCard
-              icon={<PieChart className="size-6 text-violet-500" />}
-              title="Budgets that warn you early"
-              description="Categories and trends surface before overspend becomes a surprise."
-              color="bg-violet-500/10"
-            />
-            <FeatureCard
-              icon={<Repeat2 className="size-6 text-orange-500" />}
-              title="Recurring on autopilot"
-              description="Rent, subscriptions, EMIs Premium rules drop routine spends into your ledger on schedule."
-              color="bg-orange-500/10"
-            />
-            <FeatureCard
-              icon={<Mail className="size-6 text-sky-500" />}
-              title="Know where your money actually goes"
-              description="Premium turns your history into weekly nudges and monthly patterns not a wall of numbers."
-              color="bg-sky-500/10"
-            />
-            <FeatureCard
-              icon={<Shield className="size-6 text-green-500" />}
-              title="Your data stays yours"
-              description="We don't sell your financial data. Delete your account and data whenever you want."
-              color="bg-green-500/10"
-            />
-          </div>
-        </section>
-
-        <section
-          id="android-app"
-          aria-labelledby="android-app-heading"
-          className="py-16 sm:py-20 relative rounded-3xl border border-green-500/20 bg-green-500/5 px-4 sm:px-8 mb-8"
-        >
-          <div className="max-w-3xl mx-auto text-center space-y-5">
-            <div className="inline-flex items-center justify-center size-12 rounded-2xl bg-green-500/10 border border-green-500/20">
-              <Smartphone className="size-6 text-green-600 dark:text-green-400" />
-            </div>
-            <h2
-              id="android-app-heading"
-              className="text-2xl sm:text-4xl font-bold tracking-tight"
-            >
-              Download AiXpense on Google Play
-            </h2>
-            <p className="text-muted-foreground text-sm sm:text-base leading-relaxed max-w-2xl mx-auto">
-              Native Android app built for India: voice input in 22+ languages
-              (Hindi, Marathi, Tamil, Telugu &amp; more), camera bill scanning,
-              budgets, and AI spending coach. Same account as the web app.
-              Free tier with 3 free AI messages (lifetime).
-            </p>
-            <div className="pt-2 flex flex-col sm:flex-row gap-3 justify-center items-center">
-              <PlayStoreLink
-                size="lg"
-                label="Get it on Google Play"
-                className="h-12 px-8 text-base sm:text-lg"
-                showExternalIcon
-              />
-              <SmartLink variant="outline" className="rounded-full h-12 px-8">
-                Or use the web app
-              </SmartLink>
-            </div>
-            <p className="text-xs text-muted-foreground pt-2">
-              Also available at{" "}
-              <PlayStoreTextLink className="font-normal">
-                play.google.com/store/apps/details?id=com.aixpense.app
-              </PlayStoreTextLink>
-            </p>
-          </div>
-        </section>
-
-        <section
-          id="premium"
-          className="py-16 sm:py-20 relative rounded-3xl border border-primary/20 bg-primary/5 px-4 sm:px-8 mb-8"
-        >
-          <div className="max-w-3xl mx-auto text-center space-y-4">
-            <Badge
-              variant="outline"
-              className="border-primary/30 bg-background/80 text-primary"
-            >
-              <Sparkles className="size-3.5 mr-1.5" />
-              Premium
-            </Badge>
-            <h2 className="text-2xl sm:text-4xl font-bold tracking-tight">
-              Ready to go unlimited?
-            </h2>
-            <p className="text-muted-foreground text-sm sm:text-base leading-relaxed">
-              The free tier gets you started. Premium gets you there faster
-              unlimited AI conversations, receipt scanning, recurring
-              automation, shareable report cards, and priority support.
-            </p>
-            <div className="pt-2 flex flex-col sm:flex-row gap-3 justify-center">
-              <Button
-                className="rounded-full shadow-lg shadow-primary/20"
-                asChild
-              >
-                <Link href="/premium">View Premium &amp; pricing</Link>
-              </Button>
-              <SmartLink variant="outline" className="rounded-full">
-                Try free first
-              </SmartLink>
-            </div>
-          </div>
-        </section>
-
-        <section
-          id="supported-currencies"
-          aria-labelledby="supported-currencies-heading"
-          className="py-14 sm:py-20 relative max-w-6xl mx-auto w-full min-w-0 overflow-x-hidden"
-        >
-          <div className="text-center mb-8 sm:mb-10">
-            <div className="inline-flex items-center justify-center size-12 rounded-2xl bg-primary/10 border border-primary/20 mb-4">
-              <Globe2 className="size-6 text-primary" />
-            </div>
-            <h2
-              id="supported-currencies-heading"
-              className="text-2xl sm:text-3xl font-bold mb-3"
-            >
-              Supported account currencies
-            </h2>
-            <p className="text-muted-foreground text-sm sm:text-base max-w-2xl mx-auto px-2 leading-relaxed">
-              Pick one as your ledger currency amounts, budgets, and reports all
-              use it. Change anytime in{" "}
-              <strong className="text-foreground font-medium">Profile</strong>{" "}
-              after sign-up. INR is the default for India.
-            </p>
-          </div>
-
-          <div className="rounded-2xl border border-border/50 bg-card/60 p-4 sm:p-6 w-full min-w-0 overflow-x-hidden">
-            <p className="text-xs sm:text-sm text-muted-foreground mb-4 text-center sm:text-left">
-              {CURRENCIES.length} ISO codes (flag · code · symbol · name)
-            </p>
-            <div
-              className="rounded-xl border border-border/40 bg-muted/20 p-3 sm:p-4 w-full min-w-0"
-              role="region"
-              aria-label="Full list of supported account currency codes"
-            >
-              <ul className="grid w-full min-w-0 grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2 sm:gap-2.5 list-none p-0 m-0">
-                {CURRENCIES.map((c) => (
-                  <li key={c.code} className="min-w-0">
-                    <span className="flex min-w-0 w-full items-start gap-2 rounded-lg border border-border/50 bg-background/80 px-2 py-2 text-xs sm:text-sm">
-                      <span
-                        className="text-base shrink-0 leading-none pt-0.5"
-                        aria-hidden
-                      >
-                        {c.flag}
-                      </span>
-                      <span className="min-w-0 flex-1 flex flex-col items-start gap-0.5 leading-tight text-left">
-                        <span className="font-semibold tabular-nums">
-                          {c.code}
-                        </span>
-                        <span className="text-[0.65rem] sm:text-xs text-muted-foreground wrap-anywhere">
-                          {c.symbol} · {c.name}
-                        </span>
-                      </span>
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-        </section>
-
-        <section id="pricing" className="py-16 sm:py-24 lg:py-32 relative">
-          <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-2xl sm:text-4xl font-bold mb-4">
-              Simple pricing
-            </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base px-2">
-              Start free with 3 AI messages total. Upgrade on the web when you
-              want unlimited help and scanning.
-            </p>
-          </div>
-
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto items-stretch">
-            <div className="rounded-2xl border border-border/50 bg-card p-6 sm:p-8 space-y-4 flex flex-col">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground mb-1">
-                  Free
-                </p>
-                <p className="text-4xl font-bold">₹0</p>
-                <p className="text-sm text-muted-foreground mt-1">
-                  3 free AI messages total
-                </p>
-              </div>
-              <ul className="space-y-3 text-sm flex-1">
-                {freeFeatures.map((f) => (
-                  <li
-                    key={f}
-                    className="flex items-center gap-2 text-muted-foreground"
-                  >
-                    <CheckCircle2 className="size-4 text-green-500 shrink-0" />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <div className="space-y-2 pt-1">
-                <SmartLink variant="outline" className="w-full rounded-full">
-                  Get started free
-                </SmartLink>
-                <p className="text-xs text-center text-muted-foreground">
-                  No credit card required.
-                </p>
-              </div>
-            </div>
-
-            <div className="rounded-2xl border-2 border-primary/50 bg-linear-to-b from-primary/10 to-background p-6 sm:p-8 space-y-6 relative flex flex-col shadow-lg shadow-primary/10">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                <span className="bg-primary text-primary-foreground text-xs font-semibold px-3 py-1 rounded-full">
-                  Monthly
-                </span>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-muted-foreground mb-1">
-                  Premium
-                </p>
-                <div className="flex items-end gap-1">
-                  <p className="text-4xl font-bold">₹499</p>
-                  <p className="text-muted-foreground mb-1">/month</p>
-                </div>
-                <p className="text-sm text-muted-foreground mt-1">
-                  Billed monthly · cancel anytime
-                </p>
-              </div>
-              <ul className="space-y-3 text-sm flex-1">
-                {premiumFeatures.map((f) => (
-                  <li key={f} className="flex items-center gap-2">
-                    <CheckCircle2 className="size-4 text-primary shrink-0" />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <Button
-                className="w-full rounded-full shadow-lg shadow-primary/20"
-                asChild
-              >
-                <Link href="/premium">Buy Premium monthly</Link>
-              </Button>
-            </div>
-
-            <div className="rounded-2xl border-2 border-amber-500/40 bg-linear-to-b from-amber-500/10 to-background p-6 sm:p-8 space-y-6 relative flex flex-col shadow-lg shadow-amber-500/10 sm:col-span-2 lg:col-span-1">
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                <span className="bg-amber-500 text-white text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1">
-                  <Sparkles className="size-3" />
-                  Best value
-                </span>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-muted-foreground mb-1">
-                  Premium yearly
-                </p>
-                <div className="flex items-end gap-1 flex-wrap">
-                  <p className="text-4xl font-bold">₹3,999</p>
-                  <p className="text-muted-foreground mb-1">/year</p>
-                </div>
-                <p className="text-sm text-green-600 dark:text-green-400 font-medium mt-1">
-                  Save ~33% vs paying monthly
-                </p>
-              </div>
-              <ul className="space-y-3 text-sm flex-1">
-                {premiumFeatures.map((f) => (
-                  <li key={`y-${f}`} className="flex items-center gap-2">
-                    <CheckCircle2 className="size-4 text-amber-500 shrink-0" />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <Button
-                className="w-full rounded-full bg-amber-500 hover:bg-amber-500/90 text-white border-0 shadow-lg shadow-amber-500/20"
-                asChild
-              >
-                <Link href="/premium">Buy Premium yearly</Link>
-              </Button>
-            </div>
-          </div>
-
-          <p className="text-center text-xs text-muted-foreground mt-8 max-w-xl mx-auto">
-            Secure checkout via Razorpay or Dodo by region. See{" "}
-            <Link href="/refund" className="text-primary hover:underline">
-              billing &amp; cancellation
-            </Link>{" "}
-            for renewals and terms.
-          </p>
-        </section>
-
-        <section className="py-16 sm:py-24 lg:py-32 relative">
-          <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-2xl sm:text-4xl font-bold mb-4">
-              Frequently asked questions
-            </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto text-sm sm:text-base px-2">
-              Straight answers before you sign up.
-            </p>
-          </div>
-          <LandingFaq />
-        </section>
-
-        <section className="py-16 sm:py-24 text-center">
-          <div className="max-w-4xl mx-auto p-6 sm:p-12 rounded-3xl border border-border bg-linear-to-b from-muted/50 to-background relative overflow-hidden">
-            <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-primary/50 to-transparent" />
-
-            <h2 className="text-2xl sm:text-4xl font-bold mb-4 sm:mb-6">
-              Your next expense is happening today.
-            </h2>
-            <p className="text-base sm:text-lg text-muted-foreground mb-8 sm:mb-10 max-w-xl mx-auto">
-              Take 30 seconds to log it no credit card needed.
-            </p>
-
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 sm:gap-6 text-sm text-muted-foreground">
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="size-4 text-green-500 shrink-0" />
-                Voice &amp; text in one chat
-              </div>
-              <span className="hidden sm:inline text-border">|</span>
-              <div className="flex items-center gap-2">
-                <CheckCircle2 className="size-4 text-green-500 shrink-0" />
-                AI-organized ledger
-              </div>
-            </div>
-
-            <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row gap-4 justify-center">
-              <SmartLink
-                size="lg"
-                className="h-12 px-8 sm:px-10 rounded-full text-base sm:text-lg shadow-lg hover:shadow-xl transition-all"
-              >
-                Open the web app
-              </SmartLink>
-              <PlayStoreLink
-                size="lg"
-                label="Download for Android"
-                className="h-12 px-8 sm:px-10 text-base sm:text-lg"
-              />
-              <Button
-                variant="outline"
-                size="lg"
-                className="rounded-full h-12"
-                asChild
-              >
-                <Link href="/premium">Compare Premium</Link>
-              </Button>
-            </div>
-          </div>
-        </section>
+      <header className="sticky top-0 z-50 border-b border-border/60 bg-background/85 backdrop-blur-xl"><div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8"><Link href="/" className="group flex items-center gap-2.5"><Image src="/icon.png" alt="AiXpense" width={34} height={34} className="rounded-xl shadow-sm transition-transform group-hover:scale-105" priority /><span className="text-lg font-bold tracking-tight">AiXpense</span></Link><nav className="hidden items-center gap-7 text-sm font-medium text-muted-foreground md:flex" aria-label="Main navigation"><a href="#how-it-works" className="hover:text-foreground">How it works</a><a href="#features" className="hover:text-foreground">Features</a><a href="#pricing" className="hover:text-foreground">Pricing</a><Link href="/careers" className="hover:text-foreground">Careers</Link></nav><div className="flex items-center gap-2.5"><SmartTextLink className="hidden text-sm font-medium text-muted-foreground hover:text-foreground sm:inline-flex">Log in</SmartTextLink><SmartLink className="rounded-full px-4 shadow-sm sm:px-5">Get started <ArrowRight className="ml-1.5 size-3.5" /></SmartLink></div></div></header>
+      <main>
+        <section className="relative border-b border-border/50 bg-[radial-gradient(circle_at_50%_-20%,color-mix(in_oklab,var(--primary)_16%,transparent),transparent_55%)]"><div className="absolute inset-0 opacity-[0.035] [background-image:linear-gradient(var(--foreground)_1px,transparent_1px),linear-gradient(90deg,var(--foreground)_1px,transparent_1px)] [background-size:48px_48px]" /><div className="relative mx-auto grid max-w-7xl items-center gap-12 px-4 py-16 sm:px-6 sm:py-24 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16 lg:px-8 lg:py-28"><div className="max-w-2xl"><div className="mb-6 flex flex-wrap items-center gap-2"><Badge variant="outline" className="rounded-full border-primary/25 bg-primary/5 px-3 py-1.5 text-primary"><Zap className="mr-1.5 size-3.5 fill-primary" />Personal finance, without the spreadsheet</Badge><Badge variant="outline" className="rounded-full border-emerald-500/25 bg-emerald-500/5 px-3 py-1.5 text-emerald-600 dark:text-emerald-400"><span className="mr-1.5 size-1.5 rounded-full bg-emerald-500" />Free to start</Badge></div><AnimatedLanguageHeadline /><p className="mt-6 max-w-xl text-base leading-7 text-muted-foreground sm:text-lg sm:leading-8">Log an expense the same way you would text a friend. AiXpense turns voice, text and receipts into a clean ledger, useful budgets and clear answers.</p><div className="mt-8 flex flex-col gap-3 sm:flex-row"><SmartLink size="lg" className="h-12 rounded-full px-6 text-base shadow-lg shadow-primary/20">Start tracking free <ArrowRight className="ml-2 size-4" /></SmartLink><PlayStoreLink size="lg" label="Get the Android app" className="h-12 rounded-full border-border/80 bg-background/70 px-6 text-base" /></div><div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-xs text-muted-foreground"><span className="inline-flex items-center gap-1.5"><Check className="size-3.5 text-emerald-500" />No credit card</span><span className="inline-flex items-center gap-1.5"><Check className="size-3.5 text-emerald-500" />Web + Android</span><span className="inline-flex items-center gap-1.5"><Check className="size-3.5 text-emerald-500" />22+ Indian languages</span></div></div><HeroPreview /></div></section>
+        <section aria-label="AiXpense community" className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 border-b border-border/60 px-4 py-5 text-center sm:flex-row sm:px-6 sm:text-left lg:px-8"><div className="flex items-center gap-3"><div className="flex -space-x-2" aria-hidden="true"><span className="flex size-8 items-center justify-center rounded-full border-2 border-background bg-primary text-xs font-bold text-primary-foreground">A</span><span className="flex size-8 items-center justify-center rounded-full border-2 border-background bg-orange-400 text-xs font-bold text-white">R</span><span className="flex size-8 items-center justify-center rounded-full border-2 border-background bg-emerald-500 text-xs font-bold text-white">S</span></div><span className="text-sm font-semibold">{verifiedUserCount && verifiedUserCount > 0 ? `Trusted by ${verifiedUserCount.toLocaleString("en-IN")} verified users` : "Trusted by a growing verified community"}</span></div><span className="text-sm text-muted-foreground">A calmer way to stay on top of everyday money.</span></section>
+        <section id="how-it-works" className="mx-auto max-w-7xl scroll-mt-20 px-4 py-20 sm:px-6 sm:py-28 lg:px-8"><SectionIntro eyebrow="How it works" title="From one sentence to a clearer ledger." description="No rigid forms. No spreadsheet maintenance. Just describe what happened and keep moving." /><div className="grid gap-4 md:grid-cols-3">{[{ number: "01", title: "Say or type what happened", description: <>Try <strong className="text-foreground">“Zomato dinner 450”</strong> or <strong className="text-foreground">“salary received 50000.”</strong></> }, { number: "02", title: "AI structures the details", description: "Amount, merchant, category, tags and date are inferred for you and shown back clearly." }, { number: "03", title: "See what your money is doing", description: "Search your history, set budgets, review reports and make better decisions sooner." }].map((step) => <div key={step.number} className="rounded-2xl border border-border/70 bg-card p-6 sm:p-8"><span className="text-sm font-bold tracking-[0.18em] text-primary">{step.number}</span><h3 className="mt-8 text-xl font-semibold tracking-tight">{step.title}</h3><p className="mt-3 text-sm leading-6 text-muted-foreground">{step.description}</p></div>)}</div></section>
+        <section id="chat-demo" className="border-y border-border/50 bg-muted/20 px-4 py-4 sm:px-6 lg:px-8"><div className="mx-auto max-w-4xl"><LandingChatDemo /></div></section>
+        <section id="features" className="mx-auto max-w-7xl scroll-mt-20 px-4 py-20 sm:px-6 sm:py-28 lg:px-8"><SectionIntro eyebrow="Everything in one place" title="Built around the way real people spend." description="Capture quickly, understand more and make the next money decision with less friction." /><div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">{featureCards.map((feature) => <FeatureCard key={feature.title} {...feature} />)}</div></section>
+        <section id="android-app" className="mx-auto mb-4 max-w-7xl px-4 sm:px-6 lg:px-8"><div className="relative overflow-hidden rounded-[2rem] border border-emerald-500/20 bg-emerald-500/5 px-6 py-12 sm:px-12 sm:py-16"><div className="absolute -right-20 -top-24 size-72 rounded-full bg-emerald-500/10 blur-3xl" /><div className="relative grid items-center gap-10 lg:grid-cols-[1fr_auto]"><div className="max-w-2xl"><div className="mb-5 flex size-11 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"><Smartphone className="size-5" /></div><h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Take your money assistant with you.</h2><p className="mt-4 text-sm leading-7 text-muted-foreground sm:text-base">The AiXpense Android app is made for quick capture: voice input, camera bill scanning, budgets and the same account you use on the web.</p><div className="mt-7 flex flex-col gap-3 sm:flex-row"><PlayStoreLink size="lg" label="Get it on Google Play" className="h-12 rounded-full px-5" showExternalIcon /><SmartLink variant="outline" className="h-12 rounded-full bg-background/70 px-5">Use the web app</SmartLink></div></div><div className="hidden rounded-3xl border border-emerald-500/20 bg-background/70 p-6 text-center shadow-lg sm:block"><div className="mx-auto flex size-16 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-600"><WalletCards className="size-8" /></div><p className="mt-4 text-sm font-semibold">One account</p><p className="mt-1 text-xs text-muted-foreground">Web + Android</p></div></div></div></section>
+        <section id="supported-currencies" className="mx-auto max-w-7xl scroll-mt-20 px-4 py-20 sm:px-6 sm:py-28 lg:px-8"><div className="grid items-start gap-10 lg:grid-cols-[0.72fr_1.28fr]"><div><div className="mb-5 flex size-11 items-center justify-center rounded-2xl bg-primary/10 text-primary"><Globe2 className="size-5" /></div><h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Your account, your currency.</h2><p className="mt-4 text-sm leading-7 text-muted-foreground sm:text-base">Choose one ledger currency for your amounts, budgets and reports. Change it anytime in Profile. INR is the default for India.</p></div><div className="rounded-2xl border border-border/70 bg-card p-4 sm:p-6"><p className="mb-4 text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground">{CURRENCIES.length} supported ISO codes</p><ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4">{CURRENCIES.map((currency) => <li key={currency.code} className="flex min-w-0 items-center gap-2 rounded-xl border border-border/60 bg-background px-3 py-2.5 text-sm"><span className="text-base" aria-hidden>{currency.flag}</span><span className="min-w-0"><strong className="block text-xs tabular-nums">{currency.code}</strong><span className="block truncate text-[11px] text-muted-foreground">{currency.symbol} · {currency.name}</span></span></li>)}</ul></div></div></section>
+        <section id="pricing" className="scroll-mt-20 border-y border-border/50 bg-muted/20 px-4 py-20 sm:px-6 sm:py-28 lg:px-8"><div className="mx-auto max-w-7xl"><SectionIntro eyebrow="Simple, transparent pricing" title="Start free. Upgrade when you need more." description="Try the core experience first. Premium is there when unlimited conversations and deeper insights become useful." /><div className="mx-auto grid max-w-5xl gap-4 lg:grid-cols-3"><PricingCard title="Free" price="₹0" suffix="forever" description="A simple way to start tracking." features={freeFeatures} action={<SmartLink variant="outline" className="w-full rounded-full">Get started free</SmartLink>} note="No credit card required." /><PricingCard featured title="Premium monthly" price="₹499" suffix="/month" description="Unlimited help for everyday money." features={premiumFeatures} action={<Button className="w-full rounded-full shadow-lg shadow-primary/20" asChild><Link href="/premium">Choose monthly</Link></Button>} note="Cancel anytime." /><PricingCard accent title="Premium yearly" price="₹3,999" suffix="/year" description="The best value for a full year." features={premiumFeatures} action={<Button className="w-full rounded-full border-0 bg-amber-500 text-white hover:bg-amber-500/90" asChild><Link href="/premium">Choose yearly</Link></Button>} note="Save ~33% vs paying monthly." /></div><p className="mx-auto mt-8 max-w-xl text-center text-xs leading-5 text-muted-foreground">Secure checkout via Razorpay or Dodo by region. See <Link href="/refund" className="text-primary hover:underline">billing &amp; cancellation</Link> for details.</p></div></section>
+        <section className="mx-auto max-w-4xl px-4 py-20 sm:px-6 sm:py-28"><SectionIntro eyebrow="Questions, answered" title="You should feel good about what you are signing up for." description="Straight answers before you start." /><LandingFaq /></section>
+        <section className="mx-auto max-w-7xl px-4 pb-20 sm:px-6 sm:pb-28 lg:px-8"><div className="relative overflow-hidden rounded-[2rem] border border-primary/20 bg-primary/5 px-6 py-14 text-center sm:px-12 sm:py-20"><div className="absolute left-1/2 top-0 h-px w-2/3 -translate-x-1/2 bg-linear-to-r from-transparent via-primary to-transparent" /><h2 className="mx-auto max-w-2xl text-3xl font-bold tracking-tight sm:text-5xl">Give your next expense a better place to go.</h2><p className="mx-auto mt-5 max-w-xl text-sm leading-7 text-muted-foreground sm:text-base">Take 30 seconds to log it. No credit card, no spreadsheet and no perfect setup required.</p><div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row"><SmartLink size="lg" className="h-12 rounded-full px-7 text-base shadow-lg shadow-primary/20">Open the web app <ArrowRight className="ml-2 size-4" /></SmartLink><PlayStoreLink size="lg" label="Download for Android" className="h-12 rounded-full px-7 text-base" /></div><div className="mt-7 flex flex-wrap justify-center gap-x-5 gap-y-2 text-xs text-muted-foreground"><span className="inline-flex items-center gap-1.5"><CheckCircle2 className="size-3.5 text-emerald-500" />Voice &amp; text in one chat</span><span className="inline-flex items-center gap-1.5"><CheckCircle2 className="size-3.5 text-emerald-500" />AI-organized ledger</span><span className="inline-flex items-center gap-1.5"><CheckCircle2 className="size-3.5 text-emerald-500" />Delete anytime</span></div></div></section>
       </main>
-
-      <footer className="border-t border-border/40 bg-muted/20">
-        <div className="container mx-auto px-4 py-8 space-y-6">
-          <p className="text-center text-xs sm:text-sm text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-            Account currency: change anytime in{" "}
-            <strong className="text-foreground font-medium">Profile</strong>.
-            Full code list:{" "}
-            <a
-              href="#supported-currencies"
-              className="text-primary font-medium hover:underline"
-            >
-              supported currencies
-            </a>
-            .
-          </p>
-          <div className="flex flex-wrap justify-center gap-x-6 gap-y-2 text-sm">
-            <Link
-              href="/terms"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Terms &amp; Conditions
-            </Link>
-            <Link
-              href="/privacy"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Privacy Policy
-            </Link>
-            <Link
-              href="/refund"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Billing &amp; cancellation
-            </Link>
-            <Link
-              href="/shipping"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Shipping Policy
-            </Link>
-            <Link
-              href="/contact"
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              Contact Us
-            </Link>
-            <PlayStoreTextLink className="text-muted-foreground hover:text-foreground transition-colors font-normal">
-              Google Play app
-            </PlayStoreTextLink>
-          </div>
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-            <p className="text-sm text-muted-foreground">
-              &copy; 2026 AiXpense. Built with &hearts; and AI.
-            </p>
-            <div className="flex items-center gap-4 text-sm">
-              <Link
-                href="https://www.linkedin.com/in/pratikjadhav1438/"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-foreground transition-colors"
-              >
-                LinkedIn
-              </Link>
-              <Link
-                href="https://x.com/Pratik4230"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-muted-foreground hover:text-foreground transition-colors"
-              >
-                Twitter/X
-              </Link>
-            </div>
-          </div>
-        </div>
-      </footer>
+      <footer className="border-t border-border/60 bg-muted/20"><div className="mx-auto max-w-7xl space-y-7 px-4 py-9 sm:px-6 lg:px-8"><div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-center"><Link href="/" className="flex items-center gap-2 font-semibold"><Image src="/icon.png" alt="AiXpense" width={28} height={28} className="rounded-lg" />AiXpense</Link><p className="text-xs text-muted-foreground">Built with care for clearer everyday money.</p></div><div className="flex flex-wrap gap-x-5 gap-y-2 border-t border-border/60 pt-6 text-xs text-muted-foreground"><Link href="/terms" className="hover:text-foreground">Terms</Link><Link href="/privacy" className="hover:text-foreground">Privacy</Link><Link href="/refund" className="hover:text-foreground">Billing &amp; cancellation</Link><Link href="/shipping" className="hover:text-foreground">Shipping</Link><Link href="/contact" className="hover:text-foreground">Contact</Link><Link href="/careers" className="hover:text-foreground">Careers</Link><PlayStoreTextLink className="font-normal hover:text-foreground">Google Play app</PlayStoreTextLink></div><div className="flex flex-col justify-between gap-3 border-t border-border/60 pt-6 text-xs text-muted-foreground sm:flex-row"><p>© 2026 AiXpense. All rights reserved.</p><div className="flex gap-4"><Link href="https://www.linkedin.com/in/pratikjadhav1438/" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">LinkedIn</Link><Link href="https://x.com/Pratik4230" target="_blank" rel="noopener noreferrer" className="hover:text-foreground">Twitter/X</Link></div></div></div></footer>
     </div>
   );
 }
 
-function FeatureCard({
-  icon,
-  title,
-  description,
-  color,
-  badge,
-  footer,
-}: {
-  icon: ReactNode;
-  title: string;
-  description: string;
-  color: string;
-  badge?: string;
-  footer?: ReactNode;
-}) {
-  return (
-    <Card className="bg-card h-full flex flex-col">
-      <CardHeader className="flex-1 flex flex-col">
-        <div className="flex items-start justify-between gap-2 mb-1">
-          <div
-            className={`size-12 rounded-xl ${color} flex items-center justify-center`}
-          >
-            {icon}
-          </div>
-          {badge ? (
-            <span className="text-xs font-medium bg-primary/10 text-primary border border-primary/20 px-2.5 py-1 rounded-full shrink-0">
-              {badge}
-            </span>
-          ) : null}
-        </div>
-        <CardTitle className="text-xl pt-2">{title}</CardTitle>
-        <CardDescription className="text-base leading-relaxed mt-2 flex-1">
-          {description}
-        </CardDescription>
-        {footer ? <div className="mt-4 pt-1">{footer}</div> : null}
-      </CardHeader>
-    </Card>
-  );
+function HeroPreview() {
+  return <div className="relative mx-auto w-full max-w-[500px] lg:ml-auto"><div className="absolute -inset-4 rounded-[2rem] bg-primary/10 blur-3xl" /><div className="relative rounded-[1.7rem] border border-border/70 bg-card/95 p-3 shadow-2xl shadow-primary/10 backdrop-blur sm:p-4"><div className="flex items-center justify-between border-b border-border/60 px-2 pb-3"><div className="flex items-center gap-2"><Image src="/icon.png" alt="" width={26} height={26} className="rounded-lg" /><span className="text-sm font-semibold">AiXpense Assistant</span></div><span className="flex items-center gap-1.5 text-xs text-emerald-600"><span className="size-1.5 rounded-full bg-emerald-500" />Ready</span></div><div className="space-y-4 p-3 sm:p-5"><div className="ml-auto max-w-[82%] rounded-2xl rounded-tr-sm bg-primary px-4 py-3 text-sm font-medium text-primary-foreground shadow-md">“Petrol 800 today”</div><div className="flex gap-3"><div className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-primary to-amber-400 text-white"><Sparkles className="size-4" /></div><div className="min-w-0 flex-1 rounded-2xl rounded-tl-sm border border-border/60 bg-muted/50 p-4"><p className="mb-3 text-sm font-semibold">Expense added successfully</p><div className="grid grid-cols-[auto_1fr] gap-x-8 gap-y-2 text-xs sm:text-sm"><span className="text-muted-foreground">Item</span><span className="font-medium">Petrol</span><span className="text-muted-foreground">Amount</span><span className="font-medium">₹800.00</span><span className="text-muted-foreground">Category</span><span className="font-medium text-amber-500">Transport</span><span className="text-muted-foreground">Date</span><span className="font-medium">Today</span></div><div className="mt-4 flex gap-1.5"><span className="rounded bg-primary/10 px-2 py-1 text-[11px] font-medium text-primary">#travel</span><span className="rounded bg-primary/10 px-2 py-1 text-[11px] font-medium text-primary">#fuel</span></div></div></div></div><div className="flex items-center justify-between rounded-xl bg-muted/40 px-3 py-2.5 text-xs text-muted-foreground"><span>Try: “Set a food budget for this month”</span><MessageSquare className="size-3.5" /></div></div><div className="absolute -bottom-5 -left-4 hidden items-center gap-2 rounded-2xl border border-border/70 bg-card px-3 py-2.5 text-xs shadow-lg sm:flex"><span className="flex size-7 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-600"><Shield className="size-4" /></span><span><strong className="block text-foreground">Private by default</strong><span className="text-muted-foreground">Your data stays yours</span></span></div></div>;
 }

@@ -9,7 +9,7 @@ export interface IBroadcastCampaign {
   status: BroadcastStatus;
   totalUsers: number;
   sentCount: number;
-  /** Cursor for verified-user pagination — avoids loading all users each run */
+  /** Cursor for verified-user pagination  -  avoids loading all users each run */
   lastProcessedUserId?: string;
   /** Legacy dedup list from pre-cursor campaigns */
   sentEmails: string[];

@@ -182,7 +182,7 @@ export function ChatEmptyState({
       ) : (
         <p className="text-sm text-muted-foreground mt-4 leading-relaxed">
           Log expenses, income, set budgets, or ask anything about your finances
-          — all in plain language.
+           -  all in plain language.
         </p>
       )}
     </div>

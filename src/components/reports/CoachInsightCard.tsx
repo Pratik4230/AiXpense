@@ -13,7 +13,7 @@ import { formatInsightPeriodKey } from "@/lib/utcDates";
 function cleanInsightText(text: string) {
   return text
     .replace(/\s*--\s*/g, " ")
-    .replace(/\s*—\s*/g, " ")
+    .replace(/\s* - \s*/g, " ")
     .trim();
 }
 

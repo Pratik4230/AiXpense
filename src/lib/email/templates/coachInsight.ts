@@ -16,7 +16,7 @@ export function coachInsightEmail({
 }) {
   const cleanInsight = insight
     .replace(/\s*--\s*/g, " ")
-    .replace(/\s*—\s*/g, " ")
+    .replace(/\s* - \s*/g, " ")
     .trim();
   const formattedAmount = new Intl.NumberFormat("en", {
     style: "currency",

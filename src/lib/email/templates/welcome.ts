@@ -12,7 +12,7 @@ export function welcomeEmail({ name }: { name: string }) {
 
   const content = `
     ${heading(`Welcome to AiXpense, ${firstName}`)}
-    ${paragraph("Your AI expense tracker is ready. Just chat naturally — no forms, no categories to pick.")}
+    ${paragraph("Your AI expense tracker is ready. Just chat naturally  -  no forms, no categories to pick.")}
     ${bulletList([
       'Say <em>"lunch 250 today"</em> to log instantly',
       'Ask <em>"how much did I spend this week?"</em>',

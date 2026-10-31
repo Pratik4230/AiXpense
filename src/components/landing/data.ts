@@ -19,19 +19,19 @@ export const LANDING_FAQS = [
   },
   {
     q: "Can I use it on my phone?",
-    a: `Yes. Install AiXpense for Android from Google Play (${PLAY_STORE_URL}) for voice input in 22+ Indian languages, bill scanning, and a native mobile experience—or use the web app in any mobile browser with the same account.`,
+    a: `Yes. Install AiXpense for Android from Google Play (${PLAY_STORE_URL}) for voice input in 22+ Indian languages, bill scanning, and a native mobile experience - or use the web app in any mobile browser with the same account.`,
   },
   {
     q: "What is the difference between the free and premium plans?",
-    a: "The free plan includes 3 AI messages in total (lifetime). Premium unlocks unlimited AI conversations, deeper spending insights and charts, shareable report cards, recurring payment tracking in the app, and AI receipt and bill scanning—plus priority support.",
+    a: "The free plan includes 3 AI messages in total (lifetime). Premium unlocks unlimited AI conversations, deeper spending insights and charts, shareable report cards, recurring payment tracking in the app, and AI receipt and bill scanning - plus priority support.",
   },
   {
     q: "Do I need to log every expense manually?",
-    a: "No. For everyday spends you describe them once in chat and AiXpense structures them. For bills that repeat—subscriptions, rent, EMIs—Premium recurring rules can add those on a schedule so you are not retyping the same entry every month. You can always search, edit, or delete entries later.",
+    a: "No. For everyday spends you describe them once in chat and AiXpense structures them. For bills that repeat - subscriptions, rent, EMIs - Premium recurring rules can add those on a schedule so you are not retyping the same entry every month. You can always search, edit, or delete entries later.",
   },
   {
     q: "Is this better than a notes app or Google Sheets?",
-    a: "Notes and Sheets are flexible, but you still do all the work: columns, formulas, and remembering to update them. AiXpense is built as a ledger: categories, tags, budgets, reports, and voice or chat input in one place—so totals and trends stay consistent without maintaining a spreadsheet.",
+    a: "Notes and Sheets are flexible, but you still do all the work: columns, formulas, and remembering to update them. AiXpense is built as a ledger: categories, tags, budgets, reports, and voice or chat input in one place - so totals and trends stay consistent without maintaining a spreadsheet.",
   },
   {
     q: "Which currencies does AiXpense support?",

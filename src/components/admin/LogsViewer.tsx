@@ -103,7 +103,7 @@ function LogLevelBadge({ level }: { level: "info" | "warn" | "error" }) {
 function DataCell({ data, error }: { data: Record<string, unknown> | null; error: string | null }) {
   const [expanded, setExpanded] = useState(false);
 
-  if (!data && !error) return <span className="text-muted-foreground text-xs">—</span>;
+  if (!data && !error) return <span className="text-muted-foreground text-xs"> - </span>;
 
   const preview = error
     ? error.slice(0, 80)
@@ -264,7 +264,7 @@ export function LogsViewer() {
                     </TableCell>
                     <TableCell className="font-mono text-xs">{log.event}</TableCell>
                     <TableCell className="hidden md:table-cell font-mono text-xs text-muted-foreground">
-                      {log.userId ? log.userId.slice(-8) : "—"}
+                      {log.userId ? log.userId.slice(-8) : " - "}
                     </TableCell>
                     <TableCell>
                       <DataCell data={log.data} error={log.error} />

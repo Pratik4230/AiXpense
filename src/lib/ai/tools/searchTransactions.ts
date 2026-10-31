@@ -49,8 +49,8 @@ Convert natural language financial questions into a MongoDB filter and/or aggreg
 
 DATABASE SCHEMA (Expense Collection):
 - item: string (e.g. "Starbucks Coffee", "Electricity Bill")
-- amount: number — stored in the user's account currency
-- currency: string (ISO 4217) — only filter when the user explicitly asks
+- amount: number  -  stored in the user's account currency
+- currency: string (ISO 4217)  -  only filter when the user explicitly asks
 - category: string (Enum: food, groceries, transport, shopping, entertainment, subscriptions, bills, rent, emi, health, education, personal, travel, salary, bonus, freelance, business, investment, interest, cashback, rental, refund, gift, other)
 - subcategory: string (optional)
 - type: "expense" | "income"
@@ -60,15 +60,15 @@ DATABASE SCHEMA (Expense Collection):
 RULES:
 1. SECURITY: Read-only. NO $where, $function, or mutation operators.
 2. SYNTAX: Use '$' on all operators ("$match", "$group", "$sum", "$regex", "$gte", "$lt").
-3. DATES: You resolve ALL date ranges from the user's words (today, this month, last 3 months, Q1, since January, between dates, etc.). Use half-open month boundaries: $gte month start, $lt next month/year start. Plain ISO 8601 strings only — never ISODate() or new Date().
-4. DEFAULT: If the user gives NO time period, omit date from filter — the tool applies current UTC month.
+3. DATES: You resolve ALL date ranges from the user's words (today, this month, last 3 months, Q1, since January, between dates, etc.). Use half-open month boundaries: $gte month start, $lt next month/year start. Plain ISO 8601 strings only  -  never ISODate() or new Date().
+4. DEFAULT: If the user gives NO time period, omit date from filter  -  the tool applies current UTC month.
 5. FILTER + AGGREGATION: Put every match criterion in top-level \`filter\` (category, type, date, amount, item). Stages in \`aggregation\` run after that $match. Never put match-only criteria only inside aggregation.
 6. TYPE: Spending/expense questions → filter.type = "expense". Income questions → filter.type = "income".
 7. ANALYTICS: totals/counts/averages → aggregation with $group. Biggest/largest → filter.type = "expense" + aggregation [{ "$sort": { "amount": -1 } }, { "$limit": 1 }]. Lists → filter only (no aggregation).
 8. MULTI-PERIOD: When comparing or listing across months, use one date range in filter and $group by month if totals per period are needed: { "$group": { "_id": { "$dateToString": { "format": "%Y-%m", "date": "$date" } }, "total": { "$sum": "$amount" }, "count": { "$sum": 1 } } }.
 9. REGEX: { "$regex": "pattern", "$options": "i" } on item for merchant/text search.
 10. CATEGORIES: Map fuzzy terms ("eating out") to enum values ("food").
-11. OUTPUT: Return one JSON object only — keys: filter (optional object), aggregation (optional array), explanation (optional string). No markdown fences.`;
+11. OUTPUT: Return one JSON object only  -  keys: filter (optional object), aggregation (optional array), explanation (optional string). No markdown fences.`;
 
 function validateQuery(obj: unknown, path = ""): void {
   if (obj === null || obj === undefined) return;
@@ -162,7 +162,7 @@ function pipelineNeedsLimit(stages: Record<string, unknown>[]): boolean {
   return true;
 }
 
-/** Derived from returned rows — no query-string heuristics. */
+/** Derived from returned rows  -  no query-string heuristics. */
 function buildByMonthSummary(transactions: TxLean[]) {
   if (transactions.length === 0) return undefined;
 

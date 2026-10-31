@@ -1,186 +1,148 @@
 "use client";
 
-import {
-  useEffect,
-  useRef,
-  useState,
-  useSyncExternalStore,
-} from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { RotateCcw, Sparkles } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 
-const USER_MESSAGE = "Zomato 450";
+type DemoMessage =
+  | { role: "user"; text: string }
+  | { role: "assistant"; title: string; body: string; rows: Array<[string, string]> };
 
-function subscribeReducedMotion(onStoreChange: () => void) {
+const CONVERSATIONS: Array<{ label: string; messages: DemoMessage[] }> = [
+  {
+    label: "Expense capture",
+    messages: [
+      { role: "user", text: "Zomato 450 for dinner" },
+      {
+        role: "assistant",
+        title: "Expense added successfully",
+        body: "Your dinner expense is ready to review.",
+        rows: [["Item", "Zomato"], ["Amount", "₹450.00"], ["Category", "Food & Dining"], ["Date", "Today"]],
+      },
+      { role: "user", text: "Show my food spending this month" },
+      {
+        role: "assistant",
+        title: "Food spending this month",
+        body: "You have 14 food transactions so far.",
+        rows: [["Total", "₹4,260.00"], ["Largest", "Dining out"], ["Trend", "Within your usual range"]],
+      },
+    ],
+  },
+  {
+    label: "Budget tracking",
+    messages: [
+      { role: "user", text: "Set my food budget to ₹8,000 this month" },
+      {
+        role: "assistant",
+        title: "Budget created",
+        body: "I’ll keep an eye on food and dining spending.",
+        rows: [["Monthly limit", "₹8,000"], ["Used so far", "₹4,260"], ["Remaining", "₹3,740"]],
+      },
+      { role: "user", text: "How much can I spend per day?" },
+      {
+        role: "assistant",
+        title: "Daily budget guidance",
+        body: "To stay on track for the rest of the month:",
+        rows: [["Recommended daily limit", "₹187"], ["Status", "On track"], ["Alert", "Near-limit alerts enabled"]],
+      },
+    ],
+  },
+  {
+    label: "Monthly report",
+    messages: [
+      { role: "user", text: "Give me my monthly spending report" },
+      {
+        role: "assistant",
+        title: "Your monthly report is ready",
+        body: "Here’s a quick view of where your money went.",
+        rows: [["Total expenses", "₹28,450"], ["Top category", "Food & Dining"], ["Compared with last month", "12% lower"]],
+      },
+      { role: "user", text: "What should I pay attention to?" },
+      {
+        role: "assistant",
+        title: "One useful observation",
+        body: "Dining out increased this month while transport spending fell. Your food budget is the best place to review first.",
+        rows: [["Suggested action", "Review dining transactions"], ["Next step", "Open spending report"]],
+      },
+    ],
+  },
+];
+
+function subscribeReducedMotion(onChange: () => void) {
   if (typeof window === "undefined") return () => {};
-  const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-  mq.addEventListener("change", onStoreChange);
-  return () => mq.removeEventListener("change", onStoreChange);
+  const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+  mediaQuery.addEventListener("change", onChange);
+  return () => mediaQuery.removeEventListener("change", onChange);
 }
 
 function getReducedMotionSnapshot() {
-  if (typeof window === "undefined") return false;
-  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  return typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
-function getReducedMotionServerSnapshot() {
-  return false;
-}
-
-function usePrefersReducedMotion(): boolean {
-  return useSyncExternalStore(
-    subscribeReducedMotion,
-    getReducedMotionSnapshot,
-    getReducedMotionServerSnapshot,
-  );
+function usePrefersReducedMotion() {
+  return useSyncExternalStore(subscribeReducedMotion, getReducedMotionSnapshot, () => false);
 }
 
 export function LandingChatDemo() {
-  const [replayKey, setReplayKey] = useState(0);
-  const [displayed, setDisplayed] = useState("");
-  const [showReply, setShowReply] = useState(false);
-  const timeoutsRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const [conversationIndex, setConversationIndex] = useState(0);
+  const [visibleMessages, setVisibleMessages] = useState(0);
+  const timeoutsRef = useRef<number[]>([]);
   const reducedMotion = usePrefersReducedMotion();
+  const conversation = CONVERSATIONS[conversationIndex];
 
-  const clearTimers = () => {
+  useEffect(() => {
     timeoutsRef.current.forEach(clearTimeout);
     timeoutsRef.current = [];
-  };
+    const reset = window.setTimeout(
+      () => setVisibleMessages(reducedMotion ? conversation.messages.length : 0),
+      0,
+    );
+    timeoutsRef.current.push(reset);
 
-  const schedule = (fn: () => void, ms: number) => {
-    const id = setTimeout(fn, ms);
-    timeoutsRef.current.push(id);
-  };
+    if (reducedMotion) {
+      return () => undefined;
+    }
 
-  useEffect(() => {
-    clearTimers();
+    conversation.messages.forEach((_, index) => {
+      const timeout = window.setTimeout(() => setVisibleMessages(index + 1), index * 1150 + 320);
+      timeoutsRef.current.push(timeout);
+    });
 
-    const run = () => {
-      setDisplayed("");
-      setShowReply(false);
-
-      if (reducedMotion) {
-        setDisplayed(USER_MESSAGE);
-        setShowReply(true);
-        return;
-      }
-
-      schedule(() => {
-        let i = 0;
-        const typeNext = () => {
-          i += 1;
-          setDisplayed(USER_MESSAGE.slice(0, i));
-          if (i < USER_MESSAGE.length) {
-            schedule(typeNext, 38);
-          } else {
-            schedule(() => setShowReply(true), 480);
-          }
-        };
-        typeNext();
-      }, 320);
-    };
-
-    queueMicrotask(run);
-
-    return clearTimers;
-  }, [replayKey, reducedMotion]);
+    return () => timeoutsRef.current.forEach(clearTimeout);
+  }, [conversation, reducedMotion]);
 
   useEffect(() => {
-    if (!showReply || reducedMotion) return;
-    const loopId = setTimeout(() => {
-      setReplayKey((k) => k + 1);
-    }, 12000);
-    return () => clearTimeout(loopId);
-  }, [showReply, reducedMotion]);
+    if (reducedMotion || visibleMessages !== conversation.messages.length) return;
+    const loop = window.setTimeout(() => setConversationIndex((index) => (index + 1) % CONVERSATIONS.length), 10500);
+    return () => window.clearTimeout(loop);
+  }, [conversation, reducedMotion, visibleMessages]);
+
+  const replay = () => setConversationIndex((index) => (index + 1) % CONVERSATIONS.length);
 
   return (
-    <section
-      id="chat-demo"
-      aria-labelledby="chat-demo-heading"
-      className="py-10 sm:py-14 scroll-mt-24"
-    >
-      <div className="max-w-4xl mx-auto px-0 sm:px-2">
-        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-4 text-center sm:text-left">
+    <section id="chat-demo" aria-labelledby="chat-demo-heading" className="scroll-mt-24 py-10 sm:py-14">
+      <div className="mx-auto max-w-4xl">
+        <div className="mb-4 flex flex-col gap-4 text-center sm:flex-row sm:items-end sm:justify-between sm:text-left">
           <div>
-            <h2
-              id="chat-demo-heading"
-              className="text-lg sm:text-xl font-semibold text-foreground"
-            >
-              Watch it work
-            </h2>
-            <p className="text-sm text-muted-foreground mt-1">
-              One line in chat becomes a structured expense no forms.
-            </p>
+            <p className="mb-1 text-xs font-bold uppercase tracking-[0.18em] text-primary">Live product examples</p>
+            <h2 id="chat-demo-heading" className="text-lg font-semibold sm:text-xl">Watch it work</h2>
+            <p className="mt-1 text-sm text-muted-foreground">From a quick expense to budgets, alerts and monthly insights  -  all in one conversation.</p>
           </div>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="rounded-full shrink-0 self-center sm:self-end gap-2"
-            onClick={() => setReplayKey((k) => k + 1)}
-          >
-            <RotateCcw className="size-3.5" aria-hidden />
-            Replay
+          <Button type="button" variant="outline" size="sm" className="self-center rounded-full gap-2 sm:self-end" onClick={replay}>
+            <RotateCcw className="size-3.5" aria-hidden /> Replay example
           </Button>
         </div>
 
-        <div className="rounded-2xl border border-border/50 bg-card shadow-xl shadow-primary/5 overflow-hidden ring-1 ring-border/30">
-          <div className="border-b border-border/50 px-4 py-3 flex items-center gap-2 bg-muted/30">
-            <div className="flex gap-1.5" aria-hidden>
-              <div className="size-3 rounded-full bg-red-500/80" />
-              <div className="size-3 rounded-full bg-yellow-500/80" />
-              <div className="size-3 rounded-full bg-green-500/80" />
-            </div>
-            <div className="ml-4 text-xs font-medium text-muted-foreground/70">
-              AiXpense Assistant
-            </div>
-          </div>
-          <div className="p-4 sm:p-8 space-y-6 sm:space-y-8 text-left min-h-[14rem] sm:min-h-[16rem]">
-            <div className="flex justify-end">
-              <div className="bg-primary text-primary-foreground px-4 py-3 sm:px-5 sm:py-3.5 rounded-2xl rounded-tr-sm max-w-[90%] shadow-md">
-                <p className="text-sm sm:text-base font-medium tabular-nums">
-                  {displayed}
-                  {!reducedMotion && displayed.length < USER_MESSAGE.length ? (
-                    <span className="inline-block w-0.5 h-4 sm:h-5 ml-0.5 align-[-2px] bg-primary-foreground/80 animate-pulse" />
-                  ) : null}
-                </p>
-              </div>
-            </div>
-
-            {showReply ? (
-              <div className="flex items-start gap-3 sm:gap-4 max-w-[95%] sm:max-w-[92%] animate-in fade-in slide-in-from-bottom-2 duration-500">
-                <div className="size-8 sm:size-9 rounded-full bg-linear-to-br from-primary to-amber-400 flex items-center justify-center shrink-0 shadow-lg">
-                  <Sparkles className="size-4 text-white" />
-                </div>
-                <div className="space-y-2 min-w-0 flex-1">
-                  <div className="bg-muted border border-border/50 px-3 py-3 sm:px-5 sm:py-4 rounded-2xl rounded-tl-sm">
-                    <p className="text-sm font-medium text-muted-foreground mb-2">
-                      Expense added successfully!
-                    </p>
-                    <div className="grid grid-cols-2 gap-x-4 sm:gap-x-10 gap-y-2 text-sm">
-                      <div className="text-muted-foreground">Item</div>
-                      <div className="font-medium">Zomato</div>
-                      <div className="text-muted-foreground">Amount</div>
-                      <div className="font-medium">₹450.00</div>
-                      <div className="text-muted-foreground">Category</div>
-                      <div className="font-medium text-amber-400">
-                        Food &amp; Dining
-                      </div>
-                      <div className="text-muted-foreground">Tags</div>
-                      <div className="font-medium text-xs flex flex-wrap gap-1">
-                        <span className="bg-primary/10 text-primary px-1.5 py-0.5 rounded">
-                          #food
-                        </span>
-                        <span className="bg-primary/10 text-primary px-1.5 py-0.5 rounded">
-                          #delivery
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            ) : null}
+        <div className="overflow-hidden rounded-2xl border border-border/60 bg-card shadow-xl shadow-primary/5 ring-1 ring-border/30">
+          <div className="flex items-center justify-between border-b border-border/60 bg-muted/30 px-4 py-3"><div className="flex items-center gap-2"><div className="flex gap-1.5" aria-hidden><span className="size-3 rounded-full bg-red-500/80" /><span className="size-3 rounded-full bg-yellow-500/80" /><span className="size-3 rounded-full bg-green-500/80" /></div><span className="ml-3 text-xs font-medium text-muted-foreground">AiXpense Assistant</span></div><span className="rounded-full bg-primary/10 px-2.5 py-1 text-[11px] font-semibold text-primary">{conversation.label}</span></div>
+          <div className="min-h-[26rem] space-y-5 p-4 text-left sm:min-h-[31rem] sm:p-8">
+            {conversation.messages.slice(0, visibleMessages).map((message, index) => message.role === "user" ? (
+              <div key={`${conversation.label}-${index}`} className="flex animate-in justify-end fade-in slide-in-from-bottom-2 duration-500"><div className="max-w-[88%] rounded-2xl rounded-tr-sm bg-primary px-4 py-3 text-sm font-medium text-primary-foreground shadow-md sm:max-w-[78%]">{message.text}</div></div>
+            ) : (
+              <div key={`${conversation.label}-${index}`} className="flex max-w-[96%] animate-in items-start gap-3 fade-in slide-in-from-bottom-2 duration-500 sm:max-w-[90%]"><div className="flex size-8 shrink-0 items-center justify-center rounded-xl bg-linear-to-br from-primary to-amber-400 text-white shadow-lg"><Sparkles className="size-4" /></div><div className="min-w-0 flex-1 rounded-2xl rounded-tl-sm border border-border/60 bg-muted/50 p-4 sm:p-5"><p className="text-sm font-semibold">{message.title}</p><p className="mt-1 text-xs leading-5 text-muted-foreground">{message.body}</p><div className="mt-4 grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 text-xs sm:text-sm">{message.rows.map(([label, value]) => <div key={label} className="contents"><span className="text-muted-foreground">{label}</span><span className="font-medium text-foreground">{value}</span></div>)}</div></div></div>
+            ))}
+            {!reducedMotion && visibleMessages < conversation.messages.length ? <div className="flex items-center gap-2 text-xs text-muted-foreground"><span className="flex gap-1"><span className="size-1.5 animate-pulse rounded-full bg-primary" /><span className="size-1.5 animate-pulse rounded-full bg-primary [animation-delay:120ms]" /><span className="size-1.5 animate-pulse rounded-full bg-primary [animation-delay:240ms]" /></span>AiXpense is thinking…</div> : null}
           </div>
         </div>
       </div>

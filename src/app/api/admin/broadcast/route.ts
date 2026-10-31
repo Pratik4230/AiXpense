@@ -26,7 +26,7 @@ export async function POST(req: Request) {
 
     await connectDB();
 
-    // Lock check — block if any campaign is still active
+    // Lock check  -  block if any campaign is still active
     const activeCampaign = await BroadcastCampaign.findOne({
       status: "active",
     }).lean();

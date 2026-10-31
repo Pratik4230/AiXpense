@@ -95,7 +95,7 @@ export async function createDodoPremiumCheckoutUrl(plan: "monthly" | "yearly") {
         ? userDoc.dodoCustomerId
         : undefined;
   } catch {
-    // Invalid ObjectId shape — skip linking to stored Dodo customer
+    // Invalid ObjectId shape  -  skip linking to stored Dodo customer
   }
 
   const returnUrl = `${base}/premium/success`;

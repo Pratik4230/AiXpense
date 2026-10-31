@@ -51,7 +51,7 @@ export default function BillingAndCancellationPage() {
         <p>
           This page explains how payments, renewals, and cancellations work for
           AiXpense. AiXpense does not offer refunds on subscription fees once a
-          payment has completed—please read this carefully before subscribing.
+          payment has completed - please read this carefully before subscribing.
           It applies to Premium purchases on the web at aixpense.in and to
           subscriptions purchased through the Google Play Store where noted
           below.
@@ -80,8 +80,8 @@ export default function BillingAndCancellationPage() {
           </li>
         </ul>
         <p className="mt-3">
-          We encourage you to use the free tier first—including voice input,
-          basic tracking, and (where available) trial limits—to confirm the
+          We encourage you to use the free tier first - including voice input,
+          basic tracking, and (where available) trial limits - to confirm the
           Service fits you before paying.
         </p>
       </section>

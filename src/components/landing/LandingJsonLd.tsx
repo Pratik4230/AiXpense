@@ -103,7 +103,7 @@ const softwareJsonLd = {
   alternateName: ["AiXpense", "AI Xpense", "AI Expense Tracker"],
   url: SITE_URL,
   description:
-    "AiXpense: stop losing track of spending—log with plain lines like Zomato 450 or petrol 800 aaj in Hindi, Marathi, Hinglish, English & 22+ Indian languages. No forms or spreadsheets. Free tier with 3 AI messages lifetime; Premium adds unlimited AI, receipt scan, recurring rules, reports.",
+    "AiXpense: stop losing track of spending - log with plain lines like Zomato 450 or petrol 800 aaj in Hindi, Marathi, Hinglish, English & 22+ Indian languages. No forms or spreadsheets. Free tier with 3 AI messages lifetime; Premium adds unlimited AI, receipt scan, recurring rules, reports.",
   applicationCategory: "FinanceApplication",
   applicationSubCategory: "Expense Tracker",
   operatingSystem: ["Web", "Android"],

@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     template: "%s | AiXpense - AI Expense Tracker",
   },
   description:
-    "Best AI expense tracker for India — web app and Android app on Google Play. Track daily expenses by voice, text, or bill scan in Hindi, Marathi, English & 22+ Indian languages. Free expense manager with budgets, AI categorization & spending analytics.",
+    "Best AI expense tracker for India  -  web app and Android app on Google Play. Track daily expenses by voice, text, or bill scan in Hindi, Marathi, English & 22+ Indian languages. Free expense manager with budgets, AI categorization & spending analytics.",
   keywords: [
     "expense tracker",
     "AI expense tracker",
