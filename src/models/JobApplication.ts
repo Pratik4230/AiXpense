@@ -40,6 +40,7 @@ export interface IJobApplication {
   expectedSalary: string;
   remoteTimezoneConfirmed: boolean;
   contactConsent: boolean;
+  requestFingerprint: string;
   status: JobApplicationStatus;
   payment: {
     status: JobApplicationPaymentStatus;
@@ -92,6 +93,7 @@ const jobApplicationSchema = new Schema<IJobApplicationDocument>(
     expectedSalary: { type: String, required: true, trim: true },
     remoteTimezoneConfirmed: { type: Boolean, required: true, default: false },
     contactConsent: { type: Boolean, required: true, default: false },
+    requestFingerprint: { type: String, required: true, index: true },
     status: {
       type: String,
       enum: JOB_APPLICATION_STATUSES,

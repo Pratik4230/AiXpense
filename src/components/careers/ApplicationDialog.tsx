@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { useForm } from "@tanstack/react-form";
 import { ArrowRight, CheckCircle2, Info, LockKeyhole, ShieldCheck } from "lucide-react";
 
 import {
@@ -13,6 +14,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import { applicationFormSchema } from "@/lib/careers/applicationSchema";
 
 type ApplicationDialogProps = {
   roleId: string;
@@ -35,6 +37,29 @@ export function ApplicationDialog({ roleId, roleTitle, roleSkills }: Application
   const [formError, setFormError] = React.useState<string | null>(null);
   const [copyWarning, setCopyWarning] = React.useState<string | null>(null);
   const warningTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
+  const validationForm = useForm({
+    defaultValues: {
+      roleId,
+      roleTitle,
+      fullName: "",
+      email: "",
+      phone: "",
+      location: "",
+      experience: "Fresher",
+      resume: "",
+      github: "",
+      bestProject: "",
+      skillsUsed: "",
+      technicalProblem: "",
+      whyAiXpense: "",
+      availability: "",
+      salary: "",
+      remoteTimezoneConfirmed: false,
+      contactConsent: false,
+      website: "",
+    },
+    onSubmit: async () => undefined,
+  });
 
   const showCopyWarning = React.useCallback((fieldName: string) => {
     setCopyWarning(fieldName);
@@ -74,15 +99,40 @@ export function ApplicationDialog({ roleId, roleTitle, roleSkills }: Application
 
     try {
       const form = event.currentTarget;
-      const values = Object.fromEntries(new FormData(form).entries());
+      const rawValues = Object.fromEntries(new FormData(form).entries());
+      const parsed = applicationFormSchema.safeParse({
+        ...rawValues,
+        roleId,
+        roleTitle,
+        remoteTimezoneConfirmed: rawValues.remoteTimezone === "on",
+        contactConsent: rawValues.consent === "on",
+      });
+      if (!parsed.success) {
+        setSubmitting(false);
+        setFormError(parsed.error.issues[0]?.message ?? "Please check the application fields");
+        return;
+      }
+      const values = parsed.data;
+      validationForm.setFieldValue("fullName", values.fullName);
+      validationForm.setFieldValue("email", values.email);
+      validationForm.setFieldValue("phone", values.phone);
+      validationForm.setFieldValue("location", values.location);
+      validationForm.setFieldValue("experience", values.experience);
+      validationForm.setFieldValue("resume", values.resume);
+      validationForm.setFieldValue("github", values.github);
+      validationForm.setFieldValue("bestProject", values.bestProject);
+      validationForm.setFieldValue("skillsUsed", values.skillsUsed);
+      validationForm.setFieldValue("technicalProblem", values.technicalProblem);
+      validationForm.setFieldValue("whyAiXpense", values.whyAiXpense);
+      validationForm.setFieldValue("availability", values.availability);
+      validationForm.setFieldValue("salary", values.salary);
+      validationForm.setFieldValue("remoteTimezoneConfirmed", values.remoteTimezoneConfirmed);
+      validationForm.setFieldValue("contactConsent", values.contactConsent);
       const orderResponse = await fetch("/api/careers/applications/order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           ...values,
-          roleId,
-          remoteTimezoneConfirmed: values.remoteTimezone === "on",
-          contactConsent: values.consent === "on",
         }),
       });
       const orderData = await orderResponse.json();
@@ -169,26 +219,27 @@ export function ApplicationDialog({ roleId, roleTitle, roleSkills }: Application
             </div>
 
             <FormSection title="Basic Details" description="Tell us how we can reach you and which role you are applying for.">
-              <Field label="Full name" name="fullName"><Input required name="fullName" autoComplete="name" className={inputClassName} /></Field>
-              <Field label="Email address" name="email"><Input required type="email" name="email" autoComplete="email" className={inputClassName} /></Field>
-              <Field label="Phone number" name="phone"><Input required type="tel" name="phone" autoComplete="tel" className={inputClassName} /></Field>
-              <Field label="Current city and country" name="location"><Input required name="location" placeholder="For example, Pune, India" className={inputClassName} /></Field>
+              <input type="text" name="website" tabIndex={-1} autoComplete="off" aria-hidden="true" className="hidden" />
+              <Field label="Full name" name="fullName"><Input required name="fullName" autoComplete="name" maxLength={100} className={inputClassName} /></Field>
+              <Field label="Email address" name="email"><Input required type="email" name="email" autoComplete="email" maxLength={254} className={inputClassName} /></Field>
+              <Field label="Phone number" name="phone"><Input required type="tel" name="phone" maxLength={30} autoComplete="tel" className={inputClassName} /></Field>
+              <Field label="Current city and country" name="location"><Input required name="location" placeholder="For example, Pune, India" maxLength={120} className={inputClassName} /></Field>
               <Field label="Experience" name="experience"><select required name="experience" className={`${inputClassName} w-full border border-input px-3 text-sm`}><option value="">Select experience</option><option>Fresher</option><option>Less than 1 year</option><option>1 to 2 years</option></select></Field>
-              <Field label="Resume link" name="resume"><Input required type="url" name="resume" placeholder="Google Drive or public resume link" className={inputClassName} /></Field>
+              <Field label="Resume link" name="resume"><Input required type="url" name="resume" placeholder="Google Drive or public resume link" maxLength={2048} className={inputClassName} /></Field>
               <input type="hidden" name="role" value={roleTitle} />
             </FormSection>
 
             <FormSection title="Role specific questions" description="Answer in your own words. Keep each answer clear and specific.">
-              <Field label="What have you built that best demonstrates your skills?" name="bestProject" warning={copyWarning === "bestProject"}><Textarea required name="bestProject" rows={4} className="w-full rounded-xl bg-background" onPaste={blockClipboard} onCopy={blockClipboard} onCut={blockClipboard} onKeyDown={blockKeyboardClipboard} /></Field>
-              <Field label={`Which of these skills have you used: ${roleSkills.join(", ")}?`} name="skillsUsed" warning={copyWarning === "skillsUsed"}><Textarea required name="skillsUsed" rows={3} className="w-full rounded-xl bg-background" onPaste={blockClipboard} onCopy={blockClipboard} onCut={blockClipboard} onKeyDown={blockKeyboardClipboard} /></Field>
-              <Field label="Describe one technical problem you solved and how you approached it." name="technicalProblem" warning={copyWarning === "technicalProblem"}><Textarea required name="technicalProblem" rows={4} className="w-full rounded-xl bg-background" onPaste={blockClipboard} onCopy={blockClipboard} onCut={blockClipboard} onKeyDown={blockKeyboardClipboard} /></Field>
-              <Field label="Why do you want to work at AiXpense?" name="whyAiXpense" warning={copyWarning === "whyAiXpense"}><Textarea required name="whyAiXpense" rows={3} className="w-full rounded-xl bg-background" onPaste={blockClipboard} onCopy={blockClipboard} onCut={blockClipboard} onKeyDown={blockKeyboardClipboard} /></Field>
+              <Field label="What have you built that best demonstrates your skills?" name="bestProject" warning={copyWarning === "bestProject"}><Textarea required name="bestProject" rows={4} maxLength={2000} className="w-full rounded-xl bg-background" onPaste={blockClipboard} onCopy={blockClipboard} onCut={blockClipboard} onKeyDown={blockKeyboardClipboard} /></Field>
+              <Field label={`Which of these skills have you used: ${roleSkills.join(", ")}?`} name="skillsUsed" warning={copyWarning === "skillsUsed"}><Textarea required name="skillsUsed" rows={3} maxLength={1200} className="w-full rounded-xl bg-background" onPaste={blockClipboard} onCopy={blockClipboard} onCut={blockClipboard} onKeyDown={blockKeyboardClipboard} /></Field>
+              <Field label="Describe one technical problem you solved and how you approached it." name="technicalProblem" warning={copyWarning === "technicalProblem"}><Textarea required name="technicalProblem" rows={4} maxLength={2000} className="w-full rounded-xl bg-background" onPaste={blockClipboard} onCopy={blockClipboard} onCut={blockClipboard} onKeyDown={blockKeyboardClipboard} /></Field>
+              <Field label="Why do you want to work at AiXpense?" name="whyAiXpense" warning={copyWarning === "whyAiXpense"}><Textarea required name="whyAiXpense" rows={3} maxLength={1500} className="w-full rounded-xl bg-background" onPaste={blockClipboard} onCopy={blockClipboard} onCut={blockClipboard} onKeyDown={blockKeyboardClipboard} /></Field>
             </FormSection>
 
             <FormSection title="Additional Details" description="A few practical details about working together.">
-              <Field label="Availability to join" name="availability"><Input required name="availability" placeholder="For example, immediately or after 30 days" className={inputClassName} /></Field>
-              <Field label="Expected annual salary" name="salary"><Input required name="salary" placeholder="For example, ₹5.5L" className={inputClassName} /></Field>
-              <Field label="GitHub profile link" name="github"><Input required type="url" name="github" placeholder="https://github.com/your-username" className={inputClassName} /></Field>
+              <Field label="Availability to join" name="availability"><Input required name="availability" placeholder="For example, immediately or after 30 days" maxLength={120} className={inputClassName} /></Field>
+              <Field label="Expected annual salary" name="salary"><Input required name="salary" placeholder="For example, ₹5.5L" maxLength={80} className={inputClassName} /></Field>
+              <Field label="GitHub profile link" name="github"><Input required type="url" name="github" placeholder="https://github.com/your-username" maxLength={2048} className={inputClassName} /></Field>
               <label className="flex items-start gap-3 rounded-xl border border-border/70 bg-muted/30 p-3 text-sm leading-6">
                 <input required type="checkbox" name="remoteTimezone" className="mt-1 size-4 accent-primary" />
                 <span>I am comfortable working fully remotely and collaborating during India Standard Time, Asia/Kolkata, with reasonable overlap when needed.</span>

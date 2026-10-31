@@ -1,9 +1,11 @@
+import crypto from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 
 import { careerRoles } from "@/components/careers/data";
 import { connectDB } from "@/lib/db";
 import { razorpay } from "@/lib/razorpay/client";
 import { JobApplication } from "@/models";
+import { applicationFormSchema } from "@/lib/careers/applicationSchema";
 
 const APPLICATION_AMOUNT_IN_PAISE = 10000;
 
@@ -13,16 +15,38 @@ const experienceMap = {
   "1 to 2 years": "1_to_2_years",
 } as const;
 
-function requiredString(value: unknown) {
-  return typeof value === "string" && value.trim() ? value.trim() : null;
+function isValidUrl(value: string) {
+  try {
+    const url = new URL(value);
+    return url.protocol === "https:" || url.protocol === "http:";
+  } catch {
+    return false;
+  }
+}
+
+function requestFingerprint(request: NextRequest) {
+  const forwardedFor = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim();
+  const ip = forwardedFor || request.headers.get("x-real-ip") || "unknown";
+  const userAgent = request.headers.get("user-agent") || "unknown";
+  return crypto.createHash("sha256").update(`${ip}|${userAgent}|${process.env.MONGO_URI}`).digest("hex");
 }
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const roleId = requiredString(body.roleId);
+    const parsed = applicationFormSchema.safeParse({
+      ...body,
+      remoteTimezoneConfirmed: body.remoteTimezoneConfirmed === true,
+      contactConsent: body.contactConsent === true,
+    });
+    if (!parsed.success) {
+      return NextResponse.json({ error: parsed.error.issues[0]?.message ?? "Please check the application fields" }, { status: 400 });
+    }
+
+    const values = parsed.data;
+    const roleId = values.roleId;
     const role = careerRoles.find((item) => item.id === roleId);
-    const experienceValue = requiredString(body.experience);
+    const experienceValue = values.experience;
     const experience = experienceValue
       ? experienceMap[experienceValue as keyof typeof experienceMap]
       : undefined;
@@ -31,28 +55,32 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid role or experience" }, { status: 400 });
     }
 
-    const fullName = requiredString(body.fullName);
-    const email = requiredString(body.email)?.toLowerCase();
-    const phone = requiredString(body.phone);
-    const location = requiredString(body.location);
-    const resumeUrl = requiredString(body.resume);
-    const githubUrl = requiredString(body.github);
-    const availability = requiredString(body.availability);
-    const expectedSalary = requiredString(body.salary);
-    const bestProject = requiredString(body.bestProject);
-    const skillsUsed = requiredString(body.skillsUsed);
-    const technicalProblem = requiredString(body.technicalProblem);
-    const whyAiXpense = requiredString(body.whyAiXpense);
+    const { fullName, email, phone, location, resume: resumeUrl, github: githubUrl, availability, salary: expectedSalary, bestProject, skillsUsed, technicalProblem, whyAiXpense } = values;
 
-    if (!fullName || !email || !phone || !location || !resumeUrl || !githubUrl || !availability || !expectedSalary || !bestProject || !skillsUsed || !technicalProblem || !whyAiXpense) {
-      return NextResponse.json({ error: "Please complete all required fields" }, { status: 400 });
+    if (values.website) {
+      return NextResponse.json({ error: "Unable to submit this application" }, { status: 400 });
     }
 
-    if (body.remoteTimezoneConfirmed !== true || body.contactConsent !== true) {
-      return NextResponse.json({ error: "Please confirm the required consent items" }, { status: 400 });
-    }
+    if (!isValidUrl(resumeUrl) || !isValidUrl(githubUrl)) return NextResponse.json({ error: "Please provide valid resume and GitHub links" }, { status: 400 });
 
     await connectDB();
+    const fingerprint = requestFingerprint(request);
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+    const [duplicateApplication, recentEmailAttempts, recentFingerprintAttempts] = await Promise.all([
+      JobApplication.exists({ email, roleId: role.id, createdAt: { $gte: thirtyDaysAgo } }),
+      JobApplication.countDocuments({ email, createdAt: { $gte: oneHourAgo } }),
+      JobApplication.countDocuments({ requestFingerprint: fingerprint, createdAt: { $gte: oneHourAgo } }),
+    ]);
+
+    if (duplicateApplication) {
+      return NextResponse.json({ error: "You have already applied for this role recently. You can apply again after 30 days." }, { status: 409 });
+    }
+
+    if (recentEmailAttempts >= 3 || recentFingerprintAttempts >= 5) {
+      return NextResponse.json({ error: "Too many application attempts. Please try again later." }, { status: 429 });
+    }
+
     const application = await JobApplication.create({
       roleId: role.id,
       roleTitle: role.title,
@@ -68,6 +96,7 @@ export async function POST(request: NextRequest) {
       expectedSalary,
       remoteTimezoneConfirmed: true,
       contactConsent: true,
+      requestFingerprint: fingerprint,
       status: "pending",
       payment: {
         status: "pending",
