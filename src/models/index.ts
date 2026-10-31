@@ -29,3 +29,12 @@ export {
   type IBroadcastCampaignDocument,
   type BroadcastStatus,
 } from "./BroadcastCampaign";
+export {
+  JobApplication,
+  type IJobApplication,
+  type IJobApplicationDocument,
+  type JobApplicationStatus,
+  type JobApplicationPaymentStatus,
+  JOB_APPLICATION_STATUSES,
+  JOB_APPLICATION_PAYMENT_STATUSES,
+} from "./JobApplication";

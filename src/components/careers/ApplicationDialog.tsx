@@ -15,15 +15,18 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
 type ApplicationDialogProps = {
+  roleId: string;
   roleTitle: string;
   roleSkills: string[];
 };
 
 const inputClassName = "h-11 rounded-xl bg-background";
 
-export function ApplicationDialog({ roleTitle, roleSkills }: ApplicationDialogProps) {
+export function ApplicationDialog({ roleId, roleTitle, roleSkills }: ApplicationDialogProps) {
   const [open, setOpen] = React.useState(false);
   const [submitted, setSubmitted] = React.useState(false);
+  const [submitting, setSubmitting] = React.useState(false);
+  const [formError, setFormError] = React.useState<string | null>(null);
   const [copyWarning, setCopyWarning] = React.useState<string | null>(null);
   const warningTimer = React.useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -54,9 +57,73 @@ export function ApplicationDialog({ roleTitle, roleSkills }: ApplicationDialogPr
     if (nextOpen) setSubmitted(false);
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setSubmitted(true);
+    setSubmitting(true);
+    setFormError(null);
+
+    try {
+      const form = event.currentTarget;
+      const values = Object.fromEntries(new FormData(form).entries());
+      const orderResponse = await fetch("/api/careers/applications/order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...values,
+          roleId,
+          remoteTimezoneConfirmed: values.remoteTimezone === "on",
+          contactConsent: values.consent === "on",
+        }),
+      });
+      const orderData = await orderResponse.json();
+      if (!orderResponse.ok) throw new Error(orderData.error || "Unable to start payment");
+
+      await loadRazorpayScript();
+      if (!window.Razorpay) throw new Error("Razorpay Checkout could not be loaded");
+
+      const checkout = new window.Razorpay({
+        key: orderData.keyId,
+        amount: orderData.amount,
+        currency: orderData.currency,
+        name: "AiXpense",
+        description: "AiXpense job application fee",
+        order_id: orderData.orderId,
+        prefill: {
+          name: String(values.fullName),
+          email: String(values.email),
+          contact: String(values.phone),
+        },
+        notes: { role: roleTitle },
+        theme: { color: "#ff6b00" },
+        handler: async (payment) => {
+          try {
+            const verificationResponse = await fetch("/api/careers/applications/verify", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                applicationId: orderData.applicationId,
+                razorpayOrderId: payment.razorpay_order_id,
+                razorpayPaymentId: payment.razorpay_payment_id,
+                razorpaySignature: payment.razorpay_signature,
+              }),
+            });
+            const verificationData = await verificationResponse.json();
+            if (!verificationResponse.ok) throw new Error(verificationData.error || "Payment verification failed");
+            setSubmitted(true);
+          } catch (error) {
+            setFormError(error instanceof Error ? error.message : "Payment verification failed");
+          } finally {
+            setSubmitting(false);
+          }
+        },
+        modal: { ondismiss: () => setSubmitting(false) },
+      });
+
+      checkout.open();
+    } catch (error) {
+      setSubmitting(false);
+      setFormError(error instanceof Error ? error.message : "Unable to start payment");
+    }
   };
 
   return (
@@ -138,13 +205,45 @@ export function ApplicationDialog({ roleTitle, roleSkills }: ApplicationDialogPr
               </div>
             </section>
 
-            <button type="submit" className="w-full rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90">Pay ₹100 and apply <ArrowRight className="ml-2 inline size-4" /></button>
+            {formError && <p role="alert" className="rounded-xl border border-destructive/30 bg-destructive/10 px-3 py-2.5 text-sm text-destructive">{formError}</p>}
+            <button type="submit" disabled={submitting} className="w-full rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-60">{submitting ? "Opening secure checkout..." : "Pay ₹100 and apply"} {!submitting && <ArrowRight className="ml-2 inline size-4" />}</button>
           </form>
         )}
       </DialogContent>
     </Dialog>
   );
 }
+
+function loadRazorpayScript() {
+  if (window.Razorpay) return Promise.resolve();
+  return new Promise<void>((resolve, reject) => {
+    const script = document.createElement("script");
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error("Unable to load Razorpay Checkout"));
+    document.body.appendChild(script);
+  });
+}
+
+declare global {
+  interface Window {
+    Razorpay?: new (options: RazorpayCheckoutOptions) => { open: () => void };
+  }
+}
+
+type RazorpayCheckoutOptions = {
+  key: string;
+  amount: number;
+  currency: string;
+  name: string;
+  description: string;
+  order_id: string;
+  prefill: { name: string; email: string; contact: string };
+  notes: { role: string };
+  theme: { color: string };
+  handler: (payment: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }) => void;
+  modal: { ondismiss: () => void };
+};
 
 function FormSection({ title, description, children }: { title: string; description: string; children: React.ReactNode }) {
   return <section><div className="mb-4"><h3 className="text-base font-semibold">{title}</h3><p className="mt-1 text-sm text-muted-foreground">{description}</p></div><div className="flex flex-col gap-4">{children}</div></section>;
