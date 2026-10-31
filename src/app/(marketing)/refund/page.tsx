@@ -85,7 +85,7 @@ export default function BillingAndCancellationPage() {
         <h2 className="text-xl font-semibold mb-3">Job application fee</h2>
         <div className="rounded-xl border border-amber-500/30 bg-amber-500/5 p-5">
           <p className="font-medium text-foreground">
-            The AiXpense job application fee is ₹100 and is non-refundable after a successful payment.
+            The AiXpense job application fee shown at checkout is non-refundable after a successful payment.
           </p>
         </div>
         <p className="mt-3">

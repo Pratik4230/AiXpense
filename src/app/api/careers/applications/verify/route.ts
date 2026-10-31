@@ -28,7 +28,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid payment signature" }, { status: 400 });
     }
 
-    const payment = await razorpay.payments.fetch(razorpayPaymentId) as unknown as { order_id?: string; status?: string };
+    const payment = await razorpay.payments.fetch(razorpayPaymentId) as unknown as { order_id?: string; status?: string; amount?: number; currency?: string };
     if (payment.order_id !== razorpayOrderId || payment.status !== "captured") {
       return NextResponse.json({ error: "Payment has not been captured" }, { status: 400 });
     }
@@ -37,6 +37,9 @@ export async function POST(request: NextRequest) {
     const application = await JobApplication.findOne({ _id: applicationId, "payment.orderId": razorpayOrderId });
     if (!application) {
       return NextResponse.json({ error: "Application payment order not found" }, { status: 404 });
+    }
+    if (payment.amount !== application.payment.amountInPaise || payment.currency !== application.payment.currency) {
+      return NextResponse.json({ error: "Payment amount does not match the application fee" }, { status: 400 });
     }
 
     const result = await JobApplication.updateOne(

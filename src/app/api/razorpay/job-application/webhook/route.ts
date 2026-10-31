@@ -33,18 +33,21 @@ export async function POST(request: NextRequest) {
 
     await connectDB();
     if (event.event === "payment.captured") {
+      const application = await JobApplication.findOne({ "payment.orderId": orderId });
+      if (!application) return NextResponse.json({ received: true });
+      if (payment.amount !== application.payment.amountInPaise || payment.currency !== application.payment.currency) {
+        console.error("[job-application-payment-webhook] Payment amount mismatch", { orderId });
+        return NextResponse.json({ received: true });
+      }
       const result = await JobApplication.updateOne(
-        { "payment.orderId": orderId },
+        { "payment.orderId": orderId, "payment.amountInPaise": payment.amount, "payment.currency": payment.currency },
         { $set: { "payment.status": "paid", "payment.paymentId": payment.id, "payment.paidAt": new Date() } },
       );
       if (result.matchedCount) {
-        const application = await JobApplication.findOne({ "payment.orderId": orderId });
-        if (application) {
-          await inngest.send({
-            name: "careers/job-application-paid",
-            data: { applicationId: application.id },
-          });
-        }
+        await inngest.send({
+          name: "careers/job-application-paid",
+          data: { applicationId: application.id },
+        });
       }
     } else if (event.event === "payment.failed") {
       await JobApplication.updateOne(

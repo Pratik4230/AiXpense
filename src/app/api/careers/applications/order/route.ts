@@ -2,12 +2,11 @@ import crypto from "crypto";
 import { NextRequest, NextResponse } from "next/server";
 
 import { careerRoles } from "@/components/careers/data";
+import { getCareerApplicationFee } from "@/lib/careers/applicationFee";
 import { connectDB } from "@/lib/db";
 import { razorpay } from "@/lib/razorpay/client";
 import { JobApplication } from "@/models";
 import { applicationFormSchema } from "@/lib/careers/applicationSchema";
-
-const APPLICATION_AMOUNT_IN_PAISE = 10000;
 
 const experienceMap = {
   Fresher: "fresher",
@@ -32,6 +31,7 @@ function requestFingerprint(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const startedAt = performance.now();
   try {
     const body = await request.json();
     const parsed = applicationFormSchema.safeParse({
@@ -64,14 +64,17 @@ export async function POST(request: NextRequest) {
     if (!isValidUrl(resumeUrl) || !isValidUrl(githubUrl)) return NextResponse.json({ error: "Please provide valid resume and GitHub links" }, { status: 400 });
 
     await connectDB();
+    const connectedAt = performance.now();
     const fingerprint = requestFingerprint(request);
     const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000);
     const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
-    const [duplicateApplication, recentEmailAttempts, recentFingerprintAttempts] = await Promise.all([
+    const [{ amountInPaise }, duplicateApplication, recentEmailAttempts, recentFingerprintAttempts] = await Promise.all([
+      getCareerApplicationFee(request.headers),
       JobApplication.exists({ email, roleId: role.id, createdAt: { $gte: thirtyDaysAgo } }),
       JobApplication.countDocuments({ email, createdAt: { $gte: oneHourAgo } }),
       JobApplication.countDocuments({ requestFingerprint: fingerprint, createdAt: { $gte: oneHourAgo } }),
     ]);
+    const checkedAt = performance.now();
 
     if (duplicateApplication) {
       return NextResponse.json({ error: "You have already applied for this role recently. You can apply again after 30 days." }, { status: 409 });
@@ -81,7 +84,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Too many application attempts. Please try again later." }, { status: 429 });
     }
 
-    const application = await JobApplication.create({
+    const application = new JobApplication({
       roleId: role.id,
       roleTitle: role.title,
       fullName,
@@ -100,36 +103,44 @@ export async function POST(request: NextRequest) {
       status: "pending",
       payment: {
         status: "pending",
-        amountInPaise: APPLICATION_AMOUNT_IN_PAISE,
+        amountInPaise,
         currency: "INR",
         provider: "razorpay",
       },
     });
 
-    try {
-      const order = await razorpay.orders.create({
-        amount: APPLICATION_AMOUNT_IN_PAISE,
-        currency: "INR",
-        receipt: `jobapp_${application.id}`,
-        notes: { applicationId: application.id, roleId: role.id },
-      });
+    const order = await razorpay.orders.create({
+      amount: amountInPaise,
+      currency: "INR",
+      receipt: `jobapp_${application.id}`,
+      notes: { applicationId: application.id, roleId: role.id },
+    });
+    const orderedAt = performance.now();
 
-      await JobApplication.updateOne(
-        { _id: application._id },
-        { $set: { "payment.orderId": order.id } },
-      );
+    application.payment.orderId = order.id;
+    await application.save();
+    const savedAt = performance.now();
 
-      return NextResponse.json({
-        applicationId: application.id,
-        orderId: order.id,
-        amount: APPLICATION_AMOUNT_IN_PAISE,
-        currency: "INR",
-        keyId: process.env.RAZORPAY_KEY_ID,
-      });
-    } catch (error) {
-      await JobApplication.deleteOne({ _id: application._id });
-      throw error;
-    }
+    const timings = {
+      connect: Math.round(connectedAt - startedAt),
+      checks: Math.round(checkedAt - connectedAt),
+      razorpay: Math.round(orderedAt - checkedAt),
+      save: Math.round(savedAt - orderedAt),
+      total: Math.round(savedAt - startedAt),
+    };
+    if (timings.total > 2000) console.warn("[job-application-order-slow]", timings);
+
+    return NextResponse.json({
+      applicationId: application.id,
+      orderId: order.id,
+      amount: amountInPaise,
+      currency: "INR",
+      keyId: process.env.RAZORPAY_KEY_ID,
+    }, {
+      headers: {
+        "Server-Timing": `db;dur=${timings.connect}, checks;dur=${timings.checks}, razorpay;dur=${timings.razorpay}, save;dur=${timings.save}`,
+      },
+    });
   } catch (error) {
     console.error("[job-application-order]", error);
     return NextResponse.json({ error: "Unable to start the application payment" }, { status: 500 });

@@ -181,7 +181,7 @@ export default function TermsPage() {
         <ul className="list-disc pl-6 mt-2 space-y-1">
           <li>Applications may be reviewed by AiXpense team members for hiring purposes.</li>
           <li>Submitting an application does not guarantee an interview, selection, offer, or employment.</li>
-          <li>The ₹100 application fee is a one-time, non-refundable payment after successful capture.</li>
+          <li>The application fee shown at checkout is a one-time, non-refundable payment after successful capture.</li>
           <li>Automated, duplicate, misleading, or abusive submissions may be rejected.</li>
           <li>We may contact candidates using the details submitted in the application.</li>
         </ul>
