@@ -3,7 +3,7 @@
 import { useTransition } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowDownToLine, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   OverviewCards,
@@ -45,6 +45,10 @@ export function ReportsClient({ isPremium }: { isPremium: boolean }) {
 
   const { data, isLoading } = useReports(range, mode);
 
+  function downloadExport() {
+    window.location.href = `/api/reports/export?range=${range}&mode=${mode}`;
+  }
+
   return (
     <div className="container mx-auto max-w-5xl px-4 py-5 sm:py-8 space-y-6">
       <div className="flex items-center justify-between flex-wrap gap-3">
@@ -63,22 +67,28 @@ export function ReportsClient({ isPremium }: { isPremium: boolean }) {
           </div>
         </div>
 
-        <div className="overflow-x-auto">
-          <div className="flex items-center gap-1 bg-muted/50 rounded-lg p-1 whitespace-nowrap">
-            {RANGES.map((r) => (
-              <button
-                key={r.value}
-                onClick={() => updateParam("range", r.value)}
-                className={`px-2.5 sm:px-3 py-1.5 text-xs font-medium rounded-md transition-all ${
-                  range === r.value
-                    ? "bg-background shadow-sm text-foreground"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {r.label}
-              </button>
-            ))}
+        <div className="flex w-full flex-wrap items-center justify-end gap-2 sm:w-auto">
+          <div className="overflow-x-auto">
+            <div className="flex items-center gap-1 whitespace-nowrap rounded-lg bg-muted/50 p-1">
+              {RANGES.map((r) => (
+                <button
+                  key={r.value}
+                  onClick={() => updateParam("range", r.value)}
+                  className={`rounded-md px-2.5 py-1.5 text-xs font-medium transition-all sm:px-3 ${
+                    range === r.value
+                      ? "bg-background text-foreground shadow-sm"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {r.label}
+                </button>
+              ))}
+            </div>
           </div>
+          <Button variant="outline" size="sm" onClick={downloadExport}>
+            <ArrowDownToLine className="mr-2 size-4" />
+            Export CSV
+          </Button>
         </div>
       </div>
 
