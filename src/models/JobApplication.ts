@@ -60,6 +60,7 @@ export interface IJobApplication {
   candidateNotifiedAt?: Date;
   adminNotifiedAt?: Date;
   adminNotes?: string;
+  expiresAt: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -124,6 +125,12 @@ const jobApplicationSchema = new Schema<IJobApplicationDocument>(
     candidateNotifiedAt: { type: Date },
     adminNotifiedAt: { type: Date },
     adminNotes: { type: String, trim: true },
+    expiresAt: {
+      type: Date,
+      required: true,
+      default: () => new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      index: true,
+    },
   },
   { timestamps: true },
 );
@@ -131,6 +138,7 @@ const jobApplicationSchema = new Schema<IJobApplicationDocument>(
 jobApplicationSchema.index({ roleId: 1, status: 1, createdAt: -1 });
 jobApplicationSchema.index({ email: 1, createdAt: -1 });
 jobApplicationSchema.index({ "payment.status": 1, createdAt: -1 });
+jobApplicationSchema.index({ expiresAt: 1 }, { expireAfterSeconds: 0 });
 
 export const JobApplication: Model<IJobApplicationDocument> =
   (mongoose.models.JobApplication as Model<IJobApplicationDocument>) ||
