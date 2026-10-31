@@ -192,7 +192,7 @@ export function ApplicationDialog({ roleId, roleTitle, roleSkills }: Application
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="inline-flex shrink-0 items-center justify-center rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90"
+        className="inline-flex w-full shrink-0 items-center justify-center rounded-full bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90 sm:w-auto"
       >
         Apply now <ArrowRight className="ml-2 size-4" />
       </button>

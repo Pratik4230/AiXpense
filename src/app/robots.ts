@@ -16,6 +16,8 @@ export default function robots(): MetadataRoute.Robots {
           "/terms",
           "/refund",
           "/shipping",
+          "/careers",
+          "/careers/",
         ],
         disallow: [
           "/api/",

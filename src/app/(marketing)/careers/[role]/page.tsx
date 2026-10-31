@@ -15,7 +15,28 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ role: string }> }): Promise<Metadata> {
   const { role: roleId } = await params;
   const role = careerRoles.find((item) => item.id === roleId);
-  return { title: role ? `${role.title} at AiXpense` : "Career opportunity at AiXpense", description: role?.summary, alternates: { canonical: `${SITE_URL}/careers/${roleId}` } };
+  const canonical = `${SITE_URL}/careers/${roleId}`;
+  return {
+    title: role ? `${role.seoTitle} | AiXpense` : "Career opportunity at AiXpense",
+    description: role ? `${role.summary} Apply for an early-career ${role.title.toLowerCase()} role at AiXpense, a remote-friendly product team in India.` : undefined,
+    keywords: role?.seoKeywords,
+    alternates: { canonical },
+    openGraph: {
+      type: "website",
+      locale: "en_IN",
+      url: canonical,
+      siteName: "AiXpense",
+      title: role ? `${role.seoTitle} | AiXpense` : "Career opportunity at AiXpense",
+      description: role ? `${role.summary} Apply for an early-career ${role.title.toLowerCase()} role at AiXpense.` : undefined,
+      images: [{ url: "/og-image.png", width: 1905, height: 931, alt: role?.title ?? "AiXpense careers" }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: role ? `${role.seoTitle} | AiXpense` : "Career opportunity at AiXpense",
+      description: role ? `${role.summary} Apply at AiXpense.` : undefined,
+      images: ["/og-image.png"],
+    },
+  };
 }
 
 export default async function CareerRolePage({ params }: { params: Promise<{ role: string }> }) {
@@ -26,9 +47,30 @@ export default async function CareerRolePage({ params }: { params: Promise<{ rol
 
   const Icon = role.icon;
   const experienceLabel = "0 to 2 years";
-  return <div className="min-h-screen bg-background selection:bg-primary/20"><header className="sticky top-0 z-40 border-b border-border/50 bg-background/90 backdrop-blur-xl"><div className="container mx-auto flex h-16 items-center justify-between px-4 sm:px-6"><Link href="/careers" className="inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-foreground"><ArrowLeft className="size-4" />All careers</Link><Link href="/" className="hidden items-center gap-2 font-bold sm:flex"><span className="flex size-7 items-center justify-center rounded-lg bg-primary/10 text-primary"><Sparkles className="size-4" /></span>AiXpense</Link></div></header>
+  const canonical = `${SITE_URL}/careers/${role.id}`;
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "JobPosting",
+    title: role.title,
+    description: `${role.summary}\n\n${role.responsibilities.join("\n")}`,
+    datePosted: "2026-10-31",
+    employmentType: "FULL_TIME",
+    skills: role.skills.map((skill) => skill.name).join(", "),
+    qualifications: role.idealCandidate.join("\n"),
+    hiringOrganization: { "@type": "Organization", name: "AiXpense", sameAs: SITE_URL, logo: `${SITE_URL}/icon.png` },
+    jobLocationType: "TELECOMMUTE",
+    applicantLocationRequirements: { "@type": "Country", name: "India" },
+    baseSalary: {
+      "@type": "MonetaryAmount",
+      currency: "INR",
+      value: { "@type": "QuantitativeValue", minValue: role.salaryMin, maxValue: role.salaryMax, unitText: "YEAR" },
+    },
+    url: canonical,
+  };
+
+  return <div className="min-h-screen bg-background selection:bg-primary/20"><script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }} /><header className="sticky top-0 z-40 border-b border-border/50 bg-background/90 backdrop-blur-xl"><div className="container mx-auto flex h-14 items-center justify-between px-4 sm:h-16 sm:px-6"><Link href="/careers" className="inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-foreground"><ArrowLeft className="size-4" />All careers</Link><Link href="/" className="hidden items-center gap-2 font-bold sm:flex"><span className="flex size-7 items-center justify-center rounded-lg bg-primary/10 text-primary"><Sparkles className="size-4" /></span>AiXpense</Link></div></header>
     <main>
-      <section className="border-b border-border/50 bg-muted/20"><div className="container mx-auto px-4 py-14 sm:px-6 sm:py-20"><div className="mx-auto max-w-4xl"><Link href="/careers" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground"><ArrowLeft className="mr-2 size-4" />Back to open roles</Link><div className="mt-8 flex flex-col gap-6 sm:flex-row sm:items-start sm:justify-between"><div><div className="flex items-center gap-3"><span className="flex size-12 items-center justify-center rounded-2xl bg-primary/10 text-primary"><Icon className="size-6" /></span><p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">{role.eyebrow}</p></div><h1 className="mt-6 text-4xl font-bold leading-tight tracking-tight sm:text-6xl">{role.title}</h1><p className="mt-5 max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">{role.summary}</p></div><ApplicationDialog roleId={role.id} roleTitle={role.title} roleSkills={role.skills.map((skill) => skill.name)} /></div><div className="mt-8 flex flex-wrap gap-2"><span className="rounded-full bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground">{experienceLabel}</span><span className="rounded-full bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground">Full-time</span><span className="inline-flex items-center gap-1.5 rounded-full bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground"><MapPin className="size-3.5" />India, remote-friendly</span><span className="rounded-full bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary">{role.salary}</span></div></div></div></section>
+      <section className="border-b border-border/50 bg-muted/20"><div className="container mx-auto px-4 py-10 sm:px-6 sm:py-20"><div className="mx-auto max-w-4xl"><Link href="/careers" className="inline-flex items-center text-sm text-muted-foreground hover:text-foreground"><ArrowLeft className="mr-2 size-4" />Back to open roles</Link><div className="mt-7 flex flex-col gap-6 sm:mt-8 sm:flex-row sm:items-start sm:justify-between"><div><div className="flex items-center gap-3"><span className="flex size-11 items-center justify-center rounded-2xl bg-primary/10 text-primary sm:size-12"><Icon className="size-6" /></span><p className="text-xs font-semibold uppercase tracking-[0.18em] text-primary">{role.eyebrow}</p></div><h1 className="mt-5 text-4xl font-bold leading-[1.08] tracking-tight sm:mt-6 sm:text-6xl">{role.title}</h1><p className="mt-4 max-w-2xl text-base leading-7 text-muted-foreground sm:mt-5 sm:text-lg">{role.summary}</p></div><ApplicationDialog roleId={role.id} roleTitle={role.title} roleSkills={role.skills.map((skill) => skill.name)} /></div><div className="mt-7 flex flex-wrap gap-2 sm:mt-8"><span className="rounded-full bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground">{experienceLabel}</span><span className="rounded-full bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground">Full-time</span><span className="inline-flex items-center gap-1.5 rounded-full bg-background px-3 py-1.5 text-xs font-medium text-muted-foreground"><MapPin className="size-3.5" />India, remote-friendly</span><span className="rounded-full bg-primary/10 px-3 py-1.5 text-xs font-semibold text-primary">{role.salary}</span></div></div></div></section>
 
       <section className="container mx-auto grid max-w-5xl gap-12 px-4 py-14 sm:px-6 sm:py-20 lg:grid-cols-[1.2fr_0.8fr]"><div><DetailList title="What you will do" items={role.responsibilities} /><DetailList title="What we are looking for" items={role.idealCandidate} /></div><aside className="space-y-8"><div><h2 className="text-sm font-semibold uppercase tracking-[0.16em] text-muted-foreground">Required skills</h2><div className="mt-4 grid gap-2 sm:grid-cols-2">{role.skills.map((skill) => <span key={skill.name} className="rounded-xl border border-border bg-card px-3 py-2.5 text-sm text-foreground/80">{skill.name}</span>)}</div></div><div className="rounded-3xl border border-primary/20 bg-primary/5 p-6"><h2 className="text-lg font-semibold">What you will get</h2><ul className="mt-4 space-y-3">{role.whatYouGet.map((item) => <li key={item} className="flex gap-2.5 text-sm leading-6 text-foreground/85"><CheckCircle2 className="mt-1 size-4 shrink-0 text-primary" />{item}</li>)}</ul></div><div className="rounded-3xl border border-border/70 bg-card p-6"><p className="text-sm font-semibold">How to apply</p><p className="mt-2 text-sm leading-6 text-muted-foreground">Open the application form above and answer each question in your own words.</p></div></aside></section>
     </main>
