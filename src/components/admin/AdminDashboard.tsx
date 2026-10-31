@@ -1,7 +1,7 @@
 "use client";
 
 import { Card, CardContent } from "@/components/ui/card";
-import { Bug, ScrollText } from "lucide-react";
+import { BriefcaseBusiness, Bug, ScrollText } from "lucide-react";
 import Link from "next/link";
 import { BroadcastEmail } from "./BroadcastEmail";
 
@@ -13,6 +13,14 @@ export function AdminDashboard() {
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <Link href="/admin/applications" className="block">
+          <Card className="hover:bg-muted/50 transition-colors h-full cursor-pointer">
+            <CardContent className="pt-4 pb-4">
+              <div className="flex items-center gap-2 mb-1"><BriefcaseBusiness className="size-4 text-emerald-500" /><span className="text-xs text-muted-foreground">Applications</span></div>
+              <p className="text-xl font-bold font-mono">Review All</p>
+            </CardContent>
+          </Card>
+        </Link>
         <Link href="/admin/issues" className="block">
           <Card className="hover:bg-muted/50 transition-colors h-full cursor-pointer">
             <CardContent className="pt-4 pb-4">
