@@ -76,7 +76,7 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(
   }));
 
   const { status, transcript, secondsLeft, startRecording, stopRecording, resetTranscript } =
-    useSarvamSTT();
+    useSarvamSTT(isPremium);
 
   const [isUploadingFile, setIsUploadingFile] = useState(false);
   const [uploadError, setUploadError] = useState(false);
@@ -310,33 +310,46 @@ export const ChatInput = forwardRef<ChatInputHandle, ChatInputProps>(
             </div>
 
             <div className="flex items-center gap-2">
-              <Button
-                type="button"
-                size="icon"
-                variant={isRecording ? "ghost" : "ghost"}
-                onClick={() =>
-                  isRecording ? stopRecording() : startRecording()
-                }
-                disabled={isLoading || isProcessing || isUploadingFile}
-                className={cn(
-                  "relative h-9 w-9 rounded-xl overflow-hidden",
-                  isRecording && "hover:bg-transparent",
-                )}
-              >
-                {isProcessing ? (
-                  <Loader2 className="size-4 animate-spin" />
-                ) : isRecording ? (
-                  <span
-                    aria-live="polite"
-                    aria-label={`${secondsLeft} seconds remaining`}
-                    className="absolute inset-0 flex items-center justify-center rounded-xl bg-red-500/12 text-[13px] font-semibold tabular-nums text-red-500"
-                  >
-                    {secondsLeft}
-                  </span>
-                ) : (
-                  <Mic className="size-4" />
-                )}
-              </Button>
+              {isPremium ? (
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="ghost"
+                  onClick={() => isRecording ? stopRecording() : startRecording()}
+                  disabled={isLoading || isProcessing || isUploadingFile}
+                  className={cn(
+                    "relative h-9 w-9 rounded-xl overflow-hidden",
+                    isRecording && "hover:bg-transparent",
+                  )}
+                  aria-label={isRecording ? "Stop voice recording" : "Start voice recording"}
+                >
+                  {isProcessing ? (
+                    <Loader2 className="size-4 animate-spin" />
+                  ) : isRecording ? (
+                    <span
+                      aria-live="polite"
+                      aria-label={`${secondsLeft} seconds remaining`}
+                      className="absolute inset-0 flex items-center justify-center rounded-xl bg-red-500/12 text-[13px] font-semibold tabular-nums text-red-500"
+                    >
+                      {secondsLeft}
+                    </span>
+                  ) : (
+                    <Mic className="size-4" />
+                  )}
+                </Button>
+              ) : (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Link href="/premium" aria-label="Voice input requires Premium">
+                      <Button type="button" size="icon" variant="ghost" tabIndex={-1} className="relative h-9 w-9 rounded-xl text-muted-foreground">
+                        <Mic className="size-4" />
+                        <Lock className="absolute -bottom-0.5 -right-0.5 size-2.5 text-amber-500" />
+                      </Button>
+                    </Link>
+                  </TooltipTrigger>
+                  <TooltipContent side="top" className="text-xs">Voice input is a Premium feature</TooltipContent>
+                </Tooltip>
+              )}
 
               <Button
                 type="submit"

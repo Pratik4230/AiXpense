@@ -1,4 +1,4 @@
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { VOICE_MAX_SECONDS } from "@/constants/voice";
 import { VOICE_UNAVAILABLE_MESSAGE } from "@/lib/ai/userFacingError";
 import { toast } from "sonner";
@@ -8,7 +8,7 @@ type Status = "idle" | "recording" | "processing" | "error";
 const SILENCE_THRESHOLD = 15;
 const SILENCE_DURATION_MS = 1300;
 
-export function useSarvamSTT() {
+export function useSarvamSTT(isPremium: boolean) {
   const [status, setStatus] = useState<Status>("idle");
   const [transcript, setTranscript] = useState<string>("");
   const [secondsLeft, setSecondsLeft] = useState(VOICE_MAX_SECONDS);
@@ -24,6 +24,11 @@ export function useSarvamSTT() {
   );
   const rafRef = useRef<number | null>(null);
   const speechDetectedRef = useRef(false);
+  const isPremiumRef = useRef(isPremium);
+
+  useEffect(() => {
+    isPremiumRef.current = isPremium;
+  }, [isPremium]);
 
   const clearMaxDurationTimer = () => {
     if (maxDurationTimerRef.current) {
@@ -79,6 +84,10 @@ export function useSarvamSTT() {
   };
 
   const sendAudio = async (chunks: Blob[]) => {
+    if (!isPremiumRef.current) {
+      setStatus("idle");
+      return;
+    }
     setStatus("processing");
 
     const mimeType = mimeTypeRef.current;
@@ -118,6 +127,10 @@ export function useSarvamSTT() {
     }
   }, []);
 
+  useEffect(() => {
+    if (!isPremium) stopRecording();
+  }, [isPremium, stopRecording]);
+
   const startMaxDurationCountdown = (onExpire: () => void) => {
     clearMaxDurationTimer();
     setSecondsLeft(VOICE_MAX_SECONDS);
@@ -133,6 +146,7 @@ export function useSarvamSTT() {
   };
 
   const startRecording = async (deviceId?: string) => {
+    if (!isPremiumRef.current) return;
     try {
       const audioConstraints: MediaTrackConstraints = {
         echoCancellation: true,
@@ -145,6 +159,10 @@ export function useSarvamSTT() {
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: audioConstraints,
       });
+      if (!isPremiumRef.current) {
+        stream.getTracks().forEach((track) => track.stop());
+        return;
+      }
       streamRef.current = stream;
       chunksRef.current = [];
 
